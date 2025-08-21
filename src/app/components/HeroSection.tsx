@@ -48,7 +48,7 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-4xl md:text-6xl lg:text-7xl font-questa-bold leading-tight"
           >
-            Bem-vindo ao{" "}
+            Bem-vindo a{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-teal to-primary-teal-light">
               Front Stay
             </span>
