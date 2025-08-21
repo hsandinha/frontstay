@@ -1,0 +1,499 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Importando a fonte Questa Sans */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* Simulando Questa Sans com Inter + ajustes específicos */
+@font-face {
+  font-family: "Questa Sans";
+  src: local("Inter"), local("Inter-Regular");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Questa Sans";
+  src: local("Inter"), local("Inter-Light");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Questa Sans";
+  src: local("Inter"), local("Inter-Medium");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Questa Sans";
+  src: local("Inter"), local("Inter-Bold");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Questa Sans";
+  src: local("Inter"), local("Inter-Black");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Variáveis CSS para a paleta do Front Stay */
+:root {
+  /* Cores principais */
+  --primary-teal: #00a3a3;
+  --primary-teal-light: #1ab5b5;
+  --primary-teal-dark: #008080;
+
+  --secondary-purple: #2d1b69;
+  --secondary-purple-light: #4a3b8c;
+  --secondary-purple-dark: #1f1247;
+
+  --accent-orange: #e67e22;
+  --accent-orange-light: #f39c12;
+  --accent-orange-dark: #d35400;
+
+  /* Cores neutras */
+  --neutral-dark: #2c3e50;
+  --neutral-medium: #7f8c8d;
+  --neutral-light: #bdc3c7;
+  --neutral-lighter: #ecf0f1;
+
+  /* Cores de apoio */
+  --support-green: #27ae60;
+  --support-blue: #3498db;
+  --support-pink: #e91e63;
+  --support-brown: #8d6e63;
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary-teal) 0%,
+    var(--secondary-purple) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-orange) 0%,
+    var(--primary-teal) 100%
+  );
+  --gradient-neutral: linear-gradient(
+    135deg,
+    var(--neutral-lighter) 0%,
+    var(--neutral-light) 100%
+  );
+}
+
+/* Reset e configurações base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Questa Sans", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--neutral-dark);
+  background-color: #ffffff;
+  overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* Tipografia - Questa Sans */
+.font-questa-light {
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.font-questa-regular {
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.font-questa-medium {
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.font-questa-bold {
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.font-questa-black {
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+/* Gradientes de texto */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Efeitos Glass Morphism - mais sutis */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.15);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.1);
+}
+
+.glass-dark {
+  background: rgba(45, 27, 105, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+}
+
+/* Animações personalizadas - mais sutis */
+@keyframes float-subtle {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-glow-subtle {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(0, 163, 163, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 163, 163, 0.4);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow-subtle {
+  animation: pulse-glow-subtle 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* Botões personalizados - mais clean */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-family: "Questa Sans", "Inter", sans-serif;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 163, 163, 0.25);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-family: "Questa Sans", "Inter", sans-serif;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: 1.5px solid white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: var(--primary-teal);
+  transform: translateY(-1px);
+}
+
+/* Cards com efeito hover - mais sutil */
+.card-hover {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Seções com padrões geométricos - mais sutis */
+.geometric-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.geometric-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(0, 163, 163, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(45, 27, 105, 0.05) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-lighter);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-teal-dark);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .gradient-text {
+    font-size: 2rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Efeitos de loading */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Elementos decorativos - mais sutis */
+.decorative-dots {
+  background-image: radial-gradient(
+    circle,
+    var(--primary-teal) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  opacity: 0.06;
+}
+
+.decorative-lines {
+  background-image: linear-gradient(
+    45deg,
+    transparent 40%,
+    var(--primary-teal) 40%,
+    var(--primary-teal) 60%,
+    transparent 60%
+  );
+  background-size: 32px 32px;
+  opacity: 0.03;
+}
+
+/* Animações de entrada - mais sutis */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: fadeInLeft 0.6s ease forwards;
+}
+
+@keyframes fadeInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(20px);
+  animation: fadeInRight 0.6s ease forwards;
+}
+
+@keyframes fadeInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Utilitários personalizados */
+.text-shadow-subtle {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border-gradient {
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    var(--gradient-primary) border-box;
+}
+
+/* Estados de foco para acessibilidade */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 163, 163, 0.2);
+}
+
+/* Clean spacing utilities */
+.space-clean > * + * {
+  margin-top: 1rem;
+}
+
+.space-clean-lg > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Clean form styles */
+.form-clean input,
+.form-clean select {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 163, 163, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-family: "Questa Sans", "Inter", sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.form-clean input:focus,
+.form-clean select:focus {
+  outline: none;
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 2px rgba(0, 163, 163, 0.1);
+  background: white;
+}
+
+/* Clean section spacing */
+.section-clean {
+  padding: 4rem 0;
+}
+
+@media (min-width: 768px) {
+  .section-clean {
+    padding: 6rem 0;
+  }
+}
+
+/* Modo escuro (preparação futura) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --neutral-dark: #ecf0f1;
+    --neutral-medium: #bdc3c7;
+    --neutral-light: #7f8c8d;
+    --neutral-lighter: #2c3e50;
+  }
+
+  body {
+    background-color: #1a1a1a;
+    color: var(--neutral-dark);
+  }
+}
