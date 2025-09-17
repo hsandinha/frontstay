@@ -1,178 +1,75 @@
 "use client";
+import React from "react";
 
-import FloatingButtons from "./FloatingButtons";
-import NewsletterSubscription from "./NewsletterSubscription";
-import { Facebook, Linkedin, Instagram } from "lucide-react";
-
-export default function Footer() {
-  const footerLinks = {
-    apartamentos: [
-      { name: "Studio", href: "#apartments" },
-      { name: "1 Quarto", href: "#apartments" },
-      { name: "2 Quartos", href: "#apartments" },
-      { name: "Longa Estadia", href: "#apartments" },
-    ],
-    amenidades: [
-      { name: "Wi-Fi Grátis", href: "#amenities" },
-      { name: "Estacionamento", href: "#amenities" },
-      { name: "Academia", href: "#amenities" },
-      { name: "Coworking", href: "#amenities" },
-    ],
-    suporte: [
-      { name: "Central de Ajuda", href: "#contact" },
-      { name: "Política de Cancelamento", href: "#contact" },
-      { name: "FAQ", href: "#contact" },
-      { name: "Contato 24h", href: "#contact" },
-    ],
-    empresa: [
-      { name: "Sobre Nós", href: "#about" },
-      { name: "Carreiras", href: "#careers" },
-      { name: "Imprensa", href: "#press" },
-      { name: "Sustentabilidade", href: "#sustainability" },
-    ],
-  };
-
-  const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-  ];
-
+const Footer = () => {
   return (
-    <>
-      <footer className="bg-neutral-dark text-neutral-light">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
-            {/* Logo e descrição */}
-            <div className="space-y-6 md:col-span-2">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
-                  F
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-white">
-                    Front Stay
-                  </h3>
-                  <p className="text-sm text-neutral-light">Belo Horizonte</p>
-                </div>
-              </div>
-              <p className="leading-relaxed max-w-md">
-                Experiência única de hospedagem em Belo Horizonte. Apartamentos
-                equipados com estilo mineiro, localização privilegiada e todas
-                as comodidades para sua estadia perfeita.
-              </p>
-            </div>
+    <footer className="bg-[#c2c4b5] text-black py-8 px-4">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-6 md:gap-10">
 
-            {/* Links */}
-            <div className="grid grid-cols-4 gap-8 md:col-span-3">
-              <div>
-                <h4 className="font-semibold mb-4 text-white">Apartamentos</h4>
-                <ul className="space-y-2">
-                  {footerLinks.apartamentos.map((link) => (
-                    <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="hover:text-primary-teal transition-colors duration-200"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white">Amenidades</h4>
-                <ul className="space-y-2">
-                  {footerLinks.amenidades.map((link) => (
-                    <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="hover:text-primary-teal transition-colors duration-200"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white">Suporte</h4>
-                <ul className="space-y-2">
-                  {footerLinks.suporte.map((link) => (
-                    <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="hover:text-primary-teal transition-colors duration-200"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white">Empresa</h4>
-                <ul className="space-y-2">
-                  {footerLinks.empresa.map((link) => (
-                    <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="hover:text-primary-teal transition-colors duration-200"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+        {/* Logo */}
+        <div className="flex-shrink-0 flex justify-center">
+          <img
+            src="/logo1.png"
+            alt="FrontStay Logo"
+            className="h-24 w-auto" // 🚀 logo maior
+          />
+        </div>
+
+        {/* Menus - 3 colunas compactas com divisores */}
+        <div className="flex flex-col md:flex-row md:items-start md:space-x-8 lg:space-x-12 divide-y md:divide-y-0 md:divide-x divide-white/50">
+
+          {/* Coluna 1 */}
+          <div className="px-4 md:px-6">
+            <h4 className="font-bold mb-1">Front Stay</h4>
+            <ul className="space-y-1 text-sm">
+              <li><a href="#" className="hover:underline">Sobre nós</a></li>
+              <li><a href="#" className="hover:underline">Números</a></li>
+              <li><a href="#" className="hover:underline">Blog</a></li>
+            </ul>
           </div>
 
-          {/* Rodapé inferior */}
-          <div className="mt-12 flex flex-col items-center space-y-2 text-sm text-neutral-light md:flex-row md:justify-between md:space-y-0">
-            <div className="flex items-center space-x-6">
-              <span>Siga-nos:</span>
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="hover:text-primary-teal transition-colors duration-200"
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
-            <div className="text-xs">
-              <div className="mt-8">
-                <NewsletterSubscription />
-              </div>
-            </div>
+          {/* Coluna 2 */}
+          <div className="px-4 md:px-6">
+            <h4 className="font-bold mb-1">Para você</h4>
+            <ul className="space-y-1 text-sm">
+              <li><a href="#" className="hover:underline">Investir</a></li>
+              <li><a href="#" className="hover:underline">Comodidades</a></li>
+              <li><a href="#" className="hover:underline">Design by Front</a></li>
+            </ul>
           </div>
 
-          {/* Newspaper, desenvolvido e políticas */}
-          <div className="mt-6 border-t border-neutral-light pt-4 text-xs text-neutral-light flex flex-col md:flex-row md:justify-between md:items-center space-y-2 md:space-y-0">
-            <div>© 2025 Front Stay. Todos os direitos reservados.</div>
-            <div>Desenvolvido por Hebert Sandinha</div>
-            <div>
-              <a
-                href="#"
-                className="hover:text-primary-teal transition-colors duration-200 mr-4"
-              >
-                Política de Privacidade
-              </a>
-              <a
-                href="#"
-                className="hover:text-primary-teal transition-colors duration-200"
-              >
-                Termos de Uso
-              </a>
-            </div>
+          {/* Coluna 3 */}
+          <div className="px-4 md:px-6">
+            <h4 className="font-bold mb-1">Clientes Front</h4>
+            <ul className="space-y-1 text-sm">
+              <li><a href="#" className="hover:underline">Área do Cliente</a></li>
+              <li><a href="#" className="hover:underline">Suporte</a></li>
+              <li><a href="#" className="hover:underline">Contato</a></li>
+            </ul>
           </div>
         </div>
-      </footer>
 
-      <FloatingButtons />
-    </>
+        {/* App Badges */}
+        <div className="flex-shrink-0">
+          <div className="bg-white rounded-lg p-3 flex flex-col items-center space-y-2 shadow-sm rounded-tl-xl rounded-tr-xl rounded-br-5xl rounded-bl-xl">
+            <h4 className="font-bold mb-1 text-sm">Baixe nosso app:</h4>
+            <a href="#">
+              <img src="/app-store-badge.svg" alt="App Store" className="h-9" />
+            </a>
+            <a href="#">
+              <img src="/google-play-badge.png" alt="Google Play" className="h-7" />
+              {/* 🚀 Google Play menor que App Store */}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Linha final */}
+      <div className="mt-6 text-center text-xs border-t border-black/20 pt-3">
+        Front Stay - Copyright 2025 | Todos direitos reservados.
+      </div>
+    </footer>
   );
-}
+};
+
+export default Footer;

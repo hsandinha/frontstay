@@ -1,25 +1,34 @@
-// app/page.tsx
-"use client";
+import React from 'react';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import About from './components/About';
+import Invest from './components/Invest';
+import Services from './components/Services';
+import UpcomingLaunches from './components/UpcomingLaunches';
+import DesignByFront from './components/DesignByFront';
+import GestaoByFront from './components/GestaoByFront';
+import Amenities from './components/Amenities';
+import ContactForm from './components/ContactForm';
+import Footer from './components/Footer';
 
-import { ParallaxProvider } from "react-scroll-parallax";
-import Header from "./components/Header";
-import HeroSection from "./components/HeroSection";
-import ApartmentTypesSection from "./components/ApartmentTypesSection";
-import AmenitiesSection from "./components/AmenitiesSection";
-import BenefitsSection from "./components/BenefitsSection";
-import Footer from "./components/Footer";
-
-export default function Home() {
+const HomePage = () => {
   return (
-    <ParallaxProvider>
-      <main className="min-h-screen">
-        <Header />
-        <HeroSection />
-        <ApartmentTypesSection />
-        <AmenitiesSection />
-        <BenefitsSection />
-        <Footer />
+    <div>
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <Invest />
+        <Services />
+        <UpcomingLaunches />
+        <GestaoByFront />
+        <Amenities />
+        <DesignByFront />
+        <ContactForm />
       </main>
-    </ParallaxProvider>
+      <Footer />
+    </div>
   );
-}
+};
+
+export default HomePage;

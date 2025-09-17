@@ -36,6 +36,9 @@ module.exports = {
           pink: "#E91E63",
           brown: "#8D6E63",
         },
+
+        // Adicionado para o fundo principal (era #eae8e5)
+        frontstay: "#eae8e5",
       },
       fontFamily: {
         questa: ["Questa Sans", "Inter", "system-ui", "sans-serif"],
