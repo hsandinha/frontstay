@@ -74,21 +74,15 @@
   --support-brown: #8d6e63;
 
   /* Gradientes */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--primary-teal) 0%,
-    var(--secondary-purple) 100%
-  );
-  --gradient-accent: linear-gradient(
-    135deg,
-    var(--accent-orange) 0%,
-    var(--primary-teal) 100%
-  );
-  --gradient-neutral: linear-gradient(
-    135deg,
-    var(--neutral-lighter) 0%,
-    var(--neutral-light) 100%
-  );
+  --gradient-primary: linear-gradient(135deg,
+      var(--primary-teal) 0%,
+      var(--secondary-purple) 100%);
+  --gradient-accent: linear-gradient(135deg,
+      var(--accent-orange) 0%,
+      var(--primary-teal) 100%);
+  --gradient-neutral: linear-gradient(135deg,
+      var(--neutral-lighter) 0%,
+      var(--neutral-light) 100%);
 }
 
 /* Reset e configurações base */
@@ -187,20 +181,24 @@ body {
 
 /* Animações personalizadas - mais sutis */
 @keyframes float-subtle {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-8px);
   }
 }
 
 @keyframes pulse-glow-subtle {
+
   0%,
   100% {
     box-shadow: 0 0 10px rgba(0, 163, 163, 0.2);
   }
+
   50% {
     box-shadow: 0 0 20px rgba(0, 163, 163, 0.4);
   }
@@ -210,9 +208,11 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -303,16 +303,12 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(
-      circle at 25% 25%,
+  background-image: radial-gradient(circle at 25% 25%,
       rgba(0, 163, 163, 0.05) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
+      transparent 50%),
+    radial-gradient(circle at 75% 75%,
       rgba(45, 27, 105, 0.05) 0%,
-      transparent 50%
-    );
+      transparent 50%);
   pointer-events: none;
 }
 
@@ -358,6 +354,7 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -365,23 +362,19 @@ body {
 
 /* Elementos decorativos - mais sutis */
 .decorative-dots {
-  background-image: radial-gradient(
-    circle,
-    var(--primary-teal) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle,
+      var(--primary-teal) 1px,
+      transparent 1px);
   background-size: 24px 24px;
   opacity: 0.06;
 }
 
 .decorative-lines {
-  background-image: linear-gradient(
-    45deg,
-    transparent 40%,
-    var(--primary-teal) 40%,
-    var(--primary-teal) 60%,
-    transparent 60%
-  );
+  background-image: linear-gradient(45deg,
+      transparent 40%,
+      var(--primary-teal) 40%,
+      var(--primary-teal) 60%,
+      transparent 60%);
   background-size: 32px 32px;
   opacity: 0.03;
 }
@@ -444,11 +437,11 @@ body {
 }
 
 /* Clean spacing utilities */
-.space-clean > * + * {
+.space-clean>*+* {
   margin-top: 1rem;
 }
 
-.space-clean-lg > * + * {
+.space-clean-lg>*+* {
   margin-top: 1.5rem;
 }
 
@@ -497,6 +490,7 @@ body {
     color: var(--neutral-dark);
   }
 }
+
 .great-vibes-regular {
   font-family: "Great Vibes", cursive;
   font-weight: 400;
