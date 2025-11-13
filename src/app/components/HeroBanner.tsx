@@ -50,8 +50,11 @@ const HeroBanner = () => {
     };
 
     return (
-        <section className="relative pt-20 h-[300px] overflow-hidden">
-            {/* Background Images */}
+        <section className="relative pt-20 h-[150px] overflow-hidden">
+            {/* OPÇÃO 1: Fundo Cinza (Teste) */}
+            <div className="absolute inset-0 bg-gray-300"></div>
+
+            {/* OPÇÃO 2: Background Images (Comentado para teste)
             {slides.map((slide, index) => (
                 <div
                     key={index}
@@ -62,13 +65,13 @@ const HeroBanner = () => {
                         className="w-full h-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${slide.fallback})` }}
                     />
-                    {/* Dark overlay */}
                     <div className="absolute inset-0 bg-black/20" />
                 </div>
-            ))}
+            ))} 
+            */}
 
             {/* Content - Apenas Logo */}
-            <div className="relative z-10 h-full flex items-center justify-center -mt-4">
+            <div className="relative z-10 h-full flex items-center justify-center -mt-14">
                 <div className="text-center">
                     <Image
                         src="/logo.png"

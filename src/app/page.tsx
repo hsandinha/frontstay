@@ -76,16 +76,16 @@ const HomePage = () => {
             <HeroBanner />
 
             {/* Componente de Busca */}
-            <section className="relative -mt-12 pb-8">
+            <section className="relative -mt-12 pb-4">
                 <div className="max-w-7xl mx-auto px-6">
                     <SearchComponent />
                 </div>
             </section>
 
             {/* Grid de Propriedades */}
-            <section className="py-16 px-6">
+            <section className="pt-8 pb-16 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {propriedades.map((prop) => (
                             <PropertyCard key={prop.id} property={prop} />
                         ))}
