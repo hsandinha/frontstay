@@ -15,40 +15,57 @@ const HomePage = () => {
     const propriedades = [
         {
             id: 1,
-            nome: 'Iconye FrontStay Savassi',
-            endereco: 'Rua Pernambuco, 1500, Savassi, Belo Horizonte',
-            preco: 3470,
-            precoTotal: 4470,
-            imagem: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2940',
-            tipo: ''
+            nome: 'FrontStay Esopo',
+            endereco: 'Alameda Flamboiant, 285 - Vale do Sereno, Nova Lima - MG',
+            preco: 420,
+            imagem: 'esopo.png',
+
         },
         {
             id: 2,
-            nome: 'FrontStay Lourdes Premium',
-            endereco: 'Av. Brasil, 2000, Lourdes, Belo Horizonte',
-            preco: 4403,
-            precoTotal: 5403,
-            imagem: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2940',
-            tipo: ''
+            nome: 'FrontStay City Design',
+            endereco: 'Rua Tenente Brito Melo - Barro Preto, Belo Horizonte - MG',
+            preco: 360,
+            imagem: 'citydesign.png',
+
         },
         {
             id: 3,
-            nome: 'FrontStay For You Funcionários',
+            nome: 'FrontStay Ágora',
             endereco: 'Rua dos Timbiras, 815, Funcionários, BH',
             preco: 2372,
-            precoTotal: 3542,
-            imagem: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2940',
-            tipo: ''
+            imagem: 'agora.jpg',
+
         },
         {
             id: 4,
-            nome: 'Iconye FrontStay Belvedere',
+            nome: 'FrontStay Icon',
             endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
             preco: 5672,
-            precoTotal: 8987,
             imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
-            tipo: ''
         },
+        {
+            id: 5,
+            nome: 'FrontStay Prodomo',
+            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            preco: 5672,
+            imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
+        },
+        {
+            id: 6,
+            nome: 'FrontStay Funcionarios',
+            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            preco: 5672,
+            imagem: 'funcionarios.jpeg',
+        },
+        {
+            id: 7,
+            nome: 'FrontStay Centro',
+            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            preco: 5672,
+            imagem: 'centro.jpeg',
+        }
+
     ];
 
     return (

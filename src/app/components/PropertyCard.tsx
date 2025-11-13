@@ -7,9 +7,7 @@ interface Property {
     nome: string;
     endereco: string;
     preco: number;
-    precoTotal: number;
     imagem: string;
-    tipo: string;
 }
 
 interface PropertyCardProps {
@@ -66,7 +64,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                         <span className="text-sm text-gray-600 font-questa-regular">diária</span>
                     </div>
                     <p className="text-xs text-gray-400 font-questa-regular">
-                        Total R$ {property.precoTotal.toLocaleString('pt-BR')}
+                        Total R$ {property.preco.toLocaleString('pt-BR')}
                     </p>
                 </div>
             </div>
