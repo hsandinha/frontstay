@@ -15,7 +15,7 @@ const HomePage = () => {
     const propriedades = [
         {
             id: 1,
-            nome: 'FrontStay Esopo',
+            nome: 'FrontStay Esopo Vale do Sereno',
             endereco: 'Alameda Flamboiant, 285 - Vale do Sereno, Nova Lima - MG',
             preco: 420,
             imagem: 'esopo.png',
@@ -23,45 +23,45 @@ const HomePage = () => {
         },
         {
             id: 2,
-            nome: 'FrontStay City Design',
-            endereco: 'Rua Tenente Brito Melo - Barro Preto, Belo Horizonte - MG',
+            nome: 'FrontStay City Santo Agostinho',
+            endereco: 'Rua Tenente Brito Melo, 1383 - Santo Agostinho, Belo Horizonte - MG',
             preco: 360,
             imagem: 'citydesign.png',
 
         },
         {
             id: 3,
-            nome: 'FrontStay Ágora',
-            endereco: 'Rua dos Timbiras, 815, Funcionários, BH',
+            nome: 'FrontStay Ágora Expominas',
+            endereco: 'Rua Herculano pena, 806 - Nova Suíça, Belo Horizonte - MG',
             preco: 2372,
             imagem: 'agora.jpg',
 
         },
         {
             id: 4,
-            nome: 'FrontStay Icon',
-            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            nome: 'FrontStay Icon Centro',
+            endereco: 'Rua Goitacazes - Centro, Belo Horizonte - MG',
             preco: 5672,
             imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
         },
         {
             id: 5,
-            nome: 'FrontStay Prodomo',
-            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            nome: 'FrontStay Prodomo Barro Preto',
+            endereco: 'Av. Barbacena, 70 - Barro Preto, Belo Horizonte - MG',
             preco: 5672,
             imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
         },
         {
             id: 6,
-            nome: 'FrontStay Funcionarios',
-            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            nome: 'FrontStay Savassi',
+            endereco: 'Rua Pernambuco 284 - Savassi, Belo Horizonte - MG',
             preco: 5672,
             imagem: 'funcionarios.jpeg',
         },
         {
             id: 7,
-            nome: 'FrontStay Centro',
-            endereco: 'Rua Platina, 522, Belvedere, Belo Horizonte',
+            nome: 'FrontStay Shopping Cidade',
+            endereco: 'Rua São Paulo, 957 - Centro, Belo Horizonte - MG',
             preco: 5672,
             imagem: 'centro.jpeg',
         }
