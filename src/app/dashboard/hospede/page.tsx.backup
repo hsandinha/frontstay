@@ -1,0 +1,830 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+
+type TabType = 'overview' | 'reservas' | 'estadia' | 'market' | 'servicos' | 'areas-comuns';
+
+export default function HospedeDashboard() {
+    const router = useRouter();
+    const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+    const handleLogout = () => {
+        router.push('/login');
+    };
+
+    // Dados mock de exemplo
+    const reservaAtiva = {
+        id: '1',
+        propriedade: 'FrontStay Esopo',
+        checkin: '2025-11-15',
+        checkout: '2025-11-20',
+        status: 'confirmada',
+        valor: 2100
+    };
+
+    const proximasReservas = [
+        {
+            id: '2',
+            propriedade: 'FrontStay City Design',
+            checkin: '2025-12-10',
+            checkout: '2025-12-15',
+            status: 'confirmada',
+            valor: 1800
+        }
+    ];
+
+    const historicoReservas = [
+        {
+            id: '3',
+            propriedade: 'FrontStay Ágora',
+            checkin: '2025-10-01',
+            checkout: '2025-10-05',
+            status: 'concluída',
+            valor: 1500
+        }
+    ];
+
+    return (
+        <div className="min-h-screen bg-frontstay flex flex-col">
+            <Header />
+
+            <main className="flex-1 py-10 px-6">
+                <div className="max-w-7xl mx-auto">
+                    {/* Header do Dashboard */}
+                    <div className="mb-8 flex justify-between items-center">
+                        <div>
+                            <h2 className="text-3xl font-questa-bold text-neutral-dark mb-2">
+                                Bem-vindo(a), Hóspede! 👋
+                            </h2>
+                            <p className="text-neutral-medium font-questa-regular">
+                                Gerencie suas reservas e aproveite todos os serviços Front Stay
+                            </p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="px-6 py-2 rounded-full border border-neutral-light text-neutral-dark hover:bg-white transition-all font-questa-medium"
+                        >
+                            Sair
+                        </button>
+                    </div>
+
+                    {/* Tabs de Navegação */}
+                    <div className="mb-8 bg-white rounded-xl shadow-sm p-2 flex flex-wrap gap-2">
+                        <button
+                            onClick={() => setActiveTab('overview')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'overview'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            📊 Visão Geral
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('reservas')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'reservas'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            🏨 Minhas Reservas
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('estadia')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'estadia'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            🔑 Gestão de Estadia
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('market')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'market'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            🛍️ Front Stay Market
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('servicos')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'servicos'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            💼 Serviços
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('areas-comuns')}
+                            className={`px-4 py-2 rounded-lg font-questa-medium transition-all ${activeTab === 'areas-comuns'
+                                    ? 'bg-primary-teal text-white'
+                                    : 'text-neutral-dark hover:bg-gray-100'
+                                }`}
+                        >
+                            🏊 Áreas Comuns
+                        </button>
+                    </div>
+
+                    {/* Conteúdo das Tabs */}
+                    {activeTab === 'overview' && (
+                        <div className="space-y-6">
+                            {/* Stats Rápidos */}
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-neutral-medium font-questa-regular mb-1">Reserva Ativa</p>
+                                            <p className="text-2xl font-questa-bold text-primary-teal">1</p>
+                                        </div>
+                                        <div className="text-4xl">🏠</div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-neutral-medium font-questa-regular mb-1">Próximas</p>
+                                            <p className="text-2xl font-questa-bold text-secondary-purple">{proximasReservas.length}</p>
+                                        </div>
+                                        <div className="text-4xl">📅</div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-neutral-medium font-questa-regular mb-1">Cupons Disponíveis</p>
+                                            <p className="text-2xl font-questa-bold text-secondary-orange">5</p>
+                                        </div>
+                                        <div className="text-4xl">🎟️</div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-neutral-medium font-questa-regular mb-1">Cashback Acumulado</p>
+                                            <p className="text-2xl font-questa-bold text-primary-green">R$ 450</p>
+                                        </div>
+                                        <div className="text-4xl">💰</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Reserva Ativa */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🏨 Reserva Ativa</h3>
+                                <div className="border border-gray-200 rounded-lg p-4">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="font-questa-bold text-lg text-neutral-dark">{reservaAtiva.propriedade}</h4>
+                                            <p className="text-sm text-neutral-medium font-questa-regular">
+                                                Check-in: {new Date(reservaAtiva.checkin).toLocaleDateString('pt-BR')} |
+                                                Check-out: {new Date(reservaAtiva.checkout).toLocaleDateString('pt-BR')}
+                                            </p>
+                                        </div>
+                                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-questa-medium">
+                                            {reservaAtiva.status}
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button className="flex-1 px-4 py-2 bg-primary-teal text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                            Fazer Check-in
+                                        </button>
+                                        <button className="flex-1 px-4 py-2 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Detalhes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Ações Rápidas */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">⚡ Ações Rápidas</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <button
+                                        onClick={() => router.push('/')}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-center"
+                                    >
+                                        <div className="text-3xl mb-2">🔍</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Nova Reserva</p>
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('estadia')}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-center"
+                                    >
+                                        <div className="text-3xl mb-2">👥</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Visitantes</p>
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('areas-comuns')}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-center"
+                                    >
+                                        <div className="text-3xl mb-2">🏊</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Reservar Área</p>
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('market')}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-center"
+                                    >
+                                        <div className="text-3xl mb-2">🎁</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Ver Cupons</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'reservas' && (
+                        <div className="space-y-6">
+                            {/* Nova Reserva */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-questa-bold text-neutral-dark">📝 Fazer Nova Reserva</h3>
+                                    <button
+                                        onClick={() => router.push('/')}
+                                        className="px-4 py-2 bg-primary-teal text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all"
+                                    >
+                                        Buscar Propriedades
+                                    </button>
+                                </div>
+                                <p className="text-neutral-medium font-questa-regular">
+                                    Encontre a acomodação perfeita para sua próxima estadia em BH e Nova Lima
+                                </p>
+                            </div>
+
+                            {/* Reserva Ativa */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🏨 Reserva Ativa</h3>
+                                <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 className="font-questa-bold text-lg text-neutral-dark">{reservaAtiva.propriedade}</h4>
+                                            <p className="text-sm text-neutral-medium font-questa-regular mt-1">
+                                                📅 {new Date(reservaAtiva.checkin).toLocaleDateString('pt-BR')} - {new Date(reservaAtiva.checkout).toLocaleDateString('pt-BR')}
+                                            </p>
+                                            <p className="text-sm text-neutral-dark font-questa-medium mt-2">
+                                                💰 R$ {reservaAtiva.valor.toLocaleString('pt-BR')}
+                                            </p>
+                                        </div>
+                                        <span className="px-3 py-1 bg-green-600 text-white rounded-full text-xs font-questa-medium">
+                                            ✓ Confirmada
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-2 mt-4">
+                                        <button className="px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Check-in Online
+                                        </button>
+                                        <button className="px-4 py-2 bg-white border border-gray-300 text-neutral-dark rounded-lg text-sm font-questa-medium hover:bg-gray-50">
+                                            Ver Detalhes
+                                        </button>
+                                        <button className="px-4 py-2 bg-white border border-gray-300 text-neutral-dark rounded-lg text-sm font-questa-medium hover:bg-gray-50">
+                                            Gerenciar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Próximas Reservas */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">📅 Próximas Reservas</h3>
+                                <div className="space-y-3">
+                                    {proximasReservas.map((reserva) => (
+                                        <div key={reserva.id} className="border border-gray-200 rounded-lg p-4">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="font-questa-bold text-neutral-dark">{reserva.propriedade}</h4>
+                                                    <p className="text-sm text-neutral-medium font-questa-regular mt-1">
+                                                        📅 {new Date(reserva.checkin).toLocaleDateString('pt-BR')} - {new Date(reserva.checkout).toLocaleDateString('pt-BR')}
+                                                    </p>
+                                                    <p className="text-sm text-neutral-dark font-questa-medium mt-1">
+                                                        💰 R$ {reserva.valor.toLocaleString('pt-BR')}
+                                                    </p>
+                                                </div>
+                                                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-questa-medium">
+                                                    Confirmada
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Histórico */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">📜 Histórico de Reservas</h3>
+                                <div className="space-y-3">
+                                    {historicoReservas.map((reserva) => (
+                                        <div key={reserva.id} className="border border-gray-200 rounded-lg p-4 opacity-75">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="font-questa-bold text-neutral-dark">{reserva.propriedade}</h4>
+                                                    <p className="text-sm text-neutral-medium font-questa-regular mt-1">
+                                                        📅 {new Date(reserva.checkin).toLocaleDateString('pt-BR')} - {new Date(reserva.checkout).toLocaleDateString('pt-BR')}
+                                                    </p>
+                                                    <p className="text-sm text-neutral-dark font-questa-medium mt-1">
+                                                        💰 R$ {reserva.valor.toLocaleString('pt-BR')}
+                                                    </p>
+                                                </div>
+                                                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-questa-medium">
+                                                    Concluída
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'estadia' && (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Check-in/Check-out */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        🔑 Check-in / Check-out
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <button className="w-full px-4 py-3 bg-primary-teal text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                            Fazer Check-in Online
+                                        </button>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Solicitar Check-out
+                                        </button>
+                                        <p className="text-xs text-neutral-medium font-questa-regular mt-2">
+                                            Check-in disponível 24h antes da data reservada
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Controle de Visitantes */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        👥 Controle de Visitantes
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <button className="w-full px-4 py-3 bg-secondary-purple text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                            Autorizar Visitante
+                                        </button>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Visitantes Autorizados
+                                        </button>
+                                        <p className="text-xs text-neutral-medium font-questa-regular mt-2">
+                                            Gerencie quem pode acessar o edifício durante sua estadia
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Comunicação com Portaria */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        💬 Comunicação com Portaria
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <button className="w-full px-4 py-3 bg-primary-teal text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                            Enviar Mensagem
+                                        </button>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Conversas
+                                        </button>
+                                        <p className="text-xs text-neutral-medium font-questa-regular mt-2">
+                                            Chat direto com a portaria do seu edifício
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Controle de Encomendas */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        📦 Controle de Encomendas
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                                            <p className="text-sm font-questa-medium text-neutral-dark">2 encomendas aguardando</p>
+                                        </div>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Todas as Encomendas
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Controle de Acesso */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        🚪 Controle de Fechaduras
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <button className="w-full px-4 py-3 bg-primary-green text-white rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                            🔓 Abrir Porta
+                                        </button>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Histórico de Acesso
+                                        </button>
+                                        <p className="text-xs text-neutral-medium font-questa-regular mt-2">
+                                            Controle digital da sua acomodação
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Atas de Condomínio */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-questa-bold text-neutral-dark mb-4 flex items-center gap-2">
+                                        📄 Documentos e Atas
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Ver Atas de Condomínio
+                                        </button>
+                                        <button className="w-full px-4 py-3 border border-gray-300 text-neutral-dark rounded-lg font-questa-medium hover:bg-gray-50 transition-all">
+                                            Regulamento do Edifício
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'market' && (
+                        <div className="space-y-6">
+                            {/* Cupons e Descontos */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🎟️ Meus Cupons e Descontos</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="border-2 border-dashed border-primary-teal rounded-lg p-4 bg-teal-50">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">15% OFF em Restaurantes</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular">Válido em todos os parceiros</p>
+                                            </div>
+                                            <span className="text-2xl">🍽️</span>
+                                        </div>
+                                        <button className="mt-3 px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90 w-full">
+                                            Usar Cupom
+                                        </button>
+                                    </div>
+
+                                    <div className="border-2 border-dashed border-secondary-orange rounded-lg p-4 bg-orange-50">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">Voucher Gormir + Acompanhante</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular">Jantar para 2 pessoas</p>
+                                            </div>
+                                            <span className="text-2xl">🎁</span>
+                                        </div>
+                                        <button className="mt-3 px-4 py-2 bg-secondary-orange text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90 w-full">
+                                            Usar Cupom
+                                        </button>
+                                    </div>
+
+                                    <div className="border-2 border-dashed border-secondary-purple rounded-lg p-4 bg-purple-50">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">15% OFF Aluguel de Carro</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular">Válido por 7 dias</p>
+                                            </div>
+                                            <span className="text-2xl">🚗</span>
+                                        </div>
+                                        <button className="mt-3 px-4 py-2 bg-secondary-purple text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90 w-full">
+                                            Usar Cupom
+                                        </button>
+                                    </div>
+
+                                    <div className="border-2 border-dashed border-primary-green rounded-lg p-4 bg-green-50">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">Acesso Gratuito Academia</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular">1 dia de cortesia</p>
+                                            </div>
+                                            <span className="text-2xl">🏋️</span>
+                                        </div>
+                                        <button className="mt-3 px-4 py-2 bg-primary-green text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90 w-full">
+                                            Usar Cupom
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cashback */}
+                            <div className="bg-gradient-to-r from-primary-teal to-primary-green rounded-xl shadow-sm p-6 text-white">
+                                <h3 className="text-xl font-questa-bold mb-2">💰 Cashback Acumulado</h3>
+                                <p className="text-4xl font-questa-bold mb-2">R$ 450,00</p>
+                                <p className="text-sm font-questa-regular opacity-90 mb-4">
+                                    Você ganhou cashback em suas estadias e uso de serviços parceiros
+                                </p>
+                                <button className="px-6 py-2 bg-white text-primary-teal rounded-lg font-questa-medium hover:bg-opacity-90 transition-all">
+                                    Resgatar Cashback
+                                </button>
+                            </div>
+
+                            {/* Parceiros Locais */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🤝 Parceiros Front Stay</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-3xl mb-2">🍽️</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-1">Restaurantes</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                            Gormir, Orival e mais
+                                        </p>
+                                        <span className="text-xs bg-primary-teal text-white px-2 py-1 rounded-full font-questa-medium">
+                                            15% OFF
+                                        </span>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-3xl mb-2">🎾</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-1">Academias</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                            Tênis, Padel, Spin
+                                        </p>
+                                        <span className="text-xs bg-primary-teal text-white px-2 py-1 rounded-full font-questa-medium">
+                                            15% OFF
+                                        </span>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-3xl mb-2">🗺️</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-1">Turismo</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                            Pontos turísticos de BH
+                                        </p>
+                                        <span className="text-xs bg-primary-teal text-white px-2 py-1 rounded-full font-questa-medium">
+                                            Descontos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Serviços do Edifício */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🏢 Serviços no Edifício</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
+                                        <div className="text-3xl mb-2">🛒</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Mini Market</p>
+                                    </div>
+                                    <div className="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
+                                        <div className="text-3xl mb-2">📦</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Lockers</p>
+                                    </div>
+                                    <div className="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
+                                        <div className="text-3xl mb-2">🧺</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Lavanderia</p>
+                                    </div>
+                                    <div className="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
+                                        <div className="text-3xl mb-2">💼</div>
+                                        <p className="text-sm font-questa-medium text-neutral-dark">Coworking</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'servicos' && (
+                        <div className="space-y-6">
+                            {/* Agendar Profissionais */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">👨‍💼 Agendar Profissionais</h3>
+                                <p className="text-neutral-medium font-questa-regular mb-6">
+                                    Serviços disponíveis para uso nas áreas comuns ou em sua acomodação
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">🏋️</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Personal Trainer</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 80/hora
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">🧘</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Aula de Pilates</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 60/hora
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">💄</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Maquiadora</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 100/serviço
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">✂️</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Cabeleireiro</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 50/serviço
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">💆</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Massagem</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 120/hora
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-3xl">🍳</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-questa-bold text-neutral-dark mb-1">Chef Particular</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mb-3">
+                                                    A partir de R$ 200/serviço
+                                                </p>
+                                                <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                                    Agendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Meus Agendamentos */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">📅 Meus Agendamentos</h3>
+                                <div className="space-y-3">
+                                    <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">Personal Trainer</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mt-1">
+                                                    📅 16/11/2025 às 07:00 - Academia do Prédio
+                                                </p>
+                                                <p className="text-sm text-neutral-dark font-questa-medium mt-1">
+                                                    💰 R$ 80,00
+                                                </p>
+                                            </div>
+                                            <button className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-xs font-questa-medium hover:bg-red-50">
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-neutral-medium font-questa-regular text-center py-4">
+                                        Nenhum outro agendamento
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'areas-comuns' && (
+                        <div className="space-y-6">
+                            {/* Reservar Áreas Comuns */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">🏊 Reservar Áreas Comuns</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">🏊</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Piscina</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Disponível: 08:00 - 20:00
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">🏋️</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Academia</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Disponível: 06:00 - 22:00
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">🎉</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Salão de Festas</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Capacidade: 40 pessoas
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">💼</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Sala de Reunião</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Capacidade: 12 pessoas
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">🧘</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Espaço Zen</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Yoga e Meditação
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+
+                                    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+                                        <div className="text-4xl mb-3">🎮</div>
+                                        <h4 className="font-questa-bold text-neutral-dark mb-2">Espaço Gamer</h4>
+                                        <p className="text-sm text-neutral-medium font-questa-regular mb-4">
+                                            Jogos e Entretenimento
+                                        </p>
+                                        <button className="w-full px-4 py-2 bg-primary-teal text-white rounded-lg text-sm font-questa-medium hover:bg-opacity-90">
+                                            Ver Disponibilidade
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Minhas Reservas de Áreas */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-xl font-questa-bold text-neutral-dark mb-4">📅 Minhas Reservas de Áreas</h3>
+                                <div className="space-y-3">
+                                    <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h4 className="font-questa-bold text-neutral-dark">🏊 Piscina</h4>
+                                                <p className="text-sm text-neutral-medium font-questa-regular mt-1">
+                                                    📅 17/11/2025 - 14:00 às 16:00
+                                                </p>
+                                            </div>
+                                            <button className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-xs font-questa-medium hover:bg-red-50">
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-neutral-medium font-questa-regular text-center py-4">
+                                        Nenhuma outra reserva de área comum
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Regras das Áreas Comuns */}
+                            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                                <h3 className="text-lg font-questa-bold text-neutral-dark mb-3">ℹ️ Informações Importantes</h3>
+                                <ul className="space-y-2 text-sm text-neutral-dark font-questa-regular">
+                                    <li>• Reservas podem ser feitas com até 30 dias de antecedência</li>
+                                    <li>• Cancelamento gratuito até 24h antes do horário reservado</li>
+                                    <li>• Algumas áreas podem ter taxa de utilização</li>
+                                    <li>• É necessário respeitar os horários e regras de cada espaço</li>
+                                    <li>• Hóspedes têm acesso às áreas comuns durante sua estadia</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </main>
+
+            <Footer />
+        </div>
+    );
+}
