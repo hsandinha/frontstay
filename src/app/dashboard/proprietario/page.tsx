@@ -656,11 +656,11 @@ export default function ProprietarioDashboard() {
                                 const imovel = mockImoveis.find(i => i.id === parseInt(e.target.value));
                                 if (imovel) setSelectedImovel(imovel);
                             }}
-                            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-questa-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-10 py-2 border border-gray-300 rounded-lg text-sm font-questa-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             {mockImoveis.map(imovel => (
                                 <option key={imovel.id} value={imovel.id}>
-                                    {imovel.nome} - {imovel.localizacao}
+                                    {imovel.nome}
                                 </option>
                             ))}
                         </select>
