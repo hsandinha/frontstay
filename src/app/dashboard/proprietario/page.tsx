@@ -380,6 +380,18 @@ export default function ProprietarioDashboard() {
                                             <button
                                                 onClick={() => {
                                                     setIsProfileOpen(false);
+                                                    // Aqui pode abrir um modal de chat ou redirecionar para WhatsApp/chat
+                                                }}
+                                                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                                            >
+                                                <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                                </svg>
+                                                Conversar com Administração
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsProfileOpen(false);
                                                 }}
                                                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                                             >
@@ -389,6 +401,7 @@ export default function ProprietarioDashboard() {
                                                 </svg>
                                                 Configurações
                                             </button>
+
                                         </div>
 
                                         <div className="p-2 border-t border-gray-200">
