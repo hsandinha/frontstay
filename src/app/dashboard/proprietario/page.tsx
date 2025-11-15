@@ -1641,18 +1641,18 @@ export default function ProprietarioDashboard() {
                         ) : (
                             <>
                                 {/* Upload de Documentos */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Convenção de Condomínio */}
-                                    <div className="bg-white rounded-lg shadow-sm border-2 border-blue-200 p-6 hover:border-blue-400 transition-colors">
+                                    <div className="bg-white rounded-lg shadow-sm border-2 border-blue-200 p-4 sm:p-6 hover:border-blue-400 transition-colors">
                                         <div className="flex flex-col items-center text-center">
-                                            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                                                <svg className="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                                                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                                 </svg>
                                             </div>
-                                            <h3 className="font-questa-bold text-gray-900 mb-2">Convenção de Condomínio</h3>
-                                            <p className="text-xs text-gray-600 font-questa-regular mb-4">
-                                                Regras e regulamentos do condomínio
+                                            <h3 className="font-questa-bold text-gray-900 mb-1 text-sm sm:text-base">Convenção de Condomínio</h3>
+                                            <p className="text-xs text-gray-600 font-questa-regular mb-3">
+                                                Regras e regulamentos
                                             </p>
                                             <label className="w-full cursor-pointer">
                                                 <input
@@ -1661,25 +1661,24 @@ export default function ProprietarioDashboard() {
                                                     accept=".pdf,.doc,.docx"
                                                     onChange={() => handleFileUpload('Convenção de Condomínio')}
                                                 />
-                                                <div className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-medium hover:bg-blue-950 transition-colors">
-                                                    + Adicionar Documento
+                                                <div className="px-3 py-2 sm:px-4 bg-blue-900 text-white rounded-lg text-xs sm:text-sm font-questa-medium hover:bg-blue-950 transition-colors">
+                                                    + Adicionar
                                                 </div>
                                             </label>
-                                            <span className="text-xs text-green-600 font-questa-medium mt-2">✓ Você pode fazer upload</span>
                                         </div>
                                     </div>
 
                                     {/* Matrícula do Imóvel */}
-                                    <div className="bg-white rounded-lg shadow-sm border-2 border-orange-200 p-6 hover:border-orange-400 transition-colors">
+                                    <div className="bg-white rounded-lg shadow-sm border-2 border-orange-200 p-4 sm:p-6 hover:border-orange-400 transition-colors">
                                         <div className="flex flex-col items-center text-center">
-                                            <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
-                                                <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-100 flex items-center justify-center mb-3">
+                                                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
                                             </div>
-                                            <h3 className="font-questa-bold text-gray-900 mb-2">Matrícula do Imóvel</h3>
-                                            <p className="text-xs text-gray-600 font-questa-regular mb-4">
-                                                Registro e documentação oficial
+                                            <h3 className="font-questa-bold text-gray-900 mb-1 text-sm sm:text-base">Matrícula do Imóvel</h3>
+                                            <p className="text-xs text-gray-600 font-questa-regular mb-3">
+                                                Registro oficial
                                             </p>
                                             <label className="w-full cursor-pointer">
                                                 <input
@@ -1688,11 +1687,10 @@ export default function ProprietarioDashboard() {
                                                     accept=".pdf,.doc,.docx"
                                                     onChange={() => handleFileUpload('Matrícula do Imóvel')}
                                                 />
-                                                <div className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-questa-medium hover:bg-orange-700 transition-colors">
-                                                    + Adicionar Documento
+                                                <div className="px-3 py-2 sm:px-4 bg-orange-600 text-white rounded-lg text-xs sm:text-sm font-questa-medium hover:bg-orange-700 transition-colors">
+                                                    + Adicionar
                                                 </div>
                                             </label>
-                                            <span className="text-xs text-green-600 font-questa-medium mt-2">✓ Você pode fazer upload</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1717,15 +1715,16 @@ export default function ProprietarioDashboard() {
                                             </div>
                                         ) : (
                                             documentos.map((doc) => (
-                                                <div key={doc.id} className="p-6 hover:bg-gray-50 transition-colors">
-                                                    <div className="flex items-center justify-between gap-4">
-                                                        <div className="flex items-center gap-4 flex-1">
+                                                <div key={doc.id} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                                                        {/* Ícone e Info Principal */}
+                                                        <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
                                                             {/* Ícone do documento */}
-                                                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${doc.categoria === 'Convenção de Condomínio' ? 'bg-blue-100' :
+                                                            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${doc.categoria === 'Convenção de Condomínio' ? 'bg-blue-100' :
                                                                 doc.categoria === 'Notas de Manutenção' ? 'bg-green-100' :
                                                                     'bg-purple-100'
                                                                 }`}>
-                                                                <svg className={`w-6 h-6 ${doc.categoria === 'Convenção de Condomínio' ? 'text-blue-900' :
+                                                                <svg className={`w-5 h-5 sm:w-6 sm:h-6 ${doc.categoria === 'Convenção de Condomínio' ? 'text-blue-900' :
                                                                     doc.categoria === 'Notas de Manutenção' ? 'text-green-600' :
                                                                         'text-purple-600'
                                                                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1734,21 +1733,21 @@ export default function ProprietarioDashboard() {
                                                             </div>
 
                                                             {/* Informações do documento */}
-                                                            <div className="flex-1">
-                                                                <h3 className="font-questa-bold text-gray-900 mb-1">{doc.nome}</h3>
-                                                                <div className="flex items-center gap-4 text-sm text-gray-600">
-                                                                    <span className={`px-2 py-0.5 rounded text-xs font-questa-medium ${doc.categoria === 'Convenção de Condomínio' ? 'bg-blue-100 text-blue-900' :
+                                                            <div className="flex-1 min-w-0">
+                                                                <h3 className="font-questa-bold text-gray-900 mb-1 text-sm sm:text-base truncate">{doc.nome}</h3>
+                                                                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                                                                    <span className={`px-2 py-0.5 rounded text-xs font-questa-medium whitespace-nowrap ${doc.categoria === 'Convenção de Condomínio' ? 'bg-blue-100 text-blue-900' :
                                                                         doc.categoria === 'Matrícula do Imóvel' ? 'bg-orange-100 text-orange-700' :
                                                                             doc.categoria === 'Notas de Manutenção' ? 'bg-green-100 text-green-700' :
                                                                                 'bg-purple-100 text-purple-700'
                                                                         }`}>
                                                                         {doc.categoria}
                                                                     </span>
-                                                                    <span className="font-questa-regular">📅 {doc.data}</span>
-                                                                    <span className="font-questa-regular">📦 {doc.tamanho}</span>
+                                                                    <span className="text-gray-600 font-questa-regular whitespace-nowrap">📅 {doc.data}</span>
+                                                                    <span className="text-gray-600 font-questa-regular whitespace-nowrap">📦 {doc.tamanho}</span>
                                                                     {doc.uploadPor === 'Administrador' && (
-                                                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-questa-medium">
-                                                                            👤 Adm. Condomínio
+                                                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-questa-medium whitespace-nowrap">
+                                                                            👤 Adm
                                                                         </span>
                                                                     )}
                                                                 </div>
@@ -1756,14 +1755,14 @@ export default function ProprietarioDashboard() {
                                                         </div>
 
                                                         {/* Ações */}
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex items-center gap-1 sm:gap-2 justify-end sm:justify-start">
                                                             <button className="p-2 text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" title="Download">
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                                 </svg>
                                                             </button>
                                                             <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Visualizar">
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                                 </svg>
@@ -1774,7 +1773,7 @@ export default function ProprietarioDashboard() {
                                                                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                                     title="Excluir"
                                                                 >
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                     </svg>
                                                                 </button>
@@ -1784,7 +1783,7 @@ export default function ProprietarioDashboard() {
                                                                     className="p-2 text-gray-300 cursor-not-allowed rounded-lg"
                                                                     title="Apenas administrador pode excluir"
                                                                 >
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                                                     </svg>
                                                                 </button>
