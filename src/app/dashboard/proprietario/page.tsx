@@ -828,7 +828,7 @@ export default function ProprietarioDashboard() {
                         )}
 
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Card 1 */}
                             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                                 <div className="flex items-center gap-4">
@@ -872,21 +872,6 @@ export default function ProprietarioDashboard() {
                                         <p className="text-2xl font-questa-bold text-gray-900">
                                             {selectedImovel.receita > 0 ? `R$ ${(selectedImovel.receita / 1000).toFixed(0)}k` : 'R$ 0'}
                                         </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Card 4 */}
-                            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-gray-500 font-questa-regular">Cashback Acum.</p>
-                                        <p className="text-2xl font-questa-bold text-gray-900">R$ 1.2k</p>
                                     </div>
                                 </div>
                             </div>
