@@ -27,13 +27,32 @@ export default function HospedeDashboard() {
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-800 to-blue-950 flex items-center justify-center">
-                                <span className="text-white font-questa-bold text-lg">F</span>
-                            </div>
-                            <h1 className="text-xl font-questa-bold text-gray-900">Dashboard do Hóspede</h1>
+                            <Image
+                                src="/logo.png"
+                                alt="FrontStay Logo"
+                                width={65}
+                                height={65}
+                                className="object-contain"
+                            />
+                            <h1 className="text-ml font-questa-bold text-gray-900">Hóspede</h1>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="text-sm text-gray-600 font-questa-regular">Olá, Hebert</span>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-gray-300">
+                                    <Image
+                                        src="/public/user-photo.jpg"
+                                        alt="Foto do Usuário"
+                                        width={40}
+                                        height={40}
+                                        className="object-cover w-full h-full"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                            e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 font-questa-bold text-sm">H</div>';
+                                        }}
+                                    />
+                                </div>
+                                <span className="text-sm text-gray-600 font-questa-regular">Bem vindo, Hebert</span>
+                            </div>
                             <button
                                 onClick={handleLogout}
                                 className="text-sm text-blue-900 hover:text-blue-950 font-questa-medium"
