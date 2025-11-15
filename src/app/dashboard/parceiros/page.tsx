@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type TabType = 'visao-geral' | 'servicos' | 'solicitacoes';
 
@@ -195,197 +196,169 @@ export default function ParceirosDashboard() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
-            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
-                        {/* Logo */}
                         <div className="flex items-center gap-3">
-                            <div className="text-2xl font-questa-bold">
-                                <span className="text-blue-900">front</span>
-                                <span className="text-gray-900">stay</span>
-                            </div>
+                            <Image
+                                src="/logo.png"
+                                alt="FrontStay Logo"
+                                width={65}
+                                height={65}
+                                className="object-contain"
+                            />
+                            <h1 className="text-ml font-questa-bold text-gray-900">Parceiro</h1>
                         </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-gray-300">
+                                    <div className="w-full h-full bg-blue-900 flex items-center justify-center text-white font-questa-bold text-sm">
+                                        {parceiro.nome.charAt(0)}
+                                    </div>
+                                </div>
+                                <span className="text-sm text-gray-600 font-questa-regular">Bem vindo, {parceiro.nome.split(' ')[0]}</span>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                className="text-sm text-blue-900 hover:text-blue-950 font-questa-medium"
+                            >
+                                Sair
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex items-center gap-2">
+            {/* Navigation Tabs - Desktop & Mobile */}
+            <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+                <div className="max-w-7xl mx-auto px-6">
+                    {/* Mobile Menu Button */}
+                    <div className="flex lg:hidden items-center justify-between py-3">
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="flex items-center gap-2 text-gray-700 font-questa-medium"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {isMobileMenuOpen ? (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                ) : (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                )}
+                            </svg>
+                            <span className="text-sm">Menu</span>
+                        </button>
+                        <span className="text-sm text-gray-900 font-questa-bold">
+                            {activeTab === 'visao-geral' && 'Visão Geral'}
+                            {activeTab === 'servicos' && 'Meus Serviços'}
+                            {activeTab === 'solicitacoes' && 'Solicitações'}
+                        </span>
+                    </div>
+
+                    {/* Mobile Menu Dropdown */}
+                    {isMobileMenuOpen && (
+                        <nav className="lg:hidden pb-4 space-y-1">
                             <button
-                                onClick={() => setActiveTab('visao-geral')}
-                                className={`px-4 py-2 rounded-lg text-sm font-questa-medium transition-colors ${activeTab === 'visao-geral'
+                                onClick={() => {
+                                    setActiveTab('visao-geral');
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className={`w-full py-3 px-4 text-sm font-questa-medium rounded-lg transition-colors flex items-center gap-3 ${activeTab === 'visao-geral'
                                     ? 'bg-blue-900 text-white'
                                     : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
-                                📊 Visão Geral
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                                Visão Geral
                             </button>
                             <button
-                                onClick={() => setActiveTab('servicos')}
-                                className={`px-4 py-2 rounded-lg text-sm font-questa-medium transition-colors ${activeTab === 'servicos'
+                                onClick={() => {
+                                    setActiveTab('servicos');
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className={`w-full py-3 px-4 text-sm font-questa-medium rounded-lg transition-colors flex items-center gap-3 ${activeTab === 'servicos'
                                     ? 'bg-blue-900 text-white'
                                     : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
-                                🛠️ Meus Serviços
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Meus Serviços
                             </button>
                             <button
-                                onClick={() => setActiveTab('solicitacoes')}
-                                className={`px-4 py-2 rounded-lg text-sm font-questa-medium transition-colors flex items-center gap-2 ${activeTab === 'solicitacoes'
+                                onClick={() => {
+                                    setActiveTab('solicitacoes');
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className={`w-full py-3 px-4 text-sm font-questa-medium rounded-lg transition-colors flex items-center gap-3 ${activeTab === 'solicitacoes'
                                     ? 'bg-blue-900 text-white'
                                     : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
-                                📋 Solicitações
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Solicitações
                                 {stats.solicitacoesPendentes > 0 && (
-                                    <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">
+                                    <span className="ml-auto px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">
                                         {stats.solicitacoesPendentes}
                                     </span>
                                 )}
                             </button>
-                        </div>
-
-                        {/* Profile */}
-                        <div className="relative">
-                            <button
-                                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 rounded-lg transition-colors"
-                            >
-                                <div className="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center text-white font-questa-bold">
-                                    {parceiro.nome.charAt(0)}
-                                </div>
-                                <div className="hidden sm:block text-left">
-                                    <p className="text-sm font-questa-bold text-gray-900">Parceiro</p>
-                                    <p className="text-xs text-gray-500 font-questa-regular">{parceiro.categoria}</p>
-                                </div>
-                                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-
-                            {/* Profile Dropdown */}
-                            {isProfileOpen && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                                    <div className="p-4 border-b border-gray-200">
-                                        <p className="font-questa-bold text-gray-900">{parceiro.nome}</p>
-                                        <p className="text-sm text-gray-500 font-questa-regular">{parceiro.email}</p>
-                                        <div className="flex items-center gap-1 mt-2">
-                                            <span className="text-amber-500">⭐</span>
-                                            <span className="text-sm font-questa-bold text-gray-900">{parceiro.avaliacao}</span>
-                                            <span className="text-xs text-gray-500">({parceiro.totalAvaliacoes} avaliações)</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-2">
-                                        <button
-                                            onClick={() => {
-                                                setIsProfileModalOpen(true);
-                                                setIsProfileOpen(false);
-                                            }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                                        >
-                                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                            Meu Perfil
-                                        </button>
-                                        <button
-                                            onClick={() => setIsProfileOpen(false)}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                                        >
-                                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            Configurações
-                                        </button>
-                                        <button
-                                            onClick={() => setIsProfileOpen(false)}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
-                                        >
-                                            <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                            </svg>
-                                            Suporte FrontStay
-                                        </button>
-                                    </div>
-
-                                    <div className="p-2 border-t border-gray-200">
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            Sair
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Mobile Menu Button */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    {/* Mobile Menu */}
-                    {isMobileMenuOpen && (
-                        <div className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
-                            <div className="flex flex-col gap-2">
-                                <button
-                                    onClick={() => {
-                                        setActiveTab('visao-geral');
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    className={`px-4 py-3 rounded-lg text-sm font-questa-medium transition-colors text-left ${activeTab === 'visao-geral'
-                                        ? 'bg-blue-900 text-white'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    📊 Visão Geral
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setActiveTab('servicos');
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    className={`px-4 py-3 rounded-lg text-sm font-questa-medium transition-colors text-left ${activeTab === 'servicos'
-                                        ? 'bg-blue-900 text-white'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    🛠️ Meus Serviços
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setActiveTab('solicitacoes');
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    className={`px-4 py-3 rounded-lg text-sm font-questa-medium transition-colors text-left flex items-center justify-between ${activeTab === 'solicitacoes'
-                                        ? 'bg-blue-900 text-white'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    <span>📋 Solicitações</span>
-                                    {stats.solicitacoesPendentes > 0 && (
-                                        <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">
-                                            {stats.solicitacoesPendentes}
-                                        </span>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
+                        </nav>
                     )}
+
+                    {/* Desktop Navigation - Hidden on Mobile */}
+                    <nav className="hidden lg:flex gap-8">
+                        <button
+                            onClick={() => setActiveTab('visao-geral')}
+                            className={`py-4 px-2 text-sm font-questa-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'visao-geral'
+                                ? 'border-blue-900 text-blue-900'
+                                : 'border-transparent text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            Visão Geral
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('servicos')}
+                            className={`py-4 px-2 text-sm font-questa-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'servicos'
+                                ? 'border-blue-900 text-blue-900'
+                                : 'border-transparent text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Meus Serviços
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('solicitacoes')}
+                            className={`py-4 px-2 text-sm font-questa-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'solicitacoes'
+                                ? 'border-blue-900 text-blue-900'
+                                : 'border-transparent text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            Solicitações
+                            {stats.solicitacoesPendentes > 0 && (
+                                <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full font-questa-bold">
+                                    {stats.solicitacoesPendentes}
+                                </span>
+                            )}
+                        </button>
+                    </nav>
                 </div>
-            </header>
+            </div>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <main className="max-w-7xl mx-auto px-6 py-6 sm:py-8">
                 {/* Visão Geral */}
                 {activeTab === 'visao-geral' && (
                     <div className="space-y-6">
@@ -452,9 +425,9 @@ export default function ParceirosDashboard() {
                         </div>
 
                         {/* Serviços em Destaque e Solicitações Recentes */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Serviços em Destaque */}
-                            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Serviços em Destaque - 2/3 da largura */}
+                            <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
                                 <div className="p-4 sm:p-6 border-b border-gray-200">
                                     <h3 className="text-lg font-questa-bold text-gray-900">Serviços Mais Solicitados</h3>
                                 </div>
@@ -487,21 +460,88 @@ export default function ParceirosDashboard() {
                                 </div>
                             </div>
 
-                            {/* Solicitações Recentes */}
+                            {/* Calendário de Compromissos - 1/3 da largura */}
                             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                                <div className="p-4 sm:p-6 border-b border-gray-200">
-                                    <h3 className="text-lg font-questa-bold text-gray-900">Solicitações Recentes</h3>
+                                <div className="p-6 border-b border-gray-200">
+                                    <h2 className="text-lg font-questa-bold text-gray-900">Hoje</h2>
+                                    <p className="text-sm text-gray-500 font-questa-regular mt-1">15 de Novembro</p>
                                 </div>
-                                <div className="p-4 sm:p-6 space-y-3">
+                                <div className="p-4">
+                                    {/* Timeline de Compromissos */}
+                                    <div className="space-y-3">
+                                        {/* Compromisso 1 */}
+                                        <div className="relative pl-6 pb-4 border-l-2 border-blue-200">
+                                            <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-blue-900 border-2 border-white"></div>
+                                            <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <svg className="w-4 h-4 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span className="text-xs font-questa-bold text-blue-900">09:00</span>
+                                                </div>
+                                                <p className="text-sm font-questa-medium text-gray-900">Limpeza Completa</p>
+                                                <p className="text-xs text-gray-600">Apt. Vista Mar</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Compromisso 2 */}
+                                        <div className="relative pl-6 pb-4 border-l-2 border-blue-200">
+                                            <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-orange-500 border-2 border-white"></div>
+                                            <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span className="text-xs font-questa-bold text-orange-500">14:00</span>
+                                                </div>
+                                                <p className="text-sm font-questa-medium text-gray-900">Manutenção Elétrica</p>
+                                                <p className="text-xs text-gray-600">Casa Jardim</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Compromisso 3 */}
+                                        <div className="relative pl-6">
+                                            <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-green-600 border-2 border-white"></div>
+                                            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span className="text-xs font-questa-bold text-green-600">16:00</span>
+                                                </div>
+                                                <p className="text-sm font-questa-medium text-gray-900">Personal Trainer</p>
+                                                <p className="text-xs text-gray-600">Cobertura Premium</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Botão Ver Mais */}
+                                    <button className="w-full mt-4 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-questa-medium hover:bg-gray-50 transition-colors">
+                                        Ver Calendário Completo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Solicitações Recentes */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div className="p-4 sm:p-6 border-b border-gray-200">
+                                <h3 className="text-lg font-questa-bold text-gray-900">Solicitações Recentes</h3>
+                            </div>
+                            <div className="p-4 sm:p-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {solicitacoes.slice(0, 4).map((solicitacao) => (
-                                        <div key={solicitacao.id} className={`border-l-4 pl-4 py-2 ${solicitacao.status === 'Pendente' ? 'border-orange-500' :
-                                            solicitacao.status === 'Aceito' ? 'border-blue-500' :
-                                                solicitacao.status === 'Concluído' ? 'border-green-500' : 'border-gray-300'
+                                        <div key={solicitacao.id} className={`border-l-4 pl-4 py-3 border border-gray-200 rounded-lg ${solicitacao.status === 'Pendente' ? 'border-l-orange-500' :
+                                            solicitacao.status === 'Aceito' ? 'border-l-blue-500' :
+                                                solicitacao.status === 'Concluído' ? 'border-l-green-500' : 'border-l-gray-300'
                                             }`}>
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex-1 min-w-0">
                                                     <h4 className="font-questa-bold text-gray-900 text-sm">{solicitacao.servico}</h4>
                                                     <p className="text-xs text-gray-600 font-questa-regular mt-1">
+                                                        {solicitacao.solicitante} • {solicitacao.tipoSolicitante}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 font-questa-regular mt-1">
                                                         {solicitacao.data} • {solicitacao.horario}
                                                     </p>
                                                 </div>
@@ -662,8 +702,25 @@ export default function ParceirosDashboard() {
                 {/* Aba Solicitações */}
                 {activeTab === 'solicitacoes' && (
                     <div className="space-y-6">
-                        {/* Filtros */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        {/* Header com Filtros */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                <div>
+                                    <h2 className="text-xl font-questa-bold text-gray-900">Agenda de Solicitações</h2>
+                                    <p className="text-sm text-gray-500 font-questa-regular mt-1">Visualize todos os seus compromissos agendados</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-medium hover:bg-blue-950 transition-colors">
+                                        Hoje
+                                    </button>
+                                    <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-questa-medium hover:bg-gray-50 transition-colors">
+                                        Esta Semana
+                                    </button>
+                                    <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-questa-medium hover:bg-gray-50 transition-colors">
+                                        Este Mês
+                                    </button>
+                                </div>
+                            </div>
                             <div className="flex flex-wrap gap-2">
                                 <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-medium">
                                     Todas ({solicitacoes.length})
@@ -680,72 +737,241 @@ export default function ParceirosDashboard() {
                             </div>
                         </div>
 
-                        {/* Lista de Solicitações */}
-                        <div className="space-y-4">
-                            {solicitacoes.map((solicitacao) => (
-                                <div key={solicitacao.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <h3 className="font-questa-bold text-gray-900 text-lg">{solicitacao.servico}</h3>
-                                                <span className={`px-3 py-1 text-xs font-questa-bold rounded-full ${solicitacao.status === 'Pendente' ? 'bg-orange-100 text-orange-700' :
-                                                    solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
-                                                        solicitacao.status === 'Concluído' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                    }`}>
-                                                    {solicitacao.status}
-                                                </span>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                                                <div>
-                                                    <p className="text-xs text-gray-500 font-questa-medium mb-1">Solicitante</p>
-                                                    <p className="text-sm text-gray-900 font-questa-regular">{solicitacao.solicitante}</p>
-                                                    <span className="text-xs text-gray-500">({solicitacao.tipoSolicitante})</span>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500 font-questa-medium mb-1">Imóvel</p>
-                                                    <p className="text-sm text-gray-900 font-questa-regular">{solicitacao.imovel}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500 font-questa-medium mb-1">Data e Horário</p>
-                                                    <p className="text-sm text-gray-900 font-questa-bold">
-                                                        {solicitacao.data} às {solicitacao.horario}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500 font-questa-medium mb-1">Observações</p>
-                                                    <p className="text-sm text-gray-600 font-questa-regular">{solicitacao.observacoes}</p>
-                                                </div>
-                                            </div>
+                        {/* Grid: Calendário e Timeline */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Calendário Mensal - 1/3 */}
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                                <div className="p-4 border-b border-gray-200">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="font-questa-bold text-gray-900">Novembro 2025</h3>
+                                        <div className="flex gap-2">
+                                            <button className="p-1 hover:bg-gray-100 rounded">
+                                                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                            </button>
+                                            <button className="p-1 hover:bg-gray-100 rounded">
+                                                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
                                         </div>
-
-                                        {/* Ações */}
-                                        {solicitacao.status === 'Pendente' && (
-                                            <div className="flex flex-col gap-2 sm:w-auto w-full">
-                                                <button className="px-6 py-2 bg-green-600 text-white rounded-lg text-sm font-questa-bold hover:bg-green-700 transition-colors">
-                                                    ✓ Aceitar
-                                                </button>
-                                                <button className="px-6 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-medium hover:bg-blue-950 transition-colors">
-                                                    📅 Reagendar
-                                                </button>
-                                                <button className="px-6 py-2 bg-red-600 text-white rounded-lg text-sm font-questa-medium hover:bg-red-700 transition-colors">
-                                                    ✕ Recusar
-                                                </button>
+                                    </div>
+                                </div>
+                                <div className="p-4">
+                                    {/* Dias da Semana */}
+                                    <div className="grid grid-cols-7 gap-1 mb-2">
+                                        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((dia, i) => (
+                                            <div key={i} className="text-center text-xs font-questa-bold text-gray-500 py-2">
+                                                {dia}
                                             </div>
-                                        )}
-                                        {solicitacao.status === 'Aceito' && (
-                                            <div className="flex flex-col gap-2 sm:w-auto w-full">
-                                                <button className="px-6 py-2 bg-green-600 text-white rounded-lg text-sm font-questa-bold hover:bg-green-700 transition-colors">
-                                                    ✓ Marcar como Concluído
+                                        ))}
+                                    </div>
+                                    {/* Dias do Mês */}
+                                    <div className="grid grid-cols-7 gap-1">
+                                        {/* Dias vazios do início */}
+                                        {[...Array(4)].map((_, i) => (
+                                            <div key={`empty-${i}`} className="aspect-square"></div>
+                                        ))}
+                                        {/* Dias do mês */}
+                                        {[...Array(30)].map((_, i) => {
+                                            const dia = i + 1;
+                                            const isToday = dia === 15;
+                                            const hasEvent = [12, 15, 18, 22, 25].includes(dia);
+                                            return (
+                                                <button
+                                                    key={dia}
+                                                    className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-colors relative
+                                                        ${isToday ? 'bg-blue-900 text-white font-questa-bold' :
+                                                            hasEvent ? 'bg-blue-50 text-blue-900 font-questa-medium hover:bg-blue-100' :
+                                                                'text-gray-700 hover:bg-gray-100 font-questa-regular'}`}
+                                                >
+                                                    {dia}
+                                                    {hasEvent && !isToday && (
+                                                        <span className="absolute bottom-1 w-1 h-1 bg-blue-900 rounded-full"></span>
+                                                    )}
                                                 </button>
-                                                <button className="px-6 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-medium hover:bg-blue-950 transition-colors">
-                                                    📅 Reagendar
-                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    {/* Legenda */}
+                                    <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
+                                        <div className="flex items-center gap-2 text-xs">
+                                            <div className="w-3 h-3 bg-blue-900 rounded"></div>
+                                            <span className="text-gray-600 font-questa-regular">Dia Atual</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs">
+                                            <div className="w-3 h-3 bg-blue-50 border border-blue-200 rounded"></div>
+                                            <span className="text-gray-600 font-questa-regular">Com Agendamentos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Timeline de Hoje - 2/3 */}
+                            <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                                <div className="p-4 sm:p-6 border-b border-gray-200">
+                                    <h3 className="text-lg font-questa-bold text-gray-900">Hoje - 15 de Novembro</h3>
+                                    <p className="text-sm text-gray-500 font-questa-regular mt-1">Seus compromissos agendados para hoje</p>
+                                </div>
+                                <div className="p-4 sm:p-6">
+                                    <div className="space-y-4">
+                                        {/* Timeline por horário */}
+                                        {solicitacoes
+                                            .filter(s => s.data === '2025-11-15')
+                                            .sort((a, b) => a.horario.localeCompare(b.horario))
+                                            .map((solicitacao, index, arr) => (
+                                                <div key={solicitacao.id} className="relative">
+                                                    <div className="flex gap-4">
+                                                        {/* Horário */}
+                                                        <div className="w-20 flex-shrink-0 pt-1">
+                                                            <span className="text-sm font-questa-bold text-gray-900">{solicitacao.horario}</span>
+                                                        </div>
+
+                                                        {/* Timeline vertical */}
+                                                        <div className="relative flex flex-col items-center">
+                                                            <div className={`w-4 h-4 rounded-full border-2 border-white z-10 ${solicitacao.status === 'Pendente' ? 'bg-orange-500' :
+                                                                    solicitacao.status === 'Aceito' ? 'bg-blue-900' :
+                                                                        solicitacao.status === 'Concluído' ? 'bg-green-600' : 'bg-gray-400'
+                                                                }`}></div>
+                                                            {index < arr.length - 1 && (
+                                                                <div className="w-0.5 h-full bg-gray-200 absolute top-4"></div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Card de Solicitação */}
+                                                        <div className={`flex-1 pb-6 border rounded-lg p-4 ${solicitacao.status === 'Pendente' ? 'border-orange-200 bg-orange-50' :
+                                                                solicitacao.status === 'Aceito' ? 'border-blue-200 bg-blue-50' :
+                                                                    solicitacao.status === 'Concluído' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
+                                                            }`}>
+                                                            <div className="flex items-start justify-between gap-3 mb-3">
+                                                                <div className="flex-1">
+                                                                    <h4 className="font-questa-bold text-gray-900 text-base mb-1">{solicitacao.servico}</h4>
+                                                                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                                                                        <span className="flex items-center gap-1">
+                                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                            </svg>
+                                                                            <span className="font-questa-medium">{solicitacao.solicitante}</span>
+                                                                        </span>
+                                                                        <span>•</span>
+                                                                        <span className="font-questa-regular">{solicitacao.tipoSolicitante}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <span className={`px-3 py-1 text-xs font-questa-bold rounded-full whitespace-nowrap ${solicitacao.status === 'Pendente' ? 'bg-orange-100 text-orange-700' :
+                                                                        solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
+                                                                            solicitacao.status === 'Concluído' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                                                                    }`}>
+                                                                    {solicitacao.status}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="flex items-start gap-2 text-sm text-gray-600 mb-3">
+                                                                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                </svg>
+                                                                <span className="font-questa-regular">{solicitacao.imovel}</span>
+                                                            </div>
+
+                                                            {solicitacao.observacoes && (
+                                                                <div className="flex items-start gap-2 text-sm text-gray-600 mb-3">
+                                                                    <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                                                    </svg>
+                                                                    <span className="font-questa-regular italic">{solicitacao.observacoes}</span>
+                                                                </div>
+                                                            )}
+
+                                                            {solicitacao.status === 'Pendente' && (
+                                                                <div className="flex flex-wrap gap-2 mt-4">
+                                                                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-questa-medium hover:bg-green-700 transition-colors">
+                                                                        Aceitar
+                                                                    </button>
+                                                                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-questa-medium hover:bg-blue-700 transition-colors">
+                                                                        Reagendar
+                                                                    </button>
+                                                                    <button className="px-4 py-2 border border-red-300 text-red-600 rounded-lg text-sm font-questa-medium hover:bg-red-50 transition-colors">
+                                                                        Recusar
+                                                                    </button>
+                                                                </div>
+                                                            )}
+
+                                                            {solicitacao.status === 'Aceito' && (
+                                                                <div className="flex flex-wrap gap-2 mt-4">
+                                                                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-questa-medium hover:bg-green-700 transition-colors">
+                                                                        Marcar como Concluído
+                                                                    </button>
+                                                                    <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-questa-medium hover:bg-gray-50 transition-colors">
+                                                                        Ver Detalhes
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                        {solicitacoes.filter(s => s.data === '2025-11-15').length === 0 && (
+                                            <div className="text-center py-12">
+                                                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <p className="text-gray-500 font-questa-regular">Nenhum compromisso agendado para hoje</p>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+                        </div>
+
+                        {/* Próximos Compromissos */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div className="p-4 sm:p-6 border-b border-gray-200">
+                                <h3 className="text-lg font-questa-bold text-gray-900">Próximos Compromissos</h3>
+                                <p className="text-sm text-gray-500 font-questa-regular mt-1">Solicitações agendadas para os próximos dias</p>
+                            </div>
+                            <div className="divide-y divide-gray-200">
+                                {solicitacoes
+                                    .filter(s => s.data > '2025-11-15')
+                                    .slice(0, 5)
+                                    .map((solicitacao) => (
+                                        <div key={solicitacao.id} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <h4 className="font-questa-bold text-gray-900">{solicitacao.servico}</h4>
+                                                        <span className={`px-2 py-1 text-xs font-questa-medium rounded-full ${solicitacao.status === 'Pendente' ? 'bg-orange-100 text-orange-700' :
+                                                                solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
+                                                                    'bg-green-100 text-green-700'
+                                                            }`}>
+                                                            {solicitacao.status}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">
+                                                        <span className="flex items-center gap-1">
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                            <span className="font-questa-medium">{solicitacao.data}</span>
+                                                        </span>
+                                                        <span className="flex items-center gap-1">
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-questa-medium">{solicitacao.horario}</span>
+                                                        </span>
+                                                        <span className="font-questa-regular">{solicitacao.solicitante} • {solicitacao.tipoSolicitante}</span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-500 font-questa-regular mt-1">{solicitacao.imovel}</p>
+                                                </div>
+                                                <button className="px-4 py-2 border border-blue-900 text-blue-900 rounded-lg text-sm font-questa-medium hover:bg-blue-50 transition-colors whitespace-nowrap">
+                                                    Ver Detalhes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
                         </div>
                     </div>
                 )}
