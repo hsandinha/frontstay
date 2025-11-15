@@ -17,8 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br"
-      data-kantu="1">
+    <html lang="pt-br" suppressHydrationWarning>
       <head>
         {/* Adicione esta linha para importar os ícones do Google Fonts */}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,1,-25" />
