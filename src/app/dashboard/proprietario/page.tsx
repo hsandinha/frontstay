@@ -331,7 +331,7 @@ export default function ProprietarioDashboard() {
                                     <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-gray-300">
                                         <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 font-questa-bold text-sm">P</div>
                                     </div>
-                                    <span className="text-sm text-gray-600 font-questa-regular">Bem vindo, Proprietário</span>
+                                    <span className="text-sm text-gray-600 font-questa-regular">João</span>
                                     <svg className={`w-4 h-4 text-gray-600 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -346,7 +346,7 @@ export default function ProprietarioDashboard() {
                                                     P
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-lg font-questa-bold text-gray-900">João Proprietário</h3>
+                                                    <h3 className="text-lg font-questa-bold text-gray-900">Bem vindo, João</h3>
                                                     <p className="text-sm text-gray-600">proprietario@frontstay.com</p>
                                                 </div>
                                             </div>
@@ -884,29 +884,29 @@ export default function ProprietarioDashboard() {
                             <>
                                 {/* Gráfico de Evolução Mensal */}
                                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                                    <div className="p-6 border-b border-gray-200">
-                                        <h2 className="text-lg font-questa-bold text-gray-900">Evolução Financeira</h2>
-                                        <p className="text-sm text-gray-500 font-questa-regular mt-1">Últimos 6 meses - {selectedImovel.nome}</p>
+                                    <div className="p-4 sm:p-6 border-b border-gray-200">
+                                        <h2 className="text-base sm:text-lg font-questa-bold text-gray-900">Evolução Financeira</h2>
+                                        <p className="text-xs sm:text-sm text-gray-500 font-questa-regular mt-1">Últimos 6 meses - {selectedImovel.nome}</p>
                                     </div>
-                                    <div className="p-6">
+                                    <div className="p-4 sm:p-6">
                                         {/* Legenda */}
-                                        <div className="flex flex-wrap gap-6 mb-6">
+                                        <div className="flex flex-wrap gap-3 sm:gap-6 mb-4 sm:mb-6 text-xs sm:text-sm">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                                                <span className="text-sm text-gray-700 font-questa-medium">Receitas</span>
+                                                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full"></div>
+                                                <span className="text-gray-700 font-questa-medium">Receitas</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-                                                <span className="text-sm text-gray-700 font-questa-medium">Custos</span>
+                                                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-amber-500 rounded-full"></div>
+                                                <span className="text-gray-700 font-questa-medium">Custos</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                                <span className="text-sm text-gray-700 font-questa-medium">Lucro Líquido</span>
+                                                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+                                                <span className="text-gray-700 font-questa-medium">Lucro</span>
                                             </div>
                                         </div>
 
                                         {/* Gráfico */}
-                                        <div className="relative" style={{ height: '300px' }}>
+                                        <div className="relative h-48 sm:h-64 md:h-80">
                                             {/* Grid horizontal */}
                                             <div className="absolute inset-0 flex flex-col justify-between">
                                                 {[0, 1, 2, 3, 4].map((i) => (
@@ -992,84 +992,88 @@ export default function ProprietarioDashboard() {
                                                 ))}
                                             </svg>
 
-                                            {/* Tooltips com valores (posicionados absolutamente) */}
-                                            {evolucaoMensal.map((m, i) => {
-                                                const xPos = (i / (evolucaoMensal.length - 1)) * 100;
-                                                const receitaY = 100 - (m.receitas / maxValue) * 90;
-                                                const custoY = 100 - (m.custos / maxValue) * 90;
-                                                const lucroY = 100 - (m.lucro / maxValue) * 90;
+                                            {/* Tooltips com valores (posicionados absolutamente) - Ocultos em mobile */}
+                                            <div className="hidden sm:block">
+                                                {evolucaoMensal.map((m, i) => {
+                                                    const xPos = (i / (evolucaoMensal.length - 1)) * 100;
+                                                    const receitaY = 100 - (m.receitas / maxValue) * 90;
+                                                    const custoY = 100 - (m.custos / maxValue) * 90;
+                                                    const lucroY = 100 - (m.lucro / maxValue) * 90;
 
-                                                return (
-                                                    <div
-                                                        key={`tooltip-${i}`}
-                                                        className="absolute"
-                                                        style={{
-                                                            left: `${xPos}%`,
-                                                            top: 0,
-                                                            bottom: 0,
-                                                            transform: 'translateX(-50%)',
-                                                            pointerEvents: 'none'
-                                                        }}
-                                                    >
-                                                        {/* Valor Receitas */}
+                                                    return (
                                                         <div
-                                                            className="absolute bg-emerald-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
+                                                            key={`tooltip-${i}`}
+                                                            className="absolute"
                                                             style={{
-                                                                top: `${receitaY}%`,
-                                                                transform: 'translate(8px, -50%)'
+                                                                left: `${xPos}%`,
+                                                                top: 0,
+                                                                bottom: 0,
+                                                                transform: 'translateX(-50%)',
+                                                                pointerEvents: 'none'
                                                             }}
                                                         >
-                                                            {(m.receitas / 1000).toFixed(1)}k
-                                                        </div>
+                                                            {/* Valor Receitas */}
+                                                            <div
+                                                                className="absolute bg-emerald-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
+                                                                style={{
+                                                                    top: `${receitaY}%`,
+                                                                    transform: 'translate(8px, -50%)'
+                                                                }}
+                                                            >
+                                                                {(m.receitas / 1000).toFixed(1)}k
+                                                            </div>
 
-                                                        {/* Valor Custos */}
-                                                        <div
-                                                            className="absolute bg-amber-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
-                                                            style={{
-                                                                top: `${custoY}%`,
-                                                                transform: 'translate(8px, -50%)'
-                                                            }}
-                                                        >
-                                                            {(m.custos / 1000).toFixed(1)}k
-                                                        </div>
+                                                            {/* Valor Custos */}
+                                                            <div
+                                                                className="absolute bg-amber-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
+                                                                style={{
+                                                                    top: `${custoY}%`,
+                                                                    transform: 'translate(8px, -50%)'
+                                                                }}
+                                                            >
+                                                                {(m.custos / 1000).toFixed(1)}k
+                                                            </div>
 
-                                                        {/* Valor Lucro */}
-                                                        <div
-                                                            className="absolute bg-blue-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
-                                                            style={{
-                                                                top: `${lucroY}%`,
-                                                                transform: 'translate(8px, -50%)'
-                                                            }}
-                                                        >
-                                                            {(m.lucro / 1000).toFixed(1)}k
+                                                            {/* Valor Lucro */}
+                                                            <div
+                                                                className="absolute bg-blue-500 text-white text-xs px-2 py-0.5 rounded shadow-lg font-questa-medium whitespace-nowrap"
+                                                                style={{
+                                                                    top: `${lucroY}%`,
+                                                                    transform: 'translate(8px, -50%)'
+                                                                }}
+                                                            >
+                                                                {(m.lucro / 1000).toFixed(1)}k
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            })}                                            {/* Labels dos meses */}
-                                            <div className="absolute -bottom-8 left-0 right-0 flex justify-between px-2">
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Labels dos meses */}
+                                            <div className="absolute -bottom-6 sm:-bottom-8 left-0 right-0 flex justify-between px-1 sm:px-2">
                                                 {evolucaoMensal.map((m, i) => (
-                                                    <span key={i} className="text-xs text-gray-600 font-questa-regular">{m.mes}</span>
+                                                    <span key={i} className="text-[10px] sm:text-xs text-gray-600 font-questa-regular">{m.mes}</span>
                                                 ))}
                                             </div>
                                         </div>
 
                                         {/* Valores atuais */}
-                                        <div className="grid grid-cols-3 gap-4 mt-12 pt-6 border-t border-gray-200">
+                                        <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-8 sm:mt-12 pt-4 sm:pt-6 border-t border-gray-200">
                                             <div className="text-center">
-                                                <p className="text-xs text-gray-500 font-questa-regular mb-1">Receitas Nov/25</p>
-                                                <p className="text-xl font-questa-bold text-emerald-500">
+                                                <p className="text-[10px] sm:text-xs text-gray-500 font-questa-regular mb-1">Receitas Nov/25</p>
+                                                <p className="text-sm sm:text-xl font-questa-bold text-emerald-500">
                                                     R$ {(evolucaoMensal[evolucaoMensal.length - 1].receitas / 1000).toFixed(1)}k
                                                 </p>
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-xs text-gray-500 font-questa-regular mb-1">Custos Nov/25</p>
-                                                <p className="text-xl font-questa-bold text-amber-500">
+                                                <p className="text-[10px] sm:text-xs text-gray-500 font-questa-regular mb-1">Custos Nov/25</p>
+                                                <p className="text-sm sm:text-xl font-questa-bold text-amber-500">
                                                     R$ {(evolucaoMensal[evolucaoMensal.length - 1].custos / 1000).toFixed(1)}k
                                                 </p>
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-xs text-gray-500 font-questa-regular mb-1">Lucro Nov/25</p>
-                                                <p className="text-xl font-questa-bold text-blue-500">
+                                                <p className="text-[10px] sm:text-xs text-gray-500 font-questa-regular mb-1">Lucro Nov/25</p>
+                                                <p className="text-sm sm:text-xl font-questa-bold text-blue-500">
                                                     R$ {(evolucaoMensal[evolucaoMensal.length - 1].lucro / 1000).toFixed(1)}k
                                                 </p>
                                             </div>
@@ -1947,10 +1951,180 @@ export default function ProprietarioDashboard() {
                 {activeTab === 'gerenciar' && (
                     <div className="space-y-6">
                         {!selectedImovel.parceriaAtiva ? (
-                            <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-                                <p className="text-orange-800 font-questa-medium">
-                                    ⚠️ Ative a parceria FrontStay para gerenciar seu imóvel
-                                </p>
+                            <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-lg border-2 border-blue-200 overflow-hidden">
+                                {/* Header */}
+                                <div className="bg-gradient-to-r from-blue-900 to-blue-700 p-6 sm:p-8 text-white">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-2xl sm:text-3xl font-questa-bold mb-2">Parceria FrontStay</h2>
+                                            <p className="text-blue-100 font-questa-regular text-sm sm:text-base">
+                                                Maximize seus lucros com gestão completa do seu imóvel
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Conteúdo */}
+                                <div className="p-6 sm:p-8">
+                                    {/* Benefícios */}
+                                    <div className="mb-8">
+                                        <h3 className="text-xl font-questa-bold text-gray-900 mb-4 flex items-center gap-2">
+                                            <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            O que está incluso
+                                        </h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Gestão de Reservas</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Check-in, check-out e atendimento 24/7</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Manutenção Preventiva</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Inspeções e reparos regulares</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Precificação Dinâmica</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Maximize receitas com IA</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Seguro Total</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Proteção contra danos e inadimplência</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Pagamento Garantido</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Receba até o 5º dia útil</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3 bg-white rounded-lg p-4 border border-blue-100">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-questa-bold text-gray-900 mb-1">Serviços Premium</h4>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Acesso a parceiros exclusivos</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Condições Comerciais */}
+                                    <div className="mb-8 bg-gradient-to-r from-blue-50 to-white rounded-lg p-6 border border-blue-200">
+                                        <h3 className="text-xl font-questa-bold text-gray-900 mb-4 flex items-center gap-2">
+                                            <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                            </svg>
+                                            Condições Comerciais
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <div className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-blue-900 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <div>
+                                                    <p className="font-questa-bold text-gray-900">Taxa de Gestão: 20% sobre receita bruta</p>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Inclui todos os serviços de gestão e manutenção</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-blue-900 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <div>
+                                                    <p className="font-questa-bold text-gray-900">Contrato de 12 meses (renovável)</p>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Flexibilidade para cancelamento com aviso prévio de 30 dias</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-blue-900 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <div>
+                                                    <p className="font-questa-bold text-gray-900">Sem custos de adesão</p>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Zero taxa de entrada ou setup inicial</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-blue-900 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <div>
+                                                    <p className="font-questa-bold text-gray-900">Ocupação mínima garantida de 70%</p>
+                                                    <p className="text-sm text-gray-600 font-questa-regular">Ou você não paga a taxa de gestão no mês</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Call to Action */}
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <button className="flex-1 px-6 py-4 bg-blue-900 text-white rounded-lg font-questa-bold hover:bg-blue-950 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                            </svg>
+                                            Quero Conversar com um Especialista
+                                        </button>
+                                        <button className="px-6 py-4 bg-white border-2 border-blue-900 text-blue-900 rounded-lg font-questa-bold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Ver Contrato
+                                        </button>
+                                    </div>
+
+                                    {/* Informação adicional */}
+                                    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <p className="text-sm text-blue-900 font-questa-medium text-center">
+                                            💡 <strong>Dica:</strong> Propriedades gerenciadas pela FrontStay têm, em média, 35% mais receita que autogestão
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <>
