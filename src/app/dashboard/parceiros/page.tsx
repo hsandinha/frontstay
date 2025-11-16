@@ -41,6 +41,36 @@ export default function ParceirosDashboard() {
     const [descricaoServico, setDescricaoServico] = useState('');
     const [precoServico, setPrecoServico] = useState('');
     const [descontoServico, setDescontoServico] = useState('');
+    const [edificiosSelecionados, setEdificiosSelecionados] = useState<string[]>([]);
+
+    // Lista de edifícios gerenciados pela FrontStay
+    const edificiosDisponiveis = [
+        'FrontStay Esopo - Vale do Sereno, Nova Lima',
+        'FrontStay City Design - Barro Preto, Belo Horizonte',
+        'FrontStay Premium Tower - Savassi, Belo Horizonte',
+        'FrontStay Beach Residence - Copacabana, Rio de Janeiro',
+        'FrontStay Vista Mar - Santos, São Paulo',
+        'FrontStay Urban Living - Pinheiros, São Paulo',
+        'FrontStay Green Park - Jardim Botânico, Rio de Janeiro',
+        'FrontStay Corporate Plaza - Faria Lima, São Paulo',
+    ];
+
+    const toggleEdificio = (edificio: string) => {
+        setEdificiosSelecionados(prev =>
+            prev.includes(edificio)
+                ? prev.filter(e => e !== edificio)
+                : [...prev, edificio]
+        );
+    };
+
+    const limparFormulario = () => {
+        setNomeServico('');
+        setCategoriaServico('');
+        setDescricaoServico('');
+        setPrecoServico('');
+        setDescontoServico('');
+        setEdificiosSelecionados([]);
+    };
 
     const handleLogout = () => {
         router.push('/login');
@@ -634,12 +664,76 @@ export default function ParceirosDashboard() {
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
                                     />
                                 </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-questa-medium text-gray-700 mb-2">
+                                        Edifícios Disponíveis para o Serviço
+                                        <span className="text-xs text-gray-500 font-questa-regular ml-2">
+                                            (Selecione um ou mais edifícios onde você pode prestar o serviço)
+                                        </span>
+                                    </label>
+                                    <div className="border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto bg-gray-50">
+                                        <div className="space-y-2">
+                                            {edificiosDisponiveis.map((edificio) => (
+                                                <label
+                                                    key={edificio}
+                                                    className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={edificiosSelecionados.includes(edificio)}
+                                                        onChange={() => toggleEdificio(edificio)}
+                                                        className="mt-1 w-4 h-4 text-blue-900 border-gray-300 rounded focus:ring-2 focus:ring-blue-900"
+                                                    />
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="w-4 h-4 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                            </svg>
+                                                            <span className="text-sm font-questa-medium text-gray-900">{edificio}</span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {edificiosSelecionados.length > 0 && (
+                                            <div className="mt-4 pt-4 border-t border-gray-200">
+                                                <p className="text-xs font-questa-bold text-blue-900 mb-2">
+                                                    {edificiosSelecionados.length} edifício{edificiosSelecionados.length > 1 ? 's' : ''} selecionado{edificiosSelecionados.length > 1 ? 's' : ''}
+                                                </p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {edificiosSelecionados.map((edificio) => (
+                                                        <span
+                                                            key={edificio}
+                                                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-900 text-xs rounded-full font-questa-medium"
+                                                        >
+                                                            {edificio.split(' - ')[0]}
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    toggleEdificio(edificio);
+                                                                }}
+                                                                className="hover:bg-blue-200 rounded-full p-0.5"
+                                                            >
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                             <div className="mt-6 flex gap-3">
                                 <button className="px-6 py-3 bg-blue-900 text-white rounded-lg font-questa-bold hover:bg-blue-950 transition-colors">
                                     Cadastrar Serviço
                                 </button>
-                                <button className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-questa-medium hover:bg-gray-300 transition-colors">
+                                <button
+                                    onClick={limparFormulario}
+                                    className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-questa-medium hover:bg-gray-300 transition-colors"
+                                >
                                     Limpar Formulário
                                 </button>
                             </div>
@@ -831,8 +925,8 @@ export default function ParceirosDashboard() {
                                                         {/* Timeline vertical */}
                                                         <div className="relative flex flex-col items-center">
                                                             <div className={`w-4 h-4 rounded-full border-2 border-white z-10 ${solicitacao.status === 'Pendente' ? 'bg-orange-500' :
-                                                                    solicitacao.status === 'Aceito' ? 'bg-blue-900' :
-                                                                        solicitacao.status === 'Concluído' ? 'bg-green-600' : 'bg-gray-400'
+                                                                solicitacao.status === 'Aceito' ? 'bg-blue-900' :
+                                                                    solicitacao.status === 'Concluído' ? 'bg-green-600' : 'bg-gray-400'
                                                                 }`}></div>
                                                             {index < arr.length - 1 && (
                                                                 <div className="w-0.5 h-full bg-gray-200 absolute top-4"></div>
@@ -841,8 +935,8 @@ export default function ParceirosDashboard() {
 
                                                         {/* Card de Solicitação */}
                                                         <div className={`flex-1 pb-6 border rounded-lg p-4 ${solicitacao.status === 'Pendente' ? 'border-orange-200 bg-orange-50' :
-                                                                solicitacao.status === 'Aceito' ? 'border-blue-200 bg-blue-50' :
-                                                                    solicitacao.status === 'Concluído' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
+                                                            solicitacao.status === 'Aceito' ? 'border-blue-200 bg-blue-50' :
+                                                                solicitacao.status === 'Concluído' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
                                                             }`}>
                                                             <div className="flex items-start justify-between gap-3 mb-3">
                                                                 <div className="flex-1">
@@ -859,8 +953,8 @@ export default function ParceirosDashboard() {
                                                                     </div>
                                                                 </div>
                                                                 <span className={`px-3 py-1 text-xs font-questa-bold rounded-full whitespace-nowrap ${solicitacao.status === 'Pendente' ? 'bg-orange-100 text-orange-700' :
-                                                                        solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
-                                                                            solicitacao.status === 'Concluído' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                                                                    solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
+                                                                        solicitacao.status === 'Concluído' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                                                                     }`}>
                                                                     {solicitacao.status}
                                                                 </span>
@@ -942,8 +1036,8 @@ export default function ParceirosDashboard() {
                                                     <div className="flex items-center gap-3 mb-2">
                                                         <h4 className="font-questa-bold text-gray-900">{solicitacao.servico}</h4>
                                                         <span className={`px-2 py-1 text-xs font-questa-medium rounded-full ${solicitacao.status === 'Pendente' ? 'bg-orange-100 text-orange-700' :
-                                                                solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
-                                                                    'bg-green-100 text-green-700'
+                                                            solicitacao.status === 'Aceito' ? 'bg-blue-100 text-blue-700' :
+                                                                'bg-green-100 text-green-700'
                                                             }`}>
                                                             {solicitacao.status}
                                                         </span>
