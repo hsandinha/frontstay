@@ -10,6 +10,7 @@ export default function HospedeDashboard() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<TabType>('visao-geral');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const handleLogout = () => {
         router.push('/login');
@@ -39,17 +40,20 @@ export default function HospedeDashboard() {
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-gray-300">
-                                    <Image
-                                        src="/public/user-photo.jpg"
-                                        alt="Foto do Usuário"
-                                        width={40}
-                                        height={40}
-                                        className="object-cover w-full h-full"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
-                                            e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 font-questa-bold text-sm">H</div>';
-                                        }}
-                                    />
+                                    {!imageError ? (
+                                        <Image
+                                            src="/public/user-photo.jpg"
+                                            alt="Foto do Usuário"
+                                            width={40}
+                                            height={40}
+                                            className="object-cover w-full h-full"
+                                            onError={() => setImageError(true)}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 font-questa-bold text-sm">
+                                            H
+                                        </div>
+                                    )}
                                 </div>
                                 <span className="text-sm text-gray-600 font-questa-regular">Bem vindo, Hebert</span>
                             </div>

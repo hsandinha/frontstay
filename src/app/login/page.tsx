@@ -11,191 +11,155 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const roles = [
-        { value: 'hospede' as UserRole, label: 'Hóspede', icon: '🏨' },
-        { value: 'proprietario' as UserRole, label: 'Proprietário', icon: '🏠' },
-        { value: 'administrador' as UserRole, label: 'Administrador', icon: '⚙️' },
-        { value: 'parceiros' as UserRole, label: 'Parceiros', icon: '🤝' },
+        { value: 'hospede' as UserRole, label: 'Hóspede' },
+        { value: 'proprietario' as UserRole, label: 'Proprietário' },
+        { value: 'administrador' as UserRole, label: 'Administrador' },
+        { value: 'parceiros' as UserRole, label: 'Parceiros' },
     ];
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulação de login - substituir por autenticação real
         setTimeout(() => {
-            // Redirecionar para o dashboard específico do perfil
             router.push(`/dashboard/${selectedRole}`);
-        }, 1000);
+        }, 1500);
     };
 
     return (
-        <div className="min-h-screen flex">
-            {/* Lado Esquerdo - Branding */}
-            <div className="hidden lg:flex lg:w-1/2 bg-[#2a3648] text-white flex-col justify-center items-center p-12 relative overflow-hidden">
-                {/* Padrão geométrico de fundo */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-10 left-10 w-40 h-40 border-4 border-white rounded-full"></div>
-                    <div className="absolute bottom-20 right-20 w-60 h-60 border-4 border-[#E67E22] transform rotate-45"></div>
-                    <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-primary-teal rounded-full"></div>
-                </div>
+        <div className="min-h-screen flex overflow-hidden relative">
+            {/* Background Image - Full Screen */}
+            <div className="absolute inset-0">
+                <Image
+                    src="/esopo.png"
+                    alt="Background"
+                    fill
+                    className="object-contain object-right"
+                    priority
+                />
+                {/* Gradient Overlay - Smooth transition from black to transparent */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 via-slate-950/90 via-slate-950/70 via-slate-900/50 via-slate-900/30 to-transparent"></div>
+            </div>
 
-                <div className="relative z-10 text-center">
+            {/* Login Form - Positioned on the left */}
+            <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
                     {/* Logo */}
-                    <div className="mb-12 flex justify-center">
+                    <div className="flex justify-center mb-8">
                         <Image
-                            src="/logo.png"
+                            src="/logo2.png"
                             alt="FrontStay Logo"
-                            width={180}
-                            height={180}
+                            width={120}
+                            height={120}
                             className="object-contain"
                         />
                     </div>
 
-                    {/* Título estilo "gestão by Front Stay" */}
-                    <h1 className="flex flex-col leading-tight mb-8">
-                        <span className="great-vibes-regular text-[#E67E22] text-7xl">gestão</span>
-                        <span className="text-5xl font-light -mt-4">by Front Stay</span>
-                    </h1>
-
-                    {/* Linha decorativa */}
-                    <div className="border-t-2 border-gray-300 w-3/4 mx-auto my-8"></div>
-
-                    {/* Subtítulo */}
-                    <p className="text-xl font-questa-light max-w-md mx-auto">
-                        Mais do que gestão: assinamos o estilo.
-                    </p>
-
-                    <p className="text-base font-questa-regular text-gray-300 mt-6 max-w-lg mx-auto">
-                        Acesse sua área exclusiva e gerencie suas reservas, propriedades e serviços com a qualidade FrontStay.
-                    </p>
-                </div>
-            </div>
-
-            {/* Lado Direito - Formulário de Login */}
-            <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-8 md:p-12">
-                <div className="w-full max-w-md">
-                    {/* Logo mobile */}
-                    <div className="lg:hidden text-center mb-8">
-                        <Image
-                            src="/logo.png"
-                            alt="FrontStay Logo"
-                            width={120}
-                            height={120}
-                            className="mx-auto mb-4"
-                        />
-                        <h2 className="text-2xl font-questa-bold text-neutral-dark">Área do Cliente</h2>
+                    <div className="mb-8">
+                        <h1 className="text-white text-3xl font-bold mb-2 text-center">Faça seu login.</h1>
+                        <p className="text-slate-400 text-center text-sm">Acesse sua conta FrontStay</p>
                     </div>
 
-                    {/* Título */}
-                    <h2 className="text-3xl font-questa-bold text-neutral-dark mb-2">
-                        Fazer Login
-                    </h2>
-                    <p className="text-neutral-medium font-questa-regular mb-8">
-                        Acesse sua conta FrontStay
-                    </p>
-
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        {/* Seleção de Perfil */}
+                    <form onSubmit={handleLogin} className="space-y-5">
                         <div>
-                            <label className="block text-sm font-questa-medium text-neutral-dark mb-3">
-                                Selecione seu perfil
-                            </label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">Perfil</label>
+                            <select
+                                value={selectedRole}
+                                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            >
                                 {roles.map((role) => (
-                                    <button
-                                        key={role.value}
-                                        type="button"
-                                        onClick={() => setSelectedRole(role.value)}
-                                        className={`p-4 rounded-lg border-2 transition-all duration-200 ${selectedRole === role.value
-                                            ? 'border-primary-teal bg-primary-teal/10 shadow-md'
-                                            : 'border-neutral-light hover:border-primary-teal/50 hover:bg-neutral-lighter'
-                                            }`}
-                                    >
-                                        <div className="text-3xl mb-2">{role.icon}</div>
-                                        <div className="text-sm font-questa-medium text-neutral-dark">
-                                            {role.label}
-                                        </div>
-                                    </button>
+                                    <option key={role.value} value={role.value} className="bg-slate-900">
+                                        {role.label}
+                                    </option>
                                 ))}
-                            </div>
+                            </select>
                         </div>
 
-                        {/* Email */}
                         <div>
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-questa-medium text-neutral-dark mb-2"
-                            >
-                                Email
-                            </label>
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">E-mail</label>
                             <input
-                                id="email"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-neutral-light focus:ring-2 focus:ring-primary-teal focus:border-transparent outline-none transition-all font-questa-regular"
-                                placeholder="seu@email.com"
+                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                placeholder="Digite seu e-mail"
                             />
                         </div>
 
-                        {/* Senha */}
                         <div>
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-questa-medium text-neutral-dark mb-2"
-                            >
-                                Senha
-                            </label>
-                            <input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-neutral-light focus:ring-2 focus:ring-primary-teal focus:border-transparent outline-none transition-all font-questa-regular"
-                                placeholder="••••••••"
-                            />
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">Senha</label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    placeholder="Digite sua senha"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Lembrar-me e Esqueci a senha */}
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center justify-between">
                             <label className="flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    className="rounded border-neutral-light text-primary-teal focus:ring-primary-teal"
+                                    className="w-4 h-4 rounded border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 bg-slate-800"
                                 />
-                                <span className="ml-2 text-neutral-dark font-questa-regular">Lembrar-me</span>
+                                <span className="ml-2 text-slate-300 text-sm">Lembrar-me</span>
                             </label>
-                            <a
-                                href="#"
-                                className="text-primary-teal hover:text-primary-teal-dark font-questa-medium"
-                            >
+                            <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
                                 Esqueci a senha
                             </a>
                         </div>
 
-                        {/* Botão de Login */}
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-support-green hover:bg-support-green/90 text-white font-questa-bold py-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
+                            className="w-full bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-bold py-3.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
                         >
-                            {isLoading ? 'Entrando...' : 'Entrar'}
+                            {isLoading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Entrando...
+                                </span>
+                            ) : (
+                                'ENTRAR'
+                            )}
                         </button>
                     </form>
 
-                    {/* Link de Cadastro */}
-                    <div className="mt-8 text-center text-sm text-neutral-medium font-questa-regular">
-                        Não tem uma conta?{' '}
-                        <a
-                            href="#"
-                            className="text-primary-teal hover:text-primary-teal-dark font-questa-medium"
-                        >
-                            Cadastre-se
-                        </a>
+                    <div className="mt-8 text-center">
+                        <p className="text-slate-400 text-sm">
+                            Ainda não possui uma conta?{' '}
+                            <a href="#" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+                                Cadastre-se
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
