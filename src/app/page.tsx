@@ -39,11 +39,12 @@ const HomePage = () => {
         },
         {
             id: 4,
-            nome: 'FrontStay Icon Centro',
-            endereco: 'Rua Goitacazes - Centro, Belo Horizonte - MG',
+            nome: 'FrontStay Lourdes',
+            endereco: 'Rua professor Antonio Aleixo, 465 - Lourdes, Belo Horizonte - MG',
             preco: 400,
-            imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
+            imagem: 'lourdes.jpeg',
         },
+
         {
             id: 5,
             nome: 'FrontStay Savassi',
@@ -60,11 +61,12 @@ const HomePage = () => {
         },
         {
             id: 7,
-            nome: 'FrontStay Lourdes',
-            endereco: 'Rua professor Antonio Aleixo, 465 - Lourdes, Belo Horizonte - MG',
+            nome: 'FrontStay Icon Centro',
+            endereco: 'Rua Goitacazes - Centro, Belo Horizonte - MG',
             preco: 400,
-            imagem: 'lourdes.jpeg',
-        }
+            imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
+        },
+
 
     ];
 
