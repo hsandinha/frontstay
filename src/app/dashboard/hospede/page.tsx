@@ -283,7 +283,7 @@ export default function HospedeDashboard() {
                 {activeTab === 'visao-geral' && (
                     <div className="space-y-6">
                         {/* Stats Cards - 3 colunas */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                             {/* Card 1 */}
                             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                                 <div className="flex items-center gap-4">
@@ -313,53 +313,53 @@ export default function HospedeDashboard() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Card 3 */}
-                        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+
+                            {/* Card 3 */}
+                            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 font-questa-regular">Reservas Futuras</p>
+                                        <p className="text-2xl font-questa-bold text-gray-900">1</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 font-questa-regular">Reservas Futuras</p>
-                                    <p className="text-2xl font-questa-bold text-gray-900">1</p>
+                            </div>
+
+                            {/* Card 4 */}
+                            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 font-questa-regular">Hospedagem Realizadas</p>
+                                        <p className="text-2xl font-questa-bold text-gray-900">1</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Card 5 */}
+                            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 font-questa-regular">Cupons Utilizados</p>
+                                        <p className="text-2xl font-questa-bold text-gray-900">8</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Card 4 */}
-                        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                    <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 font-questa-regular">Hospedagem Realizadas</p>
-                                    <p className="text-2xl font-questa-bold text-gray-900">1</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Card 5 */}
-                        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                    <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 font-questa-regular">Cupons Utilizados</p>
-                                    <p className="text-2xl font-questa-bold text-gray-900">8</p>
-                                </div>
-                            </div>
-                        </div>
-
 
                         {/* Grid 2 colunas: Próximas Reservas e Calendário */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
