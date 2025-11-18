@@ -45,14 +45,15 @@ export default function ParceirosDashboard() {
 
     // Lista de edifícios gerenciados pela FrontStay
     const edificiosDisponiveis = [
-        'FrontStay Esopo - Vale do Sereno, Nova Lima',
-        'FrontStay City Design - Barro Preto, Belo Horizonte',
-        'FrontStay Premium Tower - Savassi, Belo Horizonte',
-        'FrontStay Beach Residence - Copacabana, Rio de Janeiro',
-        'FrontStay Vista Mar - Santos, São Paulo',
-        'FrontStay Urban Living - Pinheiros, São Paulo',
-        'FrontStay Green Park - Jardim Botânico, Rio de Janeiro',
-        'FrontStay Corporate Plaza - Faria Lima, São Paulo',
+        'FrontStay Esopo Vale do Sereno - Vale do Sereno, Nova Lima',
+        'FrontStay City Santo Agostinho - Santo Agostinho, Belo Horizonte',
+        'FrontStay Ágora Expominas - Nova Suíça, Belo Horizonte',
+        'FrontStay Lourdes - Lourdes, Belo Horizonte, MG',
+        'FrontStay Centro - Centro, Belo Horizonte, MG',
+        'FrontStay Savassi - Savassi, Belo Horizonte, MG',
+        'FrontStay Shopping Cidade - Centro, Belo Horizonte, MG'
+
+
     ];
 
     const toggleEdificio = (edificio: string) => {
@@ -176,7 +177,7 @@ export default function ParceirosDashboard() {
     const stats = {
         servicosAtivos: servicos.filter(s => s.ativo).length,
         solicitacoesPendentes: solicitacoes.filter(s => s.status === 'Pendente').length,
-        receitaMes: 'R$ 18.500',
+        receitaMes: 'R$ 5.500',
         servicosConcluidos: solicitacoes.filter(s => s.status === 'Concluído').length,
     };
 
@@ -441,7 +442,7 @@ export default function ParceirosDashboard() {
                             {/* Serviços em Destaque - 2/3 da largura */}
                             <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
                                 <div className="p-4 sm:p-6 border-b border-gray-200">
-                                    <h3 className="text-lg font-questa-bold text-gray-900">Serviços Mais Solicitados</h3>
+                                    <h3 className="text-lg font-questa-bold text-gray-900">Serviços Disponibilizados</h3>
                                 </div>
                                 <div className="p-4 sm:p-6 space-y-4">
                                     {servicos.slice(0, 3).map((servico) => {
