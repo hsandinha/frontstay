@@ -78,7 +78,7 @@ export default function ParceirosDashboard() {
 
     // Mock de dados
     const parceiro = {
-        nome: 'Empresa Parceira',
+        nome: 'Marcela Personal Trainer',
         email: 'contato@parceiro.com',
         telefone: '(31) 98765-4321',
         categoria: 'Restaurante', // Pode ser: Restaurante, Manutenção, Personal, Academia, Maquiadora, etc
@@ -89,57 +89,39 @@ export default function ParceirosDashboard() {
     const servicos: ServicoType[] = [
         {
             id: 1,
-            nome: 'Almoço Executivo Delivery',
-            categoria: 'Restaurante',
-            descricao: 'Refeições balanceadas entregues no imóvel',
+            nome: 'Personal Trainer',
+            categoria: 'Personal',
+            descricao: 'Aulas de personal trainer para todas as idades',
             preco: 'R$ 35,00',
             desconto: '10%',
             ativo: true
         },
         {
             id: 2,
-            nome: 'Manutenção Elétrica',
-            categoria: 'Manutenção',
-            descricao: 'Reparos e instalações elétricas em geral',
+            nome: 'Luta de Artes Marciais',
+            categoria: 'personal',
+            descricao: 'Aulas de artes marciais para todas as idades',
             preco: 'R$ 150,00',
             desconto: '15%',
             ativo: true
         },
         {
             id: 3,
-            nome: 'Personal Trainer',
+            nome: 'Natação',
             categoria: 'Personal',
-            descricao: 'Treinos personalizados no imóvel ou online',
+            descricao: 'Aula de natação para todas as idades',
             preco: 'R$ 120,00',
             desconto: '20%',
             ativo: true
         },
         {
             id: 4,
-            nome: 'Maquiagem para Eventos',
-            categoria: 'Maquiadora',
-            descricao: 'Maquiagem profissional para festas e eventos',
+            nome: 'Aula de Yoga',
+            categoria: 'personal',
+            descricao: 'Aula de yoga para relaxamento e bem-estar',
             preco: 'R$ 180,00',
             desconto: '15%',
             ativo: true
-        },
-        {
-            id: 5,
-            nome: 'Limpeza Completa',
-            categoria: 'Limpeza',
-            descricao: 'Limpeza profunda de todos os ambientes',
-            preco: 'R$ 200,00',
-            desconto: '10%',
-            ativo: true
-        },
-        {
-            id: 6,
-            nome: 'Massagem Relaxante',
-            categoria: 'Massagem',
-            descricao: 'Sessão de massagem terapêutica no imóvel',
-            preco: 'R$ 140,00',
-            desconto: '20%',
-            ativo: false
         },
     ];
 
@@ -147,47 +129,47 @@ export default function ParceirosDashboard() {
     const solicitacoes: SolicitacaoType[] = [
         {
             id: 1,
-            servico: 'Limpeza Profissional Completa',
+            servico: 'Personal Trainer',
             solicitante: 'Maria Santos',
             tipoSolicitante: 'Proprietário',
-            imovel: 'Apartamento Vista Mar - Copacabana, Rio de Janeiro',
+            imovel: 'FrontStay Lourdes - Belo Horizonte, MG',
             data: '2025-11-18',
             horario: '10:00',
             status: 'Pendente',
-            observacoes: 'Limpeza completa após hóspede de longa temporada'
+            observacoes: 'fazer um treino personalizado'
         },
         {
             id: 2,
-            servico: 'Check-in/Check-out',
+            servico: 'Luta de Artes Marciais',
             solicitante: 'Pedro Oliveira',
             tipoSolicitante: 'Hóspede',
-            imovel: 'Loft Centro - São Paulo, SP',
+            imovel: 'FrontStay Centro - Belo Horizonte, MG',
             data: '2025-11-17',
             horario: '15:00',
             status: 'Pendente',
-            observacoes: 'Check-in para família com 2 crianças'
+            observacoes: 'Levar a Luva e protetor bucal'
         },
         {
             id: 3,
-            servico: 'Manutenção Elétrica',
+            servico: 'Natação',
             solicitante: 'Carlos Mendes',
             tipoSolicitante: 'Proprietário',
             imovel: 'Casa Jardim - Belo Horizonte, MG',
             data: '2025-11-16',
             horario: '14:00',
             status: 'Aceito',
-            observacoes: 'Troca de chuveiro e verificação de disjuntores'
+            observacoes: 'Aula particular para 1 pessoas'
         },
         {
             id: 4,
-            servico: 'Limpeza Profissional Completa',
+            servico: 'Aula de Yoga',
             solicitante: 'Ana Paula',
             tipoSolicitante: 'Hóspede',
-            imovel: 'Apartamento Praia - Santos, SP',
+            imovel: 'FrontStay Lourdes - Belo Horizonte, MG',
             data: '2025-11-12',
             horario: '09:00',
             status: 'Concluído',
-            observacoes: 'Limpeza pós-evento'
+            observacoes: 'chege com 10 minutos de antecedência'
         },
     ];
 
@@ -509,8 +491,8 @@ export default function ParceirosDashboard() {
                                                     </svg>
                                                     <span className="text-xs font-questa-bold text-blue-900">09:00</span>
                                                 </div>
-                                                <p className="text-sm font-questa-medium text-gray-900">Limpeza Completa</p>
-                                                <p className="text-xs text-gray-600">Apt. Vista Mar</p>
+                                                <p className="text-sm font-questa-medium text-gray-900">Personal Trainer</p>
+                                                <p className="text-xs text-gray-600">Frontstay Esopo</p>
                                             </div>
                                         </div>
 
@@ -524,8 +506,8 @@ export default function ParceirosDashboard() {
                                                     </svg>
                                                     <span className="text-xs font-questa-bold text-orange-500">14:00</span>
                                                 </div>
-                                                <p className="text-sm font-questa-medium text-gray-900">Manutenção Elétrica</p>
-                                                <p className="text-xs text-gray-600">Casa Jardim</p>
+                                                <p className="text-sm font-questa-medium text-gray-900">Aula de Yoga</p>
+                                                <p className="text-xs text-gray-600">Frontstay Lourdes</p>
                                             </div>
                                         </div>
 
@@ -540,7 +522,7 @@ export default function ParceirosDashboard() {
                                                     <span className="text-xs font-questa-bold text-green-600">16:00</span>
                                                 </div>
                                                 <p className="text-sm font-questa-medium text-gray-900">Personal Trainer</p>
-                                                <p className="text-xs text-gray-600">Cobertura Premium</p>
+                                                <p className="text-xs text-gray-600">FrontStay Savassi</p>
                                             </div>
                                         </div>
                                     </div>

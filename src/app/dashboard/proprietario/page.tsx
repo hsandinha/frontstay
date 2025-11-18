@@ -8,9 +8,9 @@ type TabType = 'visao-geral' | 'financeiro' | 'reservas' | 'documentos' | 'parce
 
 // Mock de dados dos imóveis
 const mockImoveis = [
-    { id: 1, nome: 'Apartamento Vista Mar', localizacao: 'Copacabana, Rio de Janeiro', parceriaAtiva: true, receita: 15000, ocupacao: 85, reservas: 8 },
-    { id: 2, nome: 'Casa na Praia', localizacao: 'Búzios, Rio de Janeiro', parceriaAtiva: true, receita: 22000, ocupacao: 92, reservas: 12 },
-    { id: 3, nome: 'Loft Centro', localizacao: 'São Paulo, SP', parceriaAtiva: false, receita: 0, ocupacao: 0, reservas: 0 },
+    { id: 1, nome: 'FrontStay Esopo Vale do Sereno', localizacao: 'Vale do Sereno, Nova Lima', parceriaAtiva: true, receita: 15000, ocupacao: 85, reservas: 8 },
+    { id: 2, nome: 'FrontStay Lourdes', localizacao: 'Lourdes, Belo Horizonte - MG', parceriaAtiva: true, receita: 22000, ocupacao: 92, reservas: 12 },
+    { id: 3, nome: 'FrontStay Savassi', localizacao: 'Savassi, Belo Horizonte - MG', parceriaAtiva: false, receita: 0, ocupacao: 0, reservas: 0 },
 ];
 
 export default function ProprietarioDashboard() {
@@ -1328,11 +1328,11 @@ export default function ProprietarioDashboard() {
                                                 </div>
                                                 <div className="space-y-2 ml-10">
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">Serviços Utilizados</span>
+                                                        <span className="text-gray-600">Coworking</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 800,00</span>
                                                     </div>
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">Cupons Resgatados</span>
+                                                        <span className="text-gray-600">Estacionamento</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 400,00</span>
                                                     </div>
                                                 </div>
@@ -1351,19 +1351,19 @@ export default function ProprietarioDashboard() {
                                                 </div>
                                                 <div className="space-y-2 ml-10">
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">🛒 Mercadinho Local</span>
+                                                        <span className="text-gray-600">🛒 Verde Mar</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 650,00</span>
                                                     </div>
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">🚗 Estacionamento</span>
+                                                        <span className="text-gray-600">🚗 Carregamento Elétrico Volvo</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 480,00</span>
                                                     </div>
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">🍽️ Restaurantes</span>
+                                                        <span className="text-gray-600">🍽️ Restaurantes Osteritta Papa</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 420,00</span>
                                                     </div>
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">🏋️ Academia</span>
+                                                        <span className="text-gray-600">🏋️ Academia Bodytech</span>
                                                         <span className="text-gray-900 font-questa-medium">R$ 250,00</span>
                                                     </div>
                                                 </div>
