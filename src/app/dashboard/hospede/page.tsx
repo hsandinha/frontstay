@@ -341,7 +341,7 @@ export default function HospedeDashboard() {
 
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500 font-questa-regular">Hospedagem Realizadas</p>
+                                        <p className="text-xs text-gray-500 font-questa-regular">Hospedagens Realizadas</p>
                                         <p className="text-2xl font-questa-bold text-gray-900">1</p>
                                     </div>
                                 </div>
