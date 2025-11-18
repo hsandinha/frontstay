@@ -463,7 +463,7 @@ export default function ParceirosDashboard() {
                                                     <div className="flex items-center gap-3">
                                                         <span className="text-sm font-questa-bold text-blue-900">{servico.preco}</span>
                                                         <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-questa-medium rounded">
-                                                            {servico.desconto} desconto
+                                                            {servico.desconto} cashback
                                                         </span>
                                                     </div>
                                                 </div>
