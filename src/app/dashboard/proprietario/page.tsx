@@ -1141,9 +1141,8 @@ export default function ProprietarioDashboard() {
                                             <p className="text-sm text-gray-600">Período: Novembro 2025</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-600 mb-1">Lucro Líquido do Mês</p>
+                                            <p className="text-sm text-gray-600 mb-1">Receita Líquido do Mês</p>
                                             <p className="text-3xl font-questa-bold text-green-600">+ R$ 8.950,00</p>
-                                            <p className="text-xs text-gray-500 mt-1">Margem de 59.67%</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1392,11 +1391,8 @@ export default function ProprietarioDashboard() {
                                             <p className="text-2xl font-questa-bold text-red-600">- R$ 6.050,00</p>
                                         </div>
                                         <div className="text-center">
-                                            <p className="text-sm text-gray-600 mb-2">💎 Lucro Líquido</p>
+                                            <p className="text-sm text-gray-600 mb-2">💎 Receita Líquida</p>
                                             <p className="text-3xl font-questa-bold text-green-700">R$ 8.950,00</p>
-                                            <div className="mt-2 inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-questa-bold rounded-full">
-                                                ↗️ Margem: 59.67%
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
