@@ -899,7 +899,7 @@ export default function ProprietarioDashboard() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
-                                                <span className="text-gray-700 font-questa-medium">Receita Liquida</span>
+                                                <span className="text-gray-700 font-questa-medium">Receita Líquida</span>
                                             </div>
                                         </div>
 
@@ -1141,7 +1141,7 @@ export default function ProprietarioDashboard() {
                                             <p className="text-sm text-gray-600">Período: Novembro 2025</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-600 mb-1">Receita Líquido do Mês</p>
+                                            <p className="text-sm text-gray-600 mb-1">Receita Líquida do Mês</p>
                                             <p className="text-3xl font-questa-bold text-green-600">+ R$ 8.950,00</p>
                                         </div>
                                     </div>
