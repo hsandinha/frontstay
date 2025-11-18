@@ -141,7 +141,7 @@ export default function ParceirosDashboard() {
         },
         {
             id: 2,
-            servico: 'Luta de Artes Marciais',
+            servico: 'Defesa Pessoal',
             solicitante: 'Pedro Oliveira',
             tipoSolicitante: 'Hóspede',
             imovel: 'FrontStay Centro - Belo Horizonte, MG',
