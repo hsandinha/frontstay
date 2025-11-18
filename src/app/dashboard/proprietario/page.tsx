@@ -8,7 +8,7 @@ type TabType = 'visao-geral' | 'financeiro' | 'reservas' | 'documentos' | 'parce
 
 // Mock de dados dos imóveis
 const mockImoveis = [
-    { id: 1, nome: 'FrontStay Esopo Vale do Sereno', localizacao: 'Vale do Sereno, Nova Lima', parceriaAtiva: true, receita: 15000, ocupacao: 85, reservas: 8 },
+    { id: 1, nome: 'FrontStay Esopo Vale do Sereno', localizacao: 'Vale do Sereno, Nova Lima', parceriaAtiva: true, receita: 15000, ocupacao: 85, reservas: 26 },
     { id: 2, nome: 'FrontStay Lourdes', localizacao: 'Lourdes, Belo Horizonte - MG', parceriaAtiva: true, receita: 22000, ocupacao: 92, reservas: 12 },
     { id: 3, nome: 'FrontStay Savassi', localizacao: 'Savassi, Belo Horizonte - MG', parceriaAtiva: false, receita: 0, ocupacao: 0, reservas: 0 },
 ];
@@ -868,7 +868,7 @@ export default function ProprietarioDashboard() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500 font-questa-regular">Receita Mês</p>
+                                        <p className="text-xs text-gray-500 font-questa-regular">Receita Bruta Mês</p>
                                         <p className="text-2xl font-questa-bold text-gray-900">
                                             {selectedImovel.receita > 0 ? `R$ ${(selectedImovel.receita / 1000).toFixed(0)}k` : 'R$ 0'}
                                         </p>
@@ -891,7 +891,7 @@ export default function ProprietarioDashboard() {
                                         <div className="flex flex-wrap gap-3 sm:gap-6 mb-4 sm:mb-6 text-xs sm:text-sm">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full"></div>
-                                                <span className="text-gray-700 font-questa-medium">Receitas</span>
+                                                <span className="text-gray-700 font-questa-medium">Receita Bruta</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 sm:w-3 sm:h-3 bg-amber-500 rounded-full"></div>
@@ -899,7 +899,7 @@ export default function ProprietarioDashboard() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
-                                                <span className="text-gray-700 font-questa-medium">Lucro</span>
+                                                <span className="text-gray-700 font-questa-medium">Receita Liquida</span>
                                             </div>
                                         </div>
 
