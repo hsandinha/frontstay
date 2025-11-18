@@ -93,7 +93,7 @@ export default function ParceirosDashboard() {
             nome: 'Personal Trainer',
             categoria: 'Personal',
             descricao: 'Aulas de personal trainer para todas as idades',
-            preco: 'R$ 35,00',
+            preco: 'R$ 150,00',
             desconto: '10%',
             ativo: true
         },
@@ -638,7 +638,7 @@ export default function ParceirosDashboard() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-questa-medium text-gray-700 mb-2">Desconto FrontStay (%)</label>
+                                    <label className="block text-sm font-questa-medium text-gray-700 mb-2">Cashback (%)</label>
                                     <input
                                         type="text"
                                         value={descontoServico}
