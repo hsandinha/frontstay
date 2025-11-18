@@ -99,9 +99,9 @@ export default function ParceirosDashboard() {
         },
         {
             id: 2,
-            nome: 'Luta de Artes Marciais',
+            nome: 'Defesa Pessoal',
             categoria: 'personal',
-            descricao: 'Aulas de artes marciais para todas as idades',
+            descricao: 'Aulas de de defesa pessoal para todas as idades',
             preco: 'R$ 150,00',
             desconto: '15%',
             ativo: true
@@ -445,7 +445,7 @@ export default function ParceirosDashboard() {
                                     <h3 className="text-lg font-questa-bold text-gray-900">Serviços Disponibilizados</h3>
                                 </div>
                                 <div className="p-4 sm:p-6 space-y-4">
-                                    {servicos.slice(0, 3).map((servico) => {
+                                    {servicos.slice(0, 4).map((servico) => {
                                         const catInfo = getCategoriaInfo(servico.categoria);
                                         return (
                                             <div key={servico.id} className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
