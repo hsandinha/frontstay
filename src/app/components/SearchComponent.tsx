@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatCurrency, getFeaturedBookingCoupons, type AppliedBookingCoupon } from '../../lib/booking-coupons';
 
 type AvailabilityStatus = 'available' | 'unavailable' | 'neutral';
 
@@ -40,6 +41,7 @@ interface SearchComponentProps {
     calendarMonthLabel?: string;
     dailyRateText?: string;
     totalStayText?: string;
+    totalStayAmount?: number;
     nightCount?: number;
     availableProperties?: AvailableProperty[];
     feedbackMessage?: string;
@@ -135,6 +137,7 @@ const SearchComponent = ({
     calendarMonthLabel,
     dailyRateText = 'Selecione um período para consultar a diária no Cloudbeds.',
     totalStayText = 'Total a calcular',
+    totalStayAmount = 0,
     nightCount = 0,
     availableProperties = [],
     feedbackMessage = '',
@@ -164,6 +167,11 @@ const SearchComponent = ({
         expiry: '',
         cvv: '',
     });
+    const [couponCode, setCouponCode] = useState('');
+    const [couponFeedback, setCouponFeedback] = useState('');
+    const [couponFeedbackTone, setCouponFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState<AppliedBookingCoupon | null>(null);
 
     const selectedHotel = useMemo(
         () => hotelOptions.find((hotel) => hotel.value === hotelId) ?? hotelOptions[0],
@@ -172,6 +180,9 @@ const SearchComponent = ({
 
     const previewDays = calendarDays.length > 0 ? calendarDays : buildNeutralCalendar(dataInicio, dataFim);
     const primaryProperty = availableProperties[0];
+    const featuredCoupons = useMemo(() => getFeaturedBookingCoupons(hotelId), [hotelId]);
+    const summaryBaseTotalText = totalStayAmount > 0 ? formatCurrency(totalStayAmount) : totalStayText;
+    const summaryFinalTotalText = appliedCoupon ? appliedCoupon.formattedFinalAmount : summaryBaseTotalText;
 
     const calendarDataMap = useMemo(
         () => new Map(previewDays.map((day) => [day.date, day])),
@@ -207,6 +218,16 @@ const SearchComponent = ({
         });
     }, [calendarDataMap, dataFim, dataInicio, displayedMonth]);
 
+    const resetCouponState = (clearInput = false) => {
+        setAppliedCoupon(null);
+        setCouponFeedback('');
+        setCouponFeedbackTone('neutral');
+
+        if (clearInput) {
+            setCouponCode('');
+        }
+    };
+
     const handleAmenityToggle = (value: string) => {
         setSelectedAmenities((current) =>
             current.includes(value)
@@ -229,6 +250,7 @@ const SearchComponent = ({
     const handleGuestCountChange = async (nextValue: number) => {
         const safeValue = Math.max(1, nextValue);
         setHospedes(safeValue);
+        resetCouponState();
 
         if (isCalendarModalOpen) {
             await handleSearch({
@@ -284,6 +306,7 @@ const SearchComponent = ({
             setDataFim(day.date);
             setSelectionStep('end');
             setCalendarFeedback('');
+            resetCouponState();
             return;
         }
 
@@ -297,6 +320,7 @@ const SearchComponent = ({
 
         setDataFim(nextEndDate);
         setCalendarFeedback('');
+        resetCouponState();
         await handleSearch({ startDate: nextStartDate, endDate: nextEndDate });
         setModalStep('details');
     };
@@ -327,12 +351,72 @@ const SearchComponent = ({
             cardForm.cvv
         );
 
+    const handleApplyCoupon = async () => {
+        const normalizedCode = couponCode.trim().toUpperCase();
+
+        if (!normalizedCode) {
+            setAppliedCoupon(null);
+            setCouponFeedback('Informe um cupom para aplicar o desconto.');
+            setCouponFeedbackTone('error');
+            return;
+        }
+
+        if (totalStayAmount <= 0 || nightCount <= 0) {
+            setAppliedCoupon(null);
+            setCouponFeedback('Selecione um período disponível antes de validar o cupom.');
+            setCouponFeedbackTone('error');
+            return;
+        }
+
+        setIsApplyingCoupon(true);
+        setCouponFeedback('');
+        setCouponFeedbackTone('neutral');
+
+        try {
+            const response = await fetch('/api/coupons/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: normalizedCode,
+                    hotelId,
+                    totalAmount: totalStayAmount,
+                    nightCount,
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok || !payload?.success || !payload?.coupon) {
+                throw new Error(payload?.error || 'Não foi possível validar o cupom informado.');
+            }
+
+            setCouponCode(normalizedCode);
+            setAppliedCoupon(payload.coupon as AppliedBookingCoupon);
+            setCouponFeedback(payload?.message || `Cupom ${normalizedCode} aplicado com sucesso.`);
+            setCouponFeedbackTone('success');
+        } catch (error: any) {
+            setAppliedCoupon(null);
+            setCouponFeedback(error?.message || 'Não foi possível validar o cupom informado.');
+            setCouponFeedbackTone('error');
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponFeedback('Cupom removido da sua hospedagem.');
+        setCouponFeedbackTone('neutral');
+    };
+
     const handleProceedToInter = () => {
         if (!isPaymentReady) {
             return;
         }
 
-        // Próxima etapa: integrar com a API real do Banco Inter.
+        // Próxima etapa: integrar com a API real do Banco Inter usando summaryFinalTotalText e appliedCoupon?.code.
     };
 
     const getDayClasses = (day: CalendarAvailabilityDay) => {
@@ -403,7 +487,10 @@ const SearchComponent = ({
                         <div className="relative">
                             <select
                                 value={hotelId}
-                                onChange={(e) => setHotelId(e.target.value)}
+                                onChange={(e) => {
+                                    setHotelId(e.target.value);
+                                    resetCouponState(true);
+                                }}
                                 className="w-full px-3 py-2 border border-gray-200 rounded-md text-xs text-black font-questa-regular focus:ring-1 focus:ring-primary-teal focus:border-primary-teal appearance-none bg-white"
                             >
                                 {hotelOptions.map((hotel) => (
@@ -687,11 +774,89 @@ const SearchComponent = ({
                                                     <span>Diária</span>
                                                     <strong>{dailyRateText}</strong>
                                                 </div>
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <span>Subtotal</span>
+                                                    <strong>{summaryBaseTotalText}</strong>
+                                                </div>
+                                                {appliedCoupon ? (
+                                                    <div className="flex items-center justify-between gap-3 text-emerald-700">
+                                                        <span>Cupom ({appliedCoupon.code})</span>
+                                                        <strong>- {appliedCoupon.formattedDiscountAmount}</strong>
+                                                    </div>
+                                                ) : null}
                                                 <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-2 text-base">
-                                                    <span className="font-semibold">Total</span>
-                                                    <strong className="text-slate-950">{totalStayText}</strong>
+                                                    <span className="font-semibold">Total final</span>
+                                                    <strong className="text-slate-950">{summaryFinalTotalText}</strong>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
+                                            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Cupom de desconto</div>
+                                            <div className="flex flex-col gap-2 sm:flex-row">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Digite seu cupom"
+                                                    value={couponCode}
+                                                    onChange={(e) => {
+                                                        setCouponCode(e.target.value.toUpperCase());
+                                                        setCouponFeedback('');
+                                                        setCouponFeedbackTone('neutral');
+                                                    }}
+                                                    className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { void handleApplyCoupon(); }}
+                                                    disabled={isApplyingCoupon || !couponCode.trim()}
+                                                    className="rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                                >
+                                                    {isApplyingCoupon ? 'Validando...' : 'Aplicar'}
+                                                </button>
+                                            </div>
+
+                                            {featuredCoupons.length > 0 ? (
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {featuredCoupons.map((coupon) => (
+                                                        <button
+                                                            key={coupon.code}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setCouponCode(coupon.code);
+                                                                setCouponFeedback(`${coupon.label} disponível para esta hospedagem.`);
+                                                                setCouponFeedbackTone('neutral');
+                                                            }}
+                                                            className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100"
+                                                        >
+                                                            {coupon.code} • {coupon.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            ) : null}
+
+                                            {couponFeedback ? (
+                                                <div className={`mt-3 rounded-lg border px-3 py-2 text-sm ${couponFeedbackTone === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : couponFeedbackTone === 'error' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>
+                                                    {couponFeedback}
+                                                </div>
+                                            ) : null}
+
+                                            {appliedCoupon ? (
+                                                <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+                                                    <div className="flex items-center justify-between gap-3">
+                                                        <div>
+                                                            <div className="font-semibold">{appliedCoupon.label} • {appliedCoupon.code}</div>
+                                                            <p className="mt-1 text-emerald-700">{appliedCoupon.description}</p>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleRemoveCoupon}
+                                                            className="rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
+                                                        >
+                                                            Remover
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : null}
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-2">
@@ -767,8 +932,18 @@ const SearchComponent = ({
                                                 <strong>{primaryProperty?.nome || selectedHotel.label}</strong>
                                             </div>
                                             <div className="mt-1 flex items-center justify-between gap-3">
-                                                <span>Total</span>
-                                                <strong>{totalStayText}</strong>
+                                                <span>Subtotal</span>
+                                                <strong>{summaryBaseTotalText}</strong>
+                                            </div>
+                                            {appliedCoupon ? (
+                                                <div className="mt-1 flex items-center justify-between gap-3 text-emerald-700">
+                                                    <span>Cupom ({appliedCoupon.code})</span>
+                                                    <strong>- {appliedCoupon.formattedDiscountAmount}</strong>
+                                                </div>
+                                            ) : null}
+                                            <div className="mt-1 flex items-center justify-between gap-3">
+                                                <span>Total final</span>
+                                                <strong>{summaryFinalTotalText}</strong>
                                             </div>
                                         </div>
 
@@ -875,8 +1050,18 @@ const SearchComponent = ({
                                                     <strong>{paymentMethod === 'pix' ? 'PIX' : paymentMethod === 'credit' ? 'Cartão de crédito' : 'Cartão de débito'}</strong>
                                                 </div>
                                                 <div className="flex items-center justify-between gap-3">
-                                                    <span>Total</span>
-                                                    <strong className="text-slate-950">{totalStayText}</strong>
+                                                    <span>Subtotal</span>
+                                                    <strong>{summaryBaseTotalText}</strong>
+                                                </div>
+                                                {appliedCoupon ? (
+                                                    <div className="flex items-center justify-between gap-3 text-emerald-700">
+                                                        <span>Cupom ({appliedCoupon.code})</span>
+                                                        <strong>- {appliedCoupon.formattedDiscountAmount}</strong>
+                                                    </div>
+                                                ) : null}
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <span>Total final</span>
+                                                    <strong className="text-slate-950">{summaryFinalTotalText}</strong>
                                                 </div>
                                             </div>
                                         </div>

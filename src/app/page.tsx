@@ -15,7 +15,17 @@ type CalendarPreview = {
     days: CalendarAvailabilityDay[];
     dailyRateText: string;
     totalStayText: string;
+    totalStayAmount: number;
     nightCount: number;
+};
+
+type RangeDayInfo = {
+    date: string;
+    roomsAvailable?: number;
+    closedToArrival?: boolean;
+    closedToDeparture?: boolean;
+    rate?: number | string | null;
+    totalRate?: number | string | null;
 };
 
 const FALLBACK_PROPERTIES: AvailableProperty[] = [
@@ -115,10 +125,10 @@ function isItemAvailableForRange(item: any, startDate: string, endDate: string) 
         return (Number(item?.availableRooms) || 0) > 0;
     }
 
-    const byDate = new Map(
+    const byDate = new Map<string, RangeDayInfo>(
         dailyRates
-            .filter((day: any) => typeof day?.date === 'string')
-            .map((day: any) => [day.date, day])
+            .filter((day: any): day is RangeDayInfo => typeof day?.date === 'string')
+            .map((day: RangeDayInfo) => [day.date, day])
     );
 
     for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
@@ -136,10 +146,10 @@ function isItemAvailableForRange(item: any, startDate: string, endDate: string) 
 
 function getRangeMetrics(item: any, startDate: string, endDate: string) {
     const dailyRates = Array.isArray(item?.dailyRates) ? item.dailyRates : [];
-    const byDate = new Map(
+    const byDate = new Map<string, RangeDayInfo>(
         dailyRates
-            .filter((day: any) => typeof day?.date === 'string')
-            .map((day: any) => [day.date, day])
+            .filter((day: any): day is RangeDayInfo => typeof day?.date === 'string')
+            .map((day: RangeDayInfo) => [day.date, day])
     );
 
     const rates: number[] = [];
@@ -271,6 +281,7 @@ function buildCalendarPreview(
         days,
         dailyRateText,
         totalStayText,
+        totalStayAmount: totalStayValue,
         nightCount,
     };
 }
@@ -369,6 +380,7 @@ const HomePage = () => {
                         calendarMonthLabel={calendarPreview?.monthLabel}
                         dailyRateText={calendarPreview?.dailyRateText}
                         totalStayText={calendarPreview?.totalStayText}
+                        totalStayAmount={calendarPreview?.totalStayAmount}
                         nightCount={calendarPreview?.nightCount}
                         availableProperties={searchStatus === 'success' ? availableProperties : []}
                         feedbackMessage={feedbackMessage}
