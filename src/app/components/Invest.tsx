@@ -1,31 +1,27 @@
 import React from "react";
+import Image from 'next/image';
 
 const Invest = () => {
   return (
     <>
-      {/* Seção 1 - Invista */}
-      <section style={{ backgroundColor: "#433d4c" }} className="relative text-white py-12 px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-[35%_65%] items-start gap-8 relative">
-
-          {/* Coluna Esquerda */}
+      <section style={{ backgroundColor: "#433d4c" }} className="relative overflow-hidden px-8 py-12 text-white">
+        <div className="relative mx-auto grid max-w-7xl items-start gap-8 md:grid-cols-[35%_65%]">
           <div>
             <h3 className="flex flex-col leading-tight">
-              <span className="great-vibes-regular text-[#E67E22] text-6xl">invista</span>
-              <span className="text-3xl font-light -mt-3">com a Front</span>
+              <span className="great-vibes-regular text-6xl text-[#E67E22]">invista</span>
+              <span className="-mt-3 text-3xl font-light">com a Front</span>
             </h3>
 
             <div className="mt-4 border-t border-gray-400/60 pt-4">
-              <p className="text-base md:text-lg leading-relaxed">
+              <p className="text-base leading-relaxed md:text-lg">
                 Do projeto à administração: <br />
                 investimento seguro, retorno consistente.
               </p>
             </div>
           </div>
 
-          {/* Coluna Direita */}
           <div className="relative flex items-start">
-            {/* Lista */}
-            <ul className="text-base leading-relaxed space-y-2 z-10 relative">
+            <ul className="relative z-10 space-y-2 text-base leading-relaxed">
               <li><span className="font-bold">• Rentabilidade</span> acima da média do mercado</li>
               <li><span className="font-bold">• Gestão</span> completa e transparente</li>
               <li>• Imóveis entregues <span className="font-bold">decorados</span>, prontos para rentabilizar</li>
@@ -34,37 +30,30 @@ const Invest = () => {
               <li>• Empresa <span className="italic font-semibold">mineira</span>, especialista no mercado local de BH</li>
             </ul>
 
-            {/* Bola apenas cortando na lateral direita */}
-            <div className="absolute right-[-80px] top-1/2 -translate-y-1/2 overflow-hidden rounded-full w-64 h-64 shadow-lg opacity-40">
-              <img
+            <div className="absolute right-[-80px] top-1/2 h-64 w-64 -translate-y-1/2 overflow-hidden rounded-full opacity-40 shadow-lg">
+              <Image
                 src="/foto2.jpg"
                 alt="Investir com a Front"
-                className="w-full h-full object-cover"
+                fill
+                sizes="256px"
+                className="object-cover"
               />
             </div>
           </div>
         </div>
       </section>
 
+      <section className="bg-white px-6 py-20 text-center">
+        <div className="mx-auto flex max-w-2xl flex-col items-center">
+          <div className="mb-6 h-px w-12 bg-gray-300"></div>
 
-
-
-
-      <section className="bg-white py-20 px-6 text-center">
-
-        <div className="max-w-2xl mx-auto flex flex-col items-center">
-          {/* Linha fininha */}
-          <div className="w-12 h-px bg-gray-300 mb-6"></div>
-
-          {/* Texto */}
-          <h2 className="text-lg md:text-xl font-light text-gray-800 leading-relaxed">
+          <h2 className="text-lg font-light leading-relaxed text-gray-800 md:text-xl">
             Investir em um Front Stay é unir <br className="hidden md:block" />
             valorização imobiliária e{" "}
-            <span className="text-[#E67E22] font-normal">renda recorrente.</span>
+            <span className="font-normal text-[#E67E22]">renda recorrente.</span>
           </h2>
 
-          {/* Botão */}
-          <button className="mt-8 bg-emerald-600 hover:bg-emerald-700 text-white text-sm md:text-base px-6 py-2 rounded-full shadow-md transition">
+          <button className="mt-8 rounded-full bg-emerald-600 px-6 py-2 text-sm text-white shadow-md transition hover:bg-emerald-700 md:text-base">
             Quero investir <span className="ml-1">{">"}</span>
           </button>
         </div>

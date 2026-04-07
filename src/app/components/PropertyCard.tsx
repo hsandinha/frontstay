@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 interface Property {
     id: number;
@@ -19,17 +20,24 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     const hasRate = property.preco > 0;
+    const imageSrc = property.imagem.startsWith('http')
+        ? property.imagem
+        : property.imagem.startsWith('/')
+            ? property.imagem
+            : `/${property.imagem}`;
 
     return (
-        <div className="bg-white overflow-hidden shadow-lg hover:shadow-xl transition-all cursor-pointer group rounded-tl-xl rounded-tr-xl rounded-br-5xl rounded-bl-xl">
+        <div className="group cursor-pointer overflow-hidden rounded-bl-xl rounded-br-5xl rounded-tl-xl rounded-tr-xl bg-white shadow-lg transition-all hover:shadow-xl">
             <div className="relative h-56 overflow-hidden rounded-tl-xl rounded-tr-xl">
-                <img
-                    src={property.imagem}
+                <Image
+                    src={imageSrc}
                     alt={property.nome}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
                 />
 
-                <div className="absolute top-3 left-3">
+                <div className="absolute left-3 top-3">
                     {property.origem === 'cloudbeds' && (
                         <span className="rounded-full bg-emerald-600/95 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
                             Cloudbeds
@@ -37,29 +45,29 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                     )}
                 </div>
 
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm">
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur-sm transition-colors hover:bg-white">
+                    <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                 </button>
             </div>
 
             <div className="p-4">
-                <h3 className="font-questa-bold text-lg text-gray-900 mb-2 leading-tight">
+                <h3 className="mb-2 text-lg leading-tight text-gray-900 font-questa-bold">
                     {property.nome}
                 </h3>
 
-                <div className="flex items-start gap-1 mb-2">
-                    <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="mb-2 flex items-start gap-1">
+                    <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm leading-relaxed text-gray-600">
                         {property.endereco}
                     </p>
                 </div>
 
                 {property.descricao && (
-                    <p className="mb-3 text-xs text-gray-500 line-clamp-2">
+                    <p className="mb-3 line-clamp-2 text-xs text-gray-500">
                         {property.descricao}
                     </p>
                 )}
@@ -69,7 +77,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                         <>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-xs text-gray-500 font-questa-regular">a partir de</span>
-                                <span className="text-xl font-questa-black text-gray-900">
+                                <span className="text-xl text-gray-900 font-questa-black">
                                     R$ {property.preco.toLocaleString('pt-BR')}
                                 </span>
                                 <span className="text-sm text-gray-600 font-questa-regular">diária</span>

@@ -59,43 +59,39 @@ const INITIAL_BUILDINGS: Building[] = [
     }
 ];
 
+const getDailyCleaningTasks = (): CleaningTask[] => {
+    return [
+        {
+            id: '1',
+            roomNumber: '101',
+            buildingName: 'FrontStay Esopo',
+            checkoutTime: '11:00',
+            status: 'pendente',
+            priority: 'alta',
+            nextCheckIn: '14:00'
+        },
+        {
+            id: '2',
+            roomNumber: '302',
+            buildingName: 'FrontStay City Design',
+            checkoutTime: '10:30',
+            status: 'pendente',
+            priority: 'normal'
+        },
+        {
+            id: '3',
+            roomNumber: '201',
+            buildingName: 'FrontStay Esopo',
+            checkoutTime: '09:00',
+            status: 'concluido',
+            priority: 'normal'
+        }
+    ];
+};
+
 // --- Componente RelatorioLimpeza ---
 const RelatorioLimpeza = () => {
-    const [tasks, setTasks] = useState<CleaningTask[]>([]);
-
-    useEffect(() => {
-        // Simular busca de tarefas
-        const getDailyCleaningTasks = (): CleaningTask[] => {
-            return [
-                {
-                    id: '1',
-                    roomNumber: '101',
-                    buildingName: 'FrontStay Esopo',
-                    checkoutTime: '11:00',
-                    status: 'pendente',
-                    priority: 'alta',
-                    nextCheckIn: '14:00'
-                },
-                {
-                    id: '2',
-                    roomNumber: '302',
-                    buildingName: 'FrontStay City Design',
-                    checkoutTime: '10:30',
-                    status: 'pendente',
-                    priority: 'normal'
-                },
-                {
-                    id: '3',
-                    roomNumber: '201',
-                    buildingName: 'FrontStay Esopo',
-                    checkoutTime: '09:00',
-                    status: 'concluido',
-                    priority: 'normal'
-                }
-            ];
-        };
-        setTasks(getDailyCleaningTasks());
-    }, []);
+    const [tasks, setTasks] = useState<CleaningTask[]>(() => getDailyCleaningTasks());
 
     const handleCompleteTask = (taskId: string) => {
         setTasks(currentTasks =>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
 import { formatCurrency, getFeaturedBookingCoupons, type AppliedBookingCoupon } from '../../lib/booking-coupons';
 
@@ -128,6 +129,15 @@ function shiftMonthDate(value: string, amount: number) {
     return toInputDate(new Date(base.getFullYear(), base.getMonth() + amount, 1, 12));
 }
 
+function normalizeImageSrc(value: string) {
+    if (!value) return '/logo.png';
+    if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/')) {
+        return value;
+    }
+
+    return `/${value}`;
+}
+
 const defaultDates = getDefaultDates();
 
 const SearchComponent = ({
@@ -180,6 +190,7 @@ const SearchComponent = ({
 
     const previewDays = calendarDays.length > 0 ? calendarDays : buildNeutralCalendar(dataInicio, dataFim);
     const primaryProperty = availableProperties[0];
+    const primaryPropertyImage = primaryProperty ? normalizeImageSrc(primaryProperty.imagem) : '/logo.png';
     const featuredCoupons = useMemo(() => getFeaturedBookingCoupons(hotelId), [hotelId]);
     const summaryBaseTotalText = totalStayAmount > 0 ? formatCurrency(totalStayAmount) : totalStayText;
     const summaryFinalTotalText = appliedCoupon ? appliedCoupon.formattedFinalAmount : summaryBaseTotalText;
@@ -658,11 +669,13 @@ const SearchComponent = ({
                                     </>
                                 ) : primaryProperty ? (
                                     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                                        <div className="h-52 overflow-hidden bg-slate-100">
-                                            <img
-                                                src={primaryProperty.imagem}
+                                        <div className="relative h-52 overflow-hidden bg-slate-100">
+                                            <Image
+                                                src={primaryPropertyImage}
                                                 alt={primaryProperty.nome}
-                                                className="h-full w-full object-cover"
+                                                fill
+                                                sizes="(min-width: 1024px) 40vw, 100vw"
+                                                className="object-cover"
                                             />
                                         </div>
                                         <div className="p-4">

@@ -1,61 +1,53 @@
 import React from 'react';
+import Image from 'next/image';
+
+const launches = [
+  {
+    title: 'Esopo',
+    location: 'Vale do Sereno | Nova Lima',
+    image: '/esopo.png',
+  },
+  {
+    title: 'City Design',
+    location: 'Santo Agostinho | Belo Horizonte',
+    image: '/citydesign.png',
+  },
+  {
+    title: 'Ágora Mall Residence',
+    location: 'Nova Suíça | Belo Horizonte',
+    image: '/agoramall.jpg',
+  },
+];
 
 const UpcomingLaunches = () => {
   return (
-    <section className="py-20 bg-white px-4">
-      <div className="text-center max-w-3xl mx-auto">
-        {/* Título */}
-        <h2 className="text-3xl text-black font-bold mb-4">
+    <section className="bg-white px-4 py-20">
+      <div className="mx-auto max-w-3xl text-center">
+        <h2 className="mb-4 text-3xl font-bold text-black">
           Próximos <span className="text-emerald-600">lançamentos</span>
         </h2>
-        {/* Subtítulo */}
-        <p className="text-gray-600 mb-12 text-sm md:text-base">
+        <p className="mb-12 text-sm text-gray-600 md:text-base">
           Conheça os empreendimentos que receberão a gestão Front Stay e estão disponíveis para investimento.
         </p>
       </div>
 
-      {/* Grid de cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-
-        {/* Card 1 */}
-        <div className="text-justify">
-          <img
-            src="/esopo.png"
-            alt="Esopo"
-            className="w-full h-72 object-cover shadow 
-                 rounded-tl-xl rounded-tr-xl rounded-br-5xl rounded-bl-xl"
-          />
-          <h3 className="mt-4 text-lg font-semibold text-gray-800 font-questa">Esopo</h3>
-          <p className="text-gray-600 text-sm font-questa">Vale do Sereno | Nova Lima</p>
-          <a href="#" className="text-gray-500 text-xs mt-1 inline-block hover:underline font-questa">[Ver mais]</a>
-        </div>
-
-        {/* Card 2 */}
-        <div className="text-justify">
-          <img
-            src="citydesign.png"
-            alt="City Design"
-            className="w-full h-72 object-cover shadow 
-                 rounded-tl-xl rounded-tr-xl rounded-br-5xl rounded-bl-xl"
-          />
-          <h3 className="mt-4 text-lg font-semibold text-gray-800 font-questa">City Design</h3>
-          <p className="text-gray-600 text-sm font-questa">Santo Agostinho | Belo Horizonte</p>
-          <a href="#" className="text-gray-500 text-xs mt-1 inline-block hover:underline font-questa">[Ver mais]</a>
-        </div>
-
-        {/* Card 3 */}
-        <div className="text-justify">
-          <img
-            src="/agoramall.jpg"
-            alt="Ágora Mall Residence"
-            className="w-full h-72 object-cover shadow 
-                 rounded-tl-xl rounded-tr-xl rounded-br-5xl rounded-bl-xl"
-          />
-          <h3 className="mt-4 text-lg font-semibold text-gray-800 font-questa">Ágora Mall Residence</h3>
-          <p className="text-gray-600 text-sm font-questa">Nova Suíça | Belo Horizonte</p>
-          <a href="#" className="text-gray-500 text-xs mt-1 inline-block hover:underline font-questa">[Ver mais]</a>
-        </div>
-
+      <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 lg:grid-cols-3">
+        {launches.map((launch) => (
+          <div key={launch.title} className="text-justify">
+            <div className="relative h-72 overflow-hidden rounded-bl-xl rounded-br-5xl rounded-tl-xl rounded-tr-xl shadow">
+              <Image
+                src={launch.image}
+                alt={launch.title}
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-gray-800 font-questa">{launch.title}</h3>
+            <p className="text-sm text-gray-600 font-questa">{launch.location}</p>
+            <a href="#" className="mt-1 inline-block text-xs text-gray-500 hover:underline font-questa">[Ver mais]</a>
+          </div>
+        ))}
       </div>
     </section>
   );

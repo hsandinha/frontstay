@@ -944,7 +944,7 @@ export default function HospedeDashboard() {
                             <ul className="space-y-2 text-sm text-gray-700 font-questa-regular">
                                 <li className="flex items-start gap-2">
                                     <span className="text-blue-600 mt-0.5">•</span>
-                                    <span>Para acessar o imóvel e áreas comuns do edifício, utilize a aba "Conectividade"</span>
+                                    <span>Para acessar o imóvel e áreas comuns do edifício, utilize a aba &quot;Conectividade&quot;</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-blue-600 mt-0.5">•</span>
