@@ -306,17 +306,42 @@ async function cloudbedsGet(path: string, params: Record<string, string>) {
     return response.json();
 }
 
+function appendFormValue(params: URLSearchParams, key: string, value: unknown) {
+    if (value === null || value === undefined || value === '') {
+        return;
+    }
+
+    if (Array.isArray(value)) {
+        value.forEach((item, index) => appendFormValue(params, `${key}[${index}]`, item));
+        return;
+    }
+
+    if (typeof value === 'object') {
+        Object.entries(value as Record<string, unknown>).forEach(([nestedKey, nestedValue]) => {
+            appendFormValue(params, `${key}[${nestedKey}]`, nestedValue);
+        });
+        return;
+    }
+
+    params.append(key, String(value));
+}
+
 async function cloudbedsPost(path: string, data: Record<string, unknown>) {
     const apiKey = getCloudbedsApiKey();
+    const formData = new URLSearchParams();
+
+    Object.entries(data).forEach(([key, value]) => {
+        appendFormValue(formData, key, value);
+    });
 
     const response = await fetch(`${CLOUDBEDS_API_BASE}${path}`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
         },
-        body: JSON.stringify(data),
+        body: formData.toString(),
         cache: 'no-store',
     });
 

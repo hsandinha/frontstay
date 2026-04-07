@@ -34,6 +34,11 @@ export type AvailableProperty = {
     disponiveis?: number;
     origem?: 'cloudbeds' | 'catalogo';
     descricao?: string;
+    propertyId?: string | null;
+    roomTypeId?: string | null;
+    ratePlanId?: string | null;
+    maxGuests?: number | null;
+    amenities?: string[];
 };
 
 interface SearchComponentProps {
@@ -184,6 +189,11 @@ const SearchComponent = ({
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [appliedCoupon, setAppliedCoupon] = useState<AppliedBookingCoupon | null>(null);
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+    const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(null);
+    const [isSubmittingReservation, setIsSubmittingReservation] = useState(false);
+    const [reservationFeedback, setReservationFeedback] = useState('');
+    const [reservationFeedbackTone, setReservationFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
+    const [reservationResult, setReservationResult] = useState<{ reservationId?: string | number | null; message?: string } | null>(null);
 
     const selectedHotel = useMemo(
         () => hotelOptions.find((hotel) => hotel.value === hotelId) ?? hotelOptions[0],
@@ -191,7 +201,13 @@ const SearchComponent = ({
     );
 
     const previewDays = calendarDays.length > 0 ? calendarDays : buildNeutralCalendar(dataInicio, dataFim);
-    const primaryProperty = availableProperties[0];
+    const primaryProperty = useMemo(() => {
+        if (availableProperties.length === 0) {
+            return undefined;
+        }
+
+        return availableProperties.find((property) => property.id === selectedPropertyId) ?? availableProperties[0];
+    }, [availableProperties, selectedPropertyId]);
     const propertyGallery = useMemo(() => {
         if (!primaryProperty) {
             return ['/logo.png'];
@@ -214,8 +230,35 @@ const SearchComponent = ({
     );
 
     useEffect(() => {
+        if (availableProperties.length === 0) {
+            setSelectedPropertyId(null);
+            return;
+        }
+
+        setSelectedPropertyId((current) => {
+            if (current !== null && availableProperties.some((property) => property.id === current)) {
+                return current;
+            }
+
+            return availableProperties[0].id;
+        });
+    }, [availableProperties]);
+
+    useEffect(() => {
         setSelectedPhotoIndex(0);
     }, [primaryProperty?.id]);
+
+    const handleSelectPreviousPhoto = () => {
+        setSelectedPhotoIndex((current) =>
+            current === 0 ? propertyGallery.length - 1 : current - 1
+        );
+    };
+
+    const handleSelectNextPhoto = () => {
+        setSelectedPhotoIndex((current) =>
+            current === propertyGallery.length - 1 ? 0 : current + 1
+        );
+    };
 
     const modalCalendarDays = useMemo(() => {
         const monthStart = parseDate(displayedMonth);
@@ -245,6 +288,12 @@ const SearchComponent = ({
             };
         });
     }, [calendarDataMap, dataFim, dataInicio, displayedMonth]);
+
+    const resetReservationState = () => {
+        setReservationFeedback('');
+        setReservationFeedbackTone('neutral');
+        setReservationResult(null);
+    };
 
     const resetCouponState = (clearInput = false) => {
         setAppliedCoupon(null);
@@ -355,10 +404,12 @@ const SearchComponent = ({
 
     const handleGuestFormChange = (field: keyof typeof guestForm, value: string) => {
         setGuestForm((current) => ({ ...current, [field]: value }));
+        resetReservationState();
     };
 
     const handleCardFormChange = (field: keyof typeof cardForm, value: string) => {
         setCardForm((current) => ({ ...current, [field]: value }));
+        resetReservationState();
     };
 
     const isGuestStepReady = Boolean(
@@ -439,12 +490,79 @@ const SearchComponent = ({
         setCouponFeedbackTone('neutral');
     };
 
-    const handleProceedToInter = () => {
-        if (!isPaymentReady) {
+    const handleProceedToInter = async () => {
+        if (!isPaymentReady || !primaryProperty) {
             return;
         }
 
-        // Próxima etapa: integrar com a API real do Banco Inter usando summaryFinalTotalText e appliedCoupon?.code.
+        if (!primaryProperty.propertyId || !primaryProperty.roomTypeId) {
+            setReservationFeedback('Não foi possível identificar a unidade no Cloudbeds para concluir a reserva.');
+            setReservationFeedbackTone('error');
+            return;
+        }
+
+        setIsSubmittingReservation(true);
+        setReservationFeedback('Enviando a reserva para o Cloudbeds...');
+        setReservationFeedbackTone('neutral');
+        setReservationResult(null);
+
+        try {
+            const response = await fetch('/api/cloudbeds/reservations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    propertyId: primaryProperty.propertyId,
+                    roomTypeId: primaryProperty.roomTypeId,
+                    ratePlanId: primaryProperty.ratePlanId,
+                    startDate: dataInicio,
+                    endDate: dataFim,
+                    firstName: guestForm.firstName.trim(),
+                    lastName: guestForm.lastName.trim(),
+                    email: guestForm.email.trim(),
+                    phone: guestForm.phone.trim(),
+                    document: guestForm.document.trim(),
+                    adults: hospedes,
+                    paymentMethod,
+                    promoCode: appliedCoupon?.code,
+                    totalAmount: appliedCoupon?.finalAmount ?? totalStayAmount,
+                    roomName: primaryProperty.nome,
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok || !payload?.success) {
+                throw new Error(payload?.error || 'Não foi possível concluir a reserva no Cloudbeds.');
+            }
+
+            const reservationId = payload?.reservationId ?? payload?.data?.reservationID ?? payload?.data?.reservationId ?? null;
+
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
+                    email: guestForm.email.trim(),
+                    name: `${guestForm.firstName.trim()} ${guestForm.lastName.trim()}`.trim(),
+                }));
+            }
+
+            const successMessage = payload?.message
+                || (reservationId
+                    ? `Reserva criada no Cloudbeds com o código ${reservationId}. Você já pode acompanhar tudo no painel do hóspede.`
+                    : 'Reserva enviada ao Cloudbeds com sucesso.');
+
+            setReservationFeedback(successMessage);
+            setReservationFeedbackTone('success');
+            setReservationResult({
+                reservationId,
+                message: payload?.message,
+            });
+        } catch (error: any) {
+            setReservationFeedback(error?.message || 'Não foi possível concluir a reserva no Cloudbeds.');
+            setReservationFeedbackTone('error');
+        } finally {
+            setIsSubmittingReservation(false);
+        }
     };
 
     const getDayClasses = (day: CalendarAvailabilityDay) => {
@@ -686,24 +804,55 @@ const SearchComponent = ({
                                     </>
                                 ) : primaryProperty ? (
                                     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                                        <div className="relative h-52 overflow-hidden bg-slate-100">
+                                        <div className="relative h-64 overflow-hidden bg-slate-100 md:h-72">
                                             <Image
                                                 src={primaryPropertyImage}
                                                 alt={primaryProperty.nome}
                                                 fill
                                                 sizes="(min-width: 1024px) 40vw, 100vw"
-                                                className="object-cover"
+                                                className="object-cover transition duration-300"
                                             />
+
+                                            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+                                                <div className="rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                                                    {selectedPhotoIndex + 1}/{propertyGallery.length}
+                                                </div>
+                                                {primaryProperty.origem === 'cloudbeds' ? (
+                                                    <span className="rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-semibold text-white shadow-sm">Cloudbeds</span>
+                                                ) : null}
+                                            </div>
+
+                                            {propertyGallery.length > 1 ? (
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSelectPreviousPhoto}
+                                                        className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow transition hover:bg-white"
+                                                        aria-label="Foto anterior"
+                                                    >
+                                                        ←
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSelectNextPhoto}
+                                                        className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow transition hover:bg-white"
+                                                        aria-label="Próxima foto"
+                                                    >
+                                                        →
+                                                    </button>
+                                                </>
+                                            ) : null}
                                         </div>
+
                                         <div className="p-4">
                                             {propertyGallery.length > 1 ? (
-                                                <div className="mb-4 grid grid-cols-4 gap-2">
-                                                    {propertyGallery.slice(0, 4).map((photo, index) => (
+                                                <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+                                                    {propertyGallery.map((photo, index) => (
                                                         <button
                                                             key={`${photo}-${index}`}
                                                             type="button"
                                                             onClick={() => setSelectedPhotoIndex(index)}
-                                                            className={`relative h-16 overflow-hidden rounded-lg border ${selectedPhotoIndex === index ? 'border-emerald-500 ring-2 ring-emerald-200' : 'border-slate-200'}`}
+                                                            className={`relative h-16 min-w-[72px] overflow-hidden rounded-lg border transition ${selectedPhotoIndex === index ? 'border-emerald-500 ring-2 ring-emerald-200' : 'border-slate-200 hover:border-slate-300'}`}
                                                         >
                                                             <Image
                                                                 src={photo}
@@ -717,16 +866,34 @@ const SearchComponent = ({
                                                 </div>
                                             ) : null}
 
-                                            <div className="flex items-center justify-between gap-2">
-                                                <h4 className="text-lg font-semibold text-slate-950">{primaryProperty.nome}</h4>
-                                                {primaryProperty.origem === 'cloudbeds' ? (
-                                                    <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white">Cloudbeds</span>
-                                                ) : null}
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div>
+                                                    <h4 className="text-lg font-semibold text-slate-950">{primaryProperty.nome}</h4>
+                                                    <p className="mt-1 text-sm text-slate-600">{primaryProperty.endereco}</p>
+                                                </div>
                                             </div>
-                                            <p className="mt-1 text-sm text-slate-600">{primaryProperty.endereco}</p>
                                             {primaryProperty.descricao ? (
-                                                <p className="mt-2 text-xs text-slate-500">{primaryProperty.descricao}</p>
+                                                <p className="mt-3 text-xs leading-relaxed text-slate-500">{primaryProperty.descricao}</p>
                                             ) : null}
+
+                                            {primaryProperty.maxGuests || (primaryProperty.amenities && primaryProperty.amenities.length > 0) ? (
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {primaryProperty.maxGuests ? (
+                                                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700">
+                                                            Até {primaryProperty.maxGuests} hóspede(s)
+                                                        </span>
+                                                    ) : null}
+                                                    {(primaryProperty.amenities || []).slice(0, 4).map((amenity) => (
+                                                        <span
+                                                            key={amenity}
+                                                            className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700"
+                                                        >
+                                                            {amenity}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            ) : null}
+
                                             <div className="mt-4 grid grid-cols-2 gap-3 rounded-lg bg-slate-50 p-3 text-sm">
                                                 <div>
                                                     <div className="text-xs text-slate-500">Diária</div>
@@ -801,6 +968,38 @@ const SearchComponent = ({
                                             <div className="text-xs uppercase tracking-wide text-slate-500">Etapa 1 de 3</div>
                                             <div className="text-base font-semibold text-slate-950">Revise sua hospedagem</div>
                                         </div>
+
+                                        {availableProperties.length > 1 ? (
+                                            <div className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
+                                                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Escolha sua unidade</div>
+                                                <div className="space-y-2">
+                                                    {availableProperties.map((property) => {
+                                                        const isSelected = property.id === primaryProperty?.id;
+
+                                                        return (
+                                                            <button
+                                                                key={property.id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setSelectedPropertyId(property.id);
+                                                                    resetReservationState();
+                                                                }}
+                                                                className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left transition ${isSelected ? 'border-emerald-400 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'}`}
+                                                            >
+                                                                <div>
+                                                                    <div className="font-semibold">{property.nome}</div>
+                                                                    <div className="text-xs text-slate-500">{property.maxGuests ? `Até ${property.maxGuests} hóspede(s)` : property.endereco}</div>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <div className="font-semibold">R$ {property.preco.toLocaleString('pt-BR')}</div>
+                                                                    <div className="text-xs text-slate-500">{typeof property.disponiveis === 'number' ? `${property.disponiveis} unidade(s)` : 'Disponível'}</div>
+                                                                </div>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ) : null}
 
                                         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
                                             <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Resumo da hospedagem</div>
@@ -1026,21 +1225,30 @@ const SearchComponent = ({
                                         <div className="grid grid-cols-3 gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => setPaymentMethod('pix')}
+                                                onClick={() => {
+                                                    setPaymentMethod('pix');
+                                                    resetReservationState();
+                                                }}
                                                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${paymentMethod === 'pix' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}
                                             >
                                                 PIX
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => setPaymentMethod('credit')}
+                                                onClick={() => {
+                                                    setPaymentMethod('credit');
+                                                    resetReservationState();
+                                                }}
                                                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${paymentMethod === 'credit' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}
                                             >
                                                 Crédito
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => setPaymentMethod('debit')}
+                                                onClick={() => {
+                                                    setPaymentMethod('debit');
+                                                    resetReservationState();
+                                                }}
                                                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${paymentMethod === 'debit' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}
                                             >
                                                 Débito
@@ -1117,6 +1325,17 @@ const SearchComponent = ({
                                             </div>
                                         </div>
 
+                                        {reservationFeedback ? (
+                                            <div className={`rounded-xl border px-3 py-3 text-sm ${reservationFeedbackTone === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : reservationFeedbackTone === 'error' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-sky-200 bg-sky-50 text-sky-700'}`}>
+                                                <div>{reservationFeedback}</div>
+                                                {reservationResult?.reservationId ? (
+                                                    <div className="mt-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                                                        Código Cloudbeds: {reservationResult.reservationId}
+                                                    </div>
+                                                ) : null}
+                                            </div>
+                                        ) : null}
+
                                         <div className="grid grid-cols-2 gap-2">
                                             <button
                                                 type="button"
@@ -1128,10 +1347,16 @@ const SearchComponent = ({
                                             <button
                                                 type="button"
                                                 onClick={handleProceedToInter}
-                                                disabled={!isPaymentReady}
+                                                disabled={!isPaymentReady || isSubmittingReservation}
                                                 className="rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
-                                                {paymentMethod === 'pix' ? 'Gerar PIX' : paymentMethod === 'credit' ? 'Pagar no crédito' : 'Pagar no débito'}
+                                                {isSubmittingReservation
+                                                    ? 'Confirmando...'
+                                                    : paymentMethod === 'pix'
+                                                        ? 'Gerar PIX e reservar'
+                                                        : paymentMethod === 'credit'
+                                                            ? 'Confirmar no crédito'
+                                                            : 'Confirmar no débito'}
                                             </button>
                                         </div>
                                     </>

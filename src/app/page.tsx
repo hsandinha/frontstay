@@ -340,6 +340,9 @@ const HomePage = () => {
 
                 const fallbackImage = FALLBACK_PROPERTIES[index % FALLBACK_PROPERTIES.length]?.imagem || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200';
                 const photoGallery = Array.isArray(item.photoUrls) ? item.photoUrls.filter(Boolean) : [];
+                const amenities = item?.raw?.roomTypeFeatures && typeof item.raw.roomTypeFeatures === 'object'
+                    ? Object.values(item.raw.roomTypeFeatures).filter((feature): feature is string => typeof feature === 'string' && Boolean(feature.trim()))
+                    : [];
 
                 return {
                     id: index + 1,
@@ -353,6 +356,11 @@ const HomePage = () => {
                     disponiveis: metrics.availableRooms,
                     origem: 'cloudbeds',
                     descricao: item.description || undefined,
+                    propertyId: item.propertyID || null,
+                    roomTypeId: item.id || item?.raw?.roomTypeID || null,
+                    ratePlanId: item.ratePlanID || item?.raw?.rateID || null,
+                    maxGuests: typeof item.maxGuests === 'number' ? item.maxGuests : null,
+                    amenities,
                 };
             });
 

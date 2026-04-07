@@ -25,6 +25,8 @@ export default function LoginPage() {
     });
     const [showRegisterPassword, setShowRegisterPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [authFeedback, setAuthFeedback] = useState('');
+    const [authFeedbackTone, setAuthFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
 
     const roles = [
         { value: 'hospede' as UserRole, label: 'Hóspede' },
@@ -36,27 +38,124 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setAuthFeedback('');
+        setAuthFeedbackTone('neutral');
 
-        setTimeout(() => {
-            router.push(`/dashboard/${selectedRole}`);
-        }, 1500);
+        if (selectedRole !== 'hospede') {
+            setTimeout(() => {
+                router.push(`/dashboard/${selectedRole}`);
+            }, 800);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/guest-portal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'login',
+                    email,
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok || !payload?.success) {
+                throw new Error(payload?.error || 'Não foi possível acessar o painel do hóspede.');
+            }
+
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
+                    email,
+                    name: payload?.guest?.name || '',
+                }));
+            }
+
+            setAuthFeedback('Acesso liberado. Carregando seu painel...');
+            setAuthFeedbackTone('success');
+
+            setTimeout(() => {
+                router.push(`/dashboard/hospede?email=${encodeURIComponent(email)}`);
+            }, 700);
+        } catch (error: any) {
+            setIsLoading(false);
+            setAuthFeedback(error?.message || 'Não foi possível acessar o painel do hóspede.');
+            setAuthFeedbackTone('error');
+        }
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (registerData.password !== registerData.confirmPassword) {
-            alert('As senhas não coincidem!');
+            setAuthFeedback('As senhas não coincidem.');
+            setAuthFeedbackTone('error');
             return;
         }
 
         setIsLoading(true);
-        // Simulação de cadastro
-        setTimeout(() => {
-            setIsLoading(false);
+        setAuthFeedback('');
+        setAuthFeedbackTone('neutral');
+
+        try {
+            if (registerData.role === 'hospede') {
+                const fullName = registerData.name.trim();
+                const [firstName = '', ...rest] = fullName.split(/\s+/);
+                const lastName = rest.join(' ');
+
+                const response = await fetch('/api/guest-portal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'register',
+                        name: fullName,
+                        firstName,
+                        lastName,
+                        email: registerData.email,
+                        phone: registerData.phone,
+                    }),
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok || !payload?.success) {
+                    throw new Error(payload?.error || 'Não foi possível concluir o cadastro.');
+                }
+
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
+                        email: registerData.email,
+                        name: payload?.guest?.name || fullName,
+                    }));
+                }
+
+                setEmail(registerData.email);
+                setSelectedRole('hospede');
+                setPassword('');
+                setShowRegisterModal(false);
+                setAuthFeedback('Cadastro compartilhado criado com sucesso. Redirecionando para o seu painel...');
+                setAuthFeedbackTone('success');
+                setIsLoading(false);
+
+                setTimeout(() => {
+                    router.push(`/dashboard/hospede?email=${encodeURIComponent(registerData.email)}`);
+                }, 900);
+                return;
+            }
+
             setShowRegisterModal(false);
-            alert('Cadastro realizado com sucesso!');
-        }, 1500);
+            setAuthFeedback('Cadastro realizado com sucesso!');
+            setAuthFeedbackTone('success');
+        } catch (error: any) {
+            setAuthFeedback(error?.message || 'Não foi possível concluir o cadastro.');
+            setAuthFeedbackTone('error');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -181,6 +280,12 @@ export default function LoginPage() {
                                 'ENTRAR'
                             )}
                         </button>
+
+                        {authFeedback ? (
+                            <div className={`rounded-lg border px-3 py-2 text-sm ${authFeedbackTone === 'success' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100' : authFeedbackTone === 'error' ? 'border-rose-500/40 bg-rose-500/10 text-rose-100' : 'border-slate-500/40 bg-slate-500/10 text-slate-100'}`}>
+                                {authFeedback}
+                            </div>
+                        ) : null}
                     </form>
 
                     <div className="mt-8 text-center">
