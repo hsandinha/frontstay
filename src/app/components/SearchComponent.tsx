@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { formatCurrency, getFeaturedBookingCoupons, type AppliedBookingCoupon } from '../../lib/booking-coupons';
 
 type AvailabilityStatus = 'available' | 'unavailable' | 'neutral';
@@ -30,6 +30,7 @@ export type AvailableProperty = {
     endereco: string;
     preco: number;
     imagem: string;
+    fotos?: string[];
     disponiveis?: number;
     origem?: 'cloudbeds' | 'catalogo';
     descricao?: string;
@@ -182,6 +183,7 @@ const SearchComponent = ({
     const [couponFeedbackTone, setCouponFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [appliedCoupon, setAppliedCoupon] = useState<AppliedBookingCoupon | null>(null);
+    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
     const selectedHotel = useMemo(
         () => hotelOptions.find((hotel) => hotel.value === hotelId) ?? hotelOptions[0],
@@ -190,7 +192,18 @@ const SearchComponent = ({
 
     const previewDays = calendarDays.length > 0 ? calendarDays : buildNeutralCalendar(dataInicio, dataFim);
     const primaryProperty = availableProperties[0];
-    const primaryPropertyImage = primaryProperty ? normalizeImageSrc(primaryProperty.imagem) : '/logo.png';
+    const propertyGallery = useMemo(() => {
+        if (!primaryProperty) {
+            return ['/logo.png'];
+        }
+
+        const sources = [primaryProperty.imagem, ...(primaryProperty.fotos || [])]
+            .filter((value): value is string => typeof value === 'string' && Boolean(value.trim()))
+            .map((value) => normalizeImageSrc(value));
+
+        return Array.from(new Set(sources));
+    }, [primaryProperty]);
+    const primaryPropertyImage = propertyGallery[selectedPhotoIndex] || propertyGallery[0] || '/logo.png';
     const featuredCoupons = useMemo(() => getFeaturedBookingCoupons(hotelId), [hotelId]);
     const summaryBaseTotalText = totalStayAmount > 0 ? formatCurrency(totalStayAmount) : totalStayText;
     const summaryFinalTotalText = appliedCoupon ? appliedCoupon.formattedFinalAmount : summaryBaseTotalText;
@@ -199,6 +212,10 @@ const SearchComponent = ({
         () => new Map(previewDays.map((day) => [day.date, day])),
         [previewDays]
     );
+
+    useEffect(() => {
+        setSelectedPhotoIndex(0);
+    }, [primaryProperty?.id]);
 
     const modalCalendarDays = useMemo(() => {
         const monthStart = parseDate(displayedMonth);
@@ -679,6 +696,27 @@ const SearchComponent = ({
                                             />
                                         </div>
                                         <div className="p-4">
+                                            {propertyGallery.length > 1 ? (
+                                                <div className="mb-4 grid grid-cols-4 gap-2">
+                                                    {propertyGallery.slice(0, 4).map((photo, index) => (
+                                                        <button
+                                                            key={`${photo}-${index}`}
+                                                            type="button"
+                                                            onClick={() => setSelectedPhotoIndex(index)}
+                                                            className={`relative h-16 overflow-hidden rounded-lg border ${selectedPhotoIndex === index ? 'border-emerald-500 ring-2 ring-emerald-200' : 'border-slate-200'}`}
+                                                        >
+                                                            <Image
+                                                                src={photo}
+                                                                alt={`${primaryProperty.nome} foto ${index + 1}`}
+                                                                fill
+                                                                sizes="80px"
+                                                                className="object-cover"
+                                                            />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            ) : null}
+
                                             <div className="flex items-center justify-between gap-2">
                                                 <h4 className="text-lg font-semibold text-slate-950">{primaryProperty.nome}</h4>
                                                 {primaryProperty.origem === 'cloudbeds' ? (

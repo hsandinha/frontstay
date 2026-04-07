@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.frontstay.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**.cloudbeds.com',
+      },
     ],
     formats: ["image/webp", "image/avif"],
     qualities: [75, 90, 100],

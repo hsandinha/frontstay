@@ -29,6 +29,8 @@ export interface CloudbedsAvailabilityItem {
     ratePlanID: string | null;
     isDerived: boolean;
     dailyRates: CloudbedsAvailabilityDailyRate[];
+    photoUrls: string[];
+    mainPhotoUrl: string | null;
     raw: CloudbedsRawRoomType;
 }
 
@@ -132,6 +134,74 @@ function pickRate(roomType: CloudbedsRawRoomType): number | null {
     return null;
 }
 
+function normalizePhotoUrls(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value.flatMap((item) => {
+        if (typeof item === 'string' && item.trim()) {
+            return [item.trim()];
+        }
+
+        if (item && typeof item === 'object') {
+            const url = pickString(item as CloudbedsRawRoomType, [
+                'url',
+                'photo',
+                'photoUrl',
+                'photoURL',
+                'image',
+                'imageUrl',
+                'imageURL',
+                'src',
+            ]);
+
+            return url ? [url] : [];
+        }
+
+        return [];
+    });
+}
+
+async function getRoomTypeCatalog(propertyID?: string): Promise<CloudbedsAvailabilityItem[]> {
+    try {
+        const payload = await cloudbedsGet('/getRoomTypes', {
+            ...(propertyID ? { propertyID } : {}),
+        });
+
+        const rawItems = asObjectArray<CloudbedsRawRoomType>(payload?.data || payload?.roomTypes || payload);
+        return rawItems.map(normalizeRoomType);
+    } catch (error) {
+        console.warn('⚠️ Não foi possível carregar as fotos dos quartos no Cloudbeds:', error);
+        return [];
+    }
+}
+
+function enrichAvailabilityWithRoomTypeData(
+    item: CloudbedsAvailabilityItem,
+    roomTypes: Map<string, CloudbedsAvailabilityItem>
+): CloudbedsAvailabilityItem {
+    const matchedRoomType = roomTypes.get(item.id)
+        || Array.from(roomTypes.values()).find((roomType) => roomType.name === item.name);
+
+    if (!matchedRoomType) {
+        return item;
+    }
+
+    return {
+        ...item,
+        description: item.description || matchedRoomType.description,
+        maxGuests: item.maxGuests ?? matchedRoomType.maxGuests,
+        propertyID: item.propertyID ?? matchedRoomType.propertyID,
+        photoUrls: matchedRoomType.photoUrls,
+        mainPhotoUrl: matchedRoomType.mainPhotoUrl,
+        raw: {
+            ...matchedRoomType.raw,
+            ...item.raw,
+        },
+    };
+}
+
 function normalizeRoomType(roomType: CloudbedsRawRoomType, index: number): CloudbedsAvailabilityItem {
     const id = pickString(roomType, ['roomTypeID', 'roomTypeId', 'roomID', 'roomId', 'id']) || `room-type-${index + 1}`;
     const name = pickString(roomType, ['roomTypeName', 'name', 'roomName', 'roomType']) || `Unidade ${index + 1}`;
@@ -141,6 +211,12 @@ function normalizeRoomType(roomType: CloudbedsRawRoomType, index: number): Cloud
     const currency = pickString(roomType, ['currency', 'currencyCode', 'currency_code']) || 'BRL';
     const maxGuests = pickNumber(roomType, ['maxGuests', 'maxOccupancy', 'adultsIncluded', 'maxPeople']);
     const propertyID = pickString(roomType, ['propertyID', 'propertyId']) || null;
+    const photoUrls = normalizePhotoUrls(
+        roomType.roomTypePhotos
+        || roomType.photos
+        || roomType.images
+        || roomType.gallery
+    );
 
     return {
         id,
@@ -155,6 +231,8 @@ function normalizeRoomType(roomType: CloudbedsRawRoomType, index: number): Cloud
         ratePlanID: null,
         isDerived: false,
         dailyRates: [],
+        photoUrls,
+        mainPhotoUrl: photoUrls[0] || null,
         raw: roomType,
     };
 }
@@ -195,6 +273,8 @@ function normalizeRatePlan(ratePlan: CloudbedsRawRatePlan, index: number): Cloud
         ratePlanID,
         isDerived,
         dailyRates,
+        photoUrls: [],
+        mainPhotoUrl: null,
         raw: ratePlan,
     };
 }
@@ -254,19 +334,25 @@ export async function getRoomAvailability(params: {
     propertyID?: string;
     adults?: number;
 }) {
-    const payload = await cloudbedsGet('/getRatePlans', {
-        startDate: params.startDate,
-        endDate: params.endDate,
-        detailedRates: 'true',
-        adults: String(params.adults || 1),
-        ...(params.propertyID ? { propertyID: params.propertyID } : {}),
-    });
+    const [payload, roomTypeCatalog] = await Promise.all([
+        cloudbedsGet('/getRatePlans', {
+            startDate: params.startDate,
+            endDate: params.endDate,
+            detailedRates: 'true',
+            adults: String(params.adults || 1),
+            ...(params.propertyID ? { propertyID: params.propertyID } : {}),
+        }),
+        getRoomTypeCatalog(params.propertyID),
+    ]);
+
+    const roomTypeMap = new Map(roomTypeCatalog.map((item) => [item.id, item]));
 
     if (payload?.success && Array.isArray(payload?.data)) {
         const ratePlanItems = asObjectArray<CloudbedsRawRatePlan>(payload.data);
 
         return ratePlanItems
             .map(normalizeRatePlan)
+            .map((item) => enrichAvailabilityWithRoomTypeData(item, roomTypeMap))
             .sort((a, b) => {
                 const rateA = a.rate ?? Number.MAX_SAFE_INTEGER;
                 const rateB = b.rate ?? Number.MAX_SAFE_INTEGER;
@@ -274,16 +360,7 @@ export async function getRoomAvailability(params: {
             });
     }
 
-    const fallbackPayload = await cloudbedsGet('/getRoomTypes', {
-        startDate: params.startDate,
-        endDate: params.endDate,
-        ...(params.propertyID ? { propertyID: params.propertyID } : {}),
-    });
-
-    const rawItems = asObjectArray<CloudbedsRawRoomType>(fallbackPayload?.data || fallbackPayload?.roomTypes || fallbackPayload);
-
-    return rawItems
-        .map(normalizeRoomType)
+    return roomTypeCatalog
         .sort((a, b) => {
             const rateA = a.rate ?? Number.MAX_SAFE_INTEGER;
             const rateB = b.rate ?? Number.MAX_SAFE_INTEGER;

@@ -338,6 +338,9 @@ const HomePage = () => {
             const mappedProperties: AvailableProperty[] = availableItems.map((item: any, index: number) => {
                 const metrics = getRangeMetrics(item, filters.startDate, filters.endDate);
 
+                const fallbackImage = FALLBACK_PROPERTIES[index % FALLBACK_PROPERTIES.length]?.imagem || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200';
+                const photoGallery = Array.isArray(item.photoUrls) ? item.photoUrls.filter(Boolean) : [];
+
                 return {
                     id: index + 1,
                     nome: item.name || `Unidade ${index + 1}`,
@@ -345,7 +348,8 @@ const HomePage = () => {
                         ? `${filters.hotelLabel} • Property ${item.propertyID} • disponibilidade via Cloudbeds`
                         : `${filters.hotelLabel} • disponibilidade via Cloudbeds`,
                     preco: Math.round(metrics.lowestDailyRate || 0),
-                    imagem: FALLBACK_PROPERTIES[index % FALLBACK_PROPERTIES.length]?.imagem || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200',
+                    imagem: item.mainPhotoUrl || photoGallery[0] || fallbackImage,
+                    fotos: photoGallery,
                     disponiveis: metrics.availableRooms,
                     origem: 'cloudbeds',
                     descricao: item.description || undefined,
