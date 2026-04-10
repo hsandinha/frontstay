@@ -115,8 +115,8 @@ export async function POST(request: NextRequest) {
             : { stored: false, guestProfileId: null, reservation: null, error: 'Reserva criada sem ID retornado pelo Cloudbeds.' };
 
         const message = reservationId
-            ? `Reserva ${reservationId} criada no Cloudbeds.${sharedDbResult.stored ? ' Seu cadastro e a reserva já estão visíveis no painel do hóspede.' : ''}`
-            : 'Reserva criada no Cloudbeds com sucesso.';
+            ? `Reserva ${reservationId} criada com sucesso.`
+            : 'Reserva criada com sucesso.';
 
         return NextResponse.json({
             success: true,

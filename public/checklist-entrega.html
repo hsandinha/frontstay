@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Padrão de Entrega de Software</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #121933;
+            --panel-soft: #18213f;
+            --line: #2b3866;
+            --text: #ebf0ff;
+            --muted: #9fb0dd;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+            --info: #60a5fa;
+            --chip: #1d2748;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 0 25%),
+                radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 0 20%),
+                linear-gradient(180deg, #0a0f1d 0%, #111831 100%);
+            color: var(--text);
+            line-height: 1.45;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(96, 165, 250, .18), rgba(34, 197, 94, .1));
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, .24);
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            max-width: 900px;
+        }
+
+        .toolbar,
+        .meta-grid,
+        .summary-grid,
+        .sections-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .toolbar {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            margin: 18px 0;
+        }
+
+        button,
+        select,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            border-color: #4c65ad;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+        }
+
+        .btn.warn {
+            background: linear-gradient(135deg, #d97706, #b45309);
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(18, 25, 51, 0.92);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+        }
+
+        .card h2,
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .stat {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 6px 0 2px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .small {
+            font-size: .92rem;
+        }
+
+        .progress {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: #0c1327;
+            overflow: hidden;
+            border: 1px solid #26345f;
+            margin-top: 8px;
+        }
+
+        .progress>span {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #22c55e, #60a5fa);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 6px 10px;
+            background: var(--chip);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: .82rem;
+            margin: 4px 6px 0 0;
+        }
+
+        .sections-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-title span:last-child {
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 9px 0;
+            border-top: 1px solid rgba(159, 176, 221, .12);
+        }
+
+        .item:first-child {
+            border-top: 0;
+        }
+
+        .item input[type="checkbox"] {
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+            accent-color: #22c55e;
+            cursor: pointer;
+        }
+
+        .item label {
+            flex: 1;
+            cursor: pointer;
+            color: #e5ebff;
+        }
+
+        .critical-badge {
+            display: inline-block;
+            margin-top: 6px;
+            color: #fecaca;
+            background: rgba(127, 29, 29, 0.35);
+            border: 1px solid rgba(248, 113, 113, .3);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 600;
+        }
+
+        .meta-grid {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            margin-top: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field label {
+            font-size: .88rem;
+            color: var(--muted);
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: #0f1730;
+            color: var(--text);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .field textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .final-box {
+            margin-top: 18px;
+            border-left: 4px solid var(--info);
+        }
+
+        .routine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .routine-step {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(24, 33, 63, .95), rgba(15, 23, 48, .95));
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .routine-step strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #dbe7ff;
+        }
+
+        .practice-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .practice-filters {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) 180px;
+            gap: 10px;
+            width: min(100%, 460px);
+        }
+
+        .practice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .practice-card {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(18, 25, 51, .98), rgba(12, 19, 39, .98));
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .practice-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .practice-top h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #f8fbff;
+        }
+
+        .practice-area {
+            color: var(--muted);
+            font-size: .8rem;
+            margin-top: 4px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 4px 8px;
+            font-size: .72rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tag-obrigatorio {
+            color: #bbf7d0;
+            background: rgba(20, 83, 45, .45);
+            border-color: rgba(74, 222, 128, .25);
+        }
+
+        .tag-recomendado {
+            color: #bfdbfe;
+            background: rgba(30, 64, 175, .35);
+            border-color: rgba(96, 165, 250, .25);
+        }
+
+        .tag-avancado {
+            color: #fde68a;
+            background: rgba(120, 53, 15, .35);
+            border-color: rgba(245, 158, 11, .25);
+        }
+
+        .practice-card p {
+            margin: 8px 0 0;
+            color: #dbe4ff;
+            font-size: .9rem;
+        }
+
+        .practice-card p span {
+            color: #93c5fd;
+            font-weight: 700;
+        }
+
+        .final-status {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .status-ok {
+            color: #86efac;
+        }
+
+        .status-warn {
+            color: #fcd34d;
+        }
+
+        .status-danger {
+            color: #fca5a5;
+        }
+
+        footer {
+            margin: 24px 0 8px;
+            color: var(--muted);
+            text-align: center;
+            font-size: .9rem;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                color: #111827;
+            }
+
+            .btn {
+                display: none;
+            }
+
+            .card,
+            .hero {
+                box-shadow: none;
+                background: #fff;
+                color: #111827;
+                border-color: #d1d5db;
+            }
+
+            .field input,
+            .field select,
+            .field textarea {
+                color: #111827;
+                background: #fff;
+                border-color: #d1d5db;
+            }
+
+            .muted,
+            footer,
+            .pill {
+                color: #4b5563;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <section class="hero">
+            <h1>📘 Padrão de Entrega de Software</h1>
+            <p>
+                Use este checklist como gate de qualidade antes de qualquer entrega. A regra é simples: <strong>sem
+                    evidência, não há aprovação</strong>.
+                Ele cobre requisitos, testes, segurança, operação, governança e continuidade.
+            </p>
+            <div style="margin-top:12px;">
+                <span class="pill">✅ Funciona</span>
+                <span class="pill">🔒 É seguro</span>
+                <span class="pill">📊 É operável</span>
+                <span class="pill">🧪 Tem evidência</span>
+            </div>
+        </section>
+
+        <div class="toolbar">
+            <button class="btn primary" onclick="markAll()">Marcar tudo</button>
+            <button class="btn" onclick="expandEvidenceTemplate()">Inserir modelo de evidência</button>
+            <button class="btn success" onclick="exportReport()">Exportar relatório</button>
+            <button class="btn warn" onclick="window.print()">Imprimir / PDF</button>
+            <button class="btn" onclick="clearAll()">Limpar dados salvos</button>
+        </div>
+
+        <section class="summary-grid">
+            <div class="card">
+                <h2>Progresso geral</h2>
+                <div class="stat" id="checked-count">0 / 0</div>
+                <div class="muted small">Itens concluídos</div>
+                <div class="progress"><span id="progress-bar"></span></div>
+            </div>
+            <div class="card">
+                <h2>Gates críticos pendentes</h2>
+                <div class="stat" id="critical-pending">0</div>
+                <div class="muted small">Se houver pendência crítica, não liberar produção</div>
+            </div>
+            <div class="card">
+                <h2>Recomendação automática</h2>
+                <div id="auto-status" class="final-status status-warn">Aguardando validação</div>
+                <div class="muted small" id="auto-status-note">Preencha os itens para obter a recomendação.</div>
+            </div>
+            <div class="card">
+                <h2>Critério mínimo de go-live</h2>
+                <div class="muted small">0 erro crítico + testes obrigatórios + rollback + observabilidade + responsável
+                    definido.</div>
+            </div>
+        </section>
+
+        <section class="card" id="release-gates-card"></section>
+        <section class="card" id="required-tests-card"></section>
+        <section class="sections-grid" id="sections"></section>
+        <section class="card" id="delivery-routine-card"></section>
+        <section class="card" id="practice-library-card"></section>
+
+        <section class="card">
+            <h2>📝 Metadados da entrega</h2>
+            <div class="meta-grid">
+                <div class="field">
+                    <label for="systemName">Sistema / projeto</label>
+                    <input id="systemName" placeholder="Ex.: InHouse Check-in" />
+                </div>
+                <div class="field">
+                    <label for="version">Versão / release</label>
+                    <input id="version" placeholder="Ex.: v1.3.0" />
+                </div>
+                <div class="field">
+                    <label for="owner">Responsável pela entrega</label>
+                    <input id="owner" placeholder="Nome do responsável" />
+                </div>
+                <div class="field">
+                    <label for="decision">Decisão final</label>
+                    <select id="decision">
+                        <option value="Aguardando decisão">Aguardando decisão</option>
+                        <option value="Aprovado para produção">Aprovado para produção</option>
+                        <option value="Aprovado com ressalvas">Aprovado com ressalvas</option>
+                        <option value="Não aprovado">Não aprovado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="meta-grid">
+                <div class="field">
+                    <label for="evidence">Evidências dos testes executados</label>
+                    <textarea id="evidence"
+                        placeholder="Cole aqui os comandos executados, resultados, datas e observações."></textarea>
+                </div>
+                <div class="field">
+                    <label for="risks">Riscos conhecidos / ressalvas</label>
+                    <textarea id="risks"
+                        placeholder="Liste riscos abertos, dependências, pontos de atenção e plano de mitigação."></textarea>
+                </div>
+            </div>
+
+            <div class="card final-box">
+                <h3>📌 Regra operacional</h3>
+                <div class="muted small">
+                    Este checklist <strong>não blinda 100%</strong> qualquer sistema, mas reduz muito o risco quando
+                    vira rotina obrigatória.
+                    O que realmente protege a entrega é: <strong>disciplina + evidência + revisão + operação
+                        pós-deploy</strong>.
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Checklist persistido localmente no navegador. Atualize sempre após testes, validações e aprovação final.
+        </footer>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'padrao-entrega-software-v1';
+
+        const releaseGates = [
+            'Não existe erro crítico aberto que impeça a liberação',
+            'Build, typecheck e lint estão passando',
+            'Fluxos críticos foram validados com evidência',
+            'Autenticação e autorização por perfil foram verificadas',
+            'Rollback / reversão estão definidos',
+            'Monitoramento mínimo e alertas essenciais estão ativos',
+            'Mudanças de banco e dados foram validadas com segurança',
+            'Há responsável operacional claramente definido',
+        ];
+
+        const requiredTests = [
+            'Build de produção executado',
+            'Typecheck executado',
+            'Lint executado',
+            'Testes unitários nas regras críticas',
+            'Testes de integração nas integrações relevantes',
+            'Smoke test manual nos fluxos principais',
+            'Cenários de erro e permissão validados',
+            'Validação de segurança básica concluída',
+        ];
+
+        const sections = [
+            {
+                title: '1. Negócio e requisitos',
+                items: [
+                    'O problema que o sistema resolve está claro',
+                    'Usuários e perfis estão definidos',
+                    'Regras de negócio principais estão documentadas',
+                    'Fluxos críticos estão mapeados',
+                    'Casos de exceção e erro foram considerados',
+                    'Critérios de aceite foram definidos',
+                    'Dependências externas foram identificadas',
+                    'Requisitos não funcionais foram combinados',
+                ],
+            },
+            {
+                title: '2. Arquitetura e desenho técnico',
+                items: [
+                    'A arquitetura é compatível com o tamanho e risco do sistema',
+                    'Há separação clara de responsabilidades',
+                    'O acoplamento entre módulos está controlado',
+                    'Integrações externas estão isoladas',
+                    'O desenho evita complexidade desnecessária',
+                    'Decisões técnicas importantes foram registradas',
+                ],
+            },
+            {
+                title: '3. Qualidade de código',
+                items: [
+                    'O código possui nomes claros e consistentes',
+                    'Métodos e módulos têm responsabilidade bem definida',
+                    'Não há duplicação desnecessária',
+                    'Tratamento de erro está explícito',
+                    'Valores mágicos foram removidos',
+                    'Configurações estão fora do código',
+                    'O projeto segue padrões definidos pela equipe',
+                    'O código foi revisado por outra pessoa',
+                ],
+            },
+            {
+                title: '4. Testes',
+                items: [
+                    'Regras de negócio têm testes unitários',
+                    'Integrações importantes têm testes de integração',
+                    'Fluxos críticos têm testes end-to-end quando necessário',
+                    'Casos de borda foram testados',
+                    'Cenários de falha foram testados',
+                    'O pipeline impede merge com testes quebrados',
+                    'A cobertura está adequada nas partes críticas',
+                    'Os testes são confiáveis e não flakey',
+                ],
+            },
+            {
+                title: '5. Banco de dados e persistência',
+                items: [
+                    'O modelo de dados atende às regras de negócio',
+                    'Índices importantes foram criados',
+                    'Consultas críticas foram validadas',
+                    'Migrations são seguras e reversíveis quando possível',
+                    'Integridade dos dados está protegida',
+                    'Transações foram usadas onde necessário',
+                    'Estratégias para concorrência foram consideradas',
+                    'Backup e restauração foram pensados',
+                ],
+            },
+            {
+                title: '6. Segurança',
+                items: [
+                    'Autenticação está correta',
+                    'Autorização está correta por perfil e escopo',
+                    'Entradas são validadas',
+                    'Saídas sensíveis são tratadas corretamente',
+                    'Senhas e segredos não estão no código',
+                    'Dados sensíveis estão protegidos',
+                    'Logs não vazam informações privadas',
+                    'Há proteção contra vulnerabilidades comuns',
+                    'Privilégios seguem o menor privilégio possível',
+                ],
+            },
+            {
+                title: '7. Confiabilidade e resiliência',
+                items: [
+                    'O sistema trata indisponibilidade de dependências externas',
+                    'Timeouts foram configurados',
+                    'Retries foram configurados com critério',
+                    'Operações críticas são idempotentes quando necessário',
+                    'Falhas parciais não derrubam o sistema inteiro',
+                    'Existe fallback quando aplicável',
+                    'Filas e eventos tratam duplicidade',
+                    'O sistema falha de forma controlada',
+                ],
+            },
+            {
+                title: '8. Observabilidade',
+                items: [
+                    'Logs são úteis e legíveis',
+                    'Há logs de erro com contexto suficiente',
+                    'Métricas importantes foram definidas',
+                    'Existe monitoramento de saúde da aplicação',
+                    'Alertas foram configurados para falhas críticas',
+                    'Requests possuem correlação e rastreamento',
+                    'Eventos relevantes de negócio podem ser acompanhados',
+                ],
+            },
+            {
+                title: '9. Performance',
+                items: [
+                    'O tempo de resposta esperado foi definido',
+                    'Pontos críticos foram medidos',
+                    'Gargalos conhecidos foram tratados',
+                    'Consultas lentas foram revisadas',
+                    'Paginação foi aplicada onde necessário',
+                    'Cache foi usado com critério',
+                    'Consumo de memória e CPU está aceitável',
+                ],
+            },
+            {
+                title: '10. API e contratos',
+                items: [
+                    'Contratos de entrada e saída estão claros',
+                    'Versionamento foi considerado',
+                    'Códigos de resposta são consistentes',
+                    'Mensagens de erro são úteis',
+                    'Validações acontecem na borda do sistema',
+                    'Compatibilidade com consumidores foi considerada',
+                    'Documentação da API está atualizada',
+                ],
+            },
+            {
+                title: '11. Front-end e experiência do usuário',
+                items: [
+                    'Fluxos principais estão claros para o usuário',
+                    'Estados de carregamento foram tratados',
+                    'Estados vazios foram tratados',
+                    'Mensagens de erro ajudam o usuário',
+                    'O sistema evita ações duplicadas',
+                    'Há feedback visual após ações importantes',
+                    'Responsividade foi validada',
+                    'Acessibilidade básica foi considerada',
+                ],
+            },
+            {
+                title: '12. Deploy e operação',
+                items: [
+                    'O processo de deploy é reproduzível',
+                    'Existe ambiente de homologação ou staging confiável',
+                    'Variáveis de ambiente estão organizadas',
+                    'CI/CD está configurado',
+                    'Existe rollback ou plano de reversão',
+                    'Mudanças de banco foram planejadas para produção',
+                    'Feature flags foram consideradas quando necessário',
+                    'O sistema sobe com instruções claras',
+                ],
+            },
+            {
+                title: '13. Documentação',
+                items: [
+                    'README explica como rodar o projeto',
+                    'A arquitetura está descrita',
+                    'As principais decisões técnicas estão registradas',
+                    'A documentação das APIs está acessível',
+                    'Procedimentos operacionais estão documentados',
+                    'Onboarding técnico é viável com a documentação atual',
+                ],
+            },
+            {
+                title: '14. Manutenção e evolução',
+                items: [
+                    'O sistema pode evoluir sem grande retrabalho',
+                    'Módulos críticos estão bem isolados',
+                    'Dívidas técnicas conhecidas estão registradas',
+                    'Dependências estão atualizadas',
+                    'Há plano para melhorias futuras',
+                    'O custo de manutenção está sob controle',
+                ],
+            },
+            {
+                title: '15. Governança e ownership',
+                items: [
+                    'Existe owner responsável pelo sistema',
+                    'Papéis de aprovação da entrega estão claros',
+                    'SLA/SLO foram definidos quando necessário',
+                    'Existe rotina de revisão periódica do sistema',
+                    'Há processo claro de escalonamento em incidente',
+                ],
+            },
+            {
+                title: '16. Incidentes e continuidade',
+                items: [
+                    'Existe runbook para falhas comuns',
+                    'RTO/RPO foram considerados',
+                    'Recuperação de desastre foi pensada ou testada',
+                    'Há contingência manual para o negócio continuar',
+                    'Post-mortem e aprendizado são registrados após incidentes',
+                ],
+            },
+            {
+                title: '17. Privacidade e ciclo de vida dos dados',
+                items: [
+                    'Política de retenção de dados está definida',
+                    'Existe processo de descarte e anonimização',
+                    'Solicitações de exclusão do titular podem ser atendidas',
+                    'Consentimentos e auditoria de acesso são rastreáveis',
+                    'Requisitos de LGPD foram avaliados na operação diária',
+                ],
+            },
+            {
+                title: '18. Supply chain e dependências',
+                items: [
+                    'Dependências com falhas conhecidas foram revisadas',
+                    'Licenças das bibliotecas foram avaliadas quando necessário',
+                    'Dependências críticas estão controladas e versionadas',
+                    'Há plano para dependências abandonadas ou de alto risco',
+                ],
+            },
+            {
+                title: '19. Custos e capacidade',
+                items: [
+                    'O custo operacional está aceitável',
+                    'A capacidade para crescimento foi estimada',
+                    'Picos de uso foram considerados no planejamento',
+                    'Gargalos operacionais ou manuais estão mapeados',
+                ],
+            },
+        ];
+
+        const deliveryRoutine = [
+            {
+                title: '1. Descoberta e escopo',
+                description: 'Clarificar problema, usuários, métricas de sucesso, critérios de aceite e riscos antes de começar a construir.'
+            },
+            {
+                title: '2. Desenho técnico e riscos',
+                description: 'Escolher arquitetura, mapear integrações, segurança, dados sensíveis, dependências e estratégia de rollback.'
+            },
+            {
+                title: '3. Implementação com revisão',
+                description: 'Desenvolver em mudanças pequenas, com peer review, padrões de código, validações e tratamento explícito de erro.'
+            },
+            {
+                title: '4. Gates automáticos',
+                description: 'Executar build, lint, typecheck, testes unitários, integração e segurança antes de qualquer liberação.'
+            },
+            {
+                title: '5. Validação de release',
+                description: 'Fazer smoke test, homologação, rollout controlado e verificar observabilidade, dados e permissões.'
+            },
+            {
+                title: '6. Pós-deploy e aprendizado',
+                description: 'Monitorar as primeiras horas, registrar incidentes, executar rollback se preciso e capturar lições aprendidas.'
+            },
+        ];
+
+        const practiceLibrary = [
+            {
+                technique: 'Pull Request + Code Review',
+                level: 'Obrigatório',
+                area: 'Qualidade de código',
+                how: 'Toda mudança entra por PR e passa por revisão de outro engenheiro antes do merge.',
+                use: 'Reduz bugs, melhora padrão de código e espalha conhecimento no time.'
+            },
+            {
+                technique: 'CI/CD',
+                level: 'Obrigatório',
+                area: 'Entrega contínua',
+                how: 'Pipelines automatizam build, testes, validações e deploy com passos reproduzíveis.',
+                use: 'Evita erro manual e acelera entregas com segurança.'
+            },
+            {
+                technique: 'Trunk-Based Development',
+                level: 'Recomendado',
+                area: 'Fluxo de desenvolvimento',
+                how: 'As branches ficam curtas e o time integra mudanças pequenas com muita frequência na principal.',
+                use: 'Diminui conflitos, acelera release e mantém o código sempre integrável.'
+            },
+            {
+                technique: 'Feature Flags',
+                level: 'Recomendado',
+                area: 'Estratégia de release',
+                how: 'A funcionalidade é ativada ou desativada por configuração, sem depender de novo deploy.',
+                use: 'Permite rollout gradual, testes em produção controlados e rollback rápido.'
+            },
+            {
+                technique: 'Blue-Green / Canary Deploy',
+                level: 'Avançado',
+                area: 'Deploy seguro',
+                how: 'A nova versão recebe uma fração do tráfego ou roda em ambiente paralelo antes da troca total.',
+                use: 'Reduz o risco de impactar todos os usuários de uma vez.'
+            },
+            {
+                technique: 'Smoke Test Pós-Deploy',
+                level: 'Obrigatório',
+                area: 'Validação operacional',
+                how: 'Logo após a publicação, um conjunto mínimo de fluxos críticos é executado manual ou automaticamente.',
+                use: 'Detecta release quebrada em minutos, antes do impacto crescer.'
+            },
+            {
+                technique: 'Observability (logs, métricas, traces)',
+                level: 'Obrigatório',
+                area: 'Operação',
+                how: 'A aplicação emite logs estruturados, métricas e rastreamentos para monitorar comportamento e falhas.',
+                use: 'Ajuda a entender rapidamente o que aconteceu e onde está o problema.'
+            },
+            {
+                technique: 'SLO / SLI / Error Budget',
+                level: 'Recomendado',
+                area: 'Confiabilidade',
+                how: 'Define indicadores e metas de disponibilidade, latência e erros para medir a saúde real do serviço.',
+                use: 'Equilibra velocidade de entrega com confiabilidade do sistema.'
+            },
+            {
+                technique: 'Runbook + On-call',
+                level: 'Recomendado',
+                area: 'Incidentes',
+                how: 'Documenta como responder a falhas e deixa claro quem atende quando algo crítico acontece.',
+                use: 'Reduz o tempo de resposta e evita improviso em produção.'
+            },
+            {
+                technique: 'Blameless Postmortem',
+                level: 'Recomendado',
+                area: 'Aprendizado organizacional',
+                how: 'Depois de incidentes, o time registra causa raiz, impacto e ações de melhoria sem foco em culpa pessoal.',
+                use: 'Evita recorrência e fortalece o processo de engenharia.'
+            },
+            {
+                technique: 'Threat Modeling',
+                level: 'Recomendado',
+                area: 'Segurança',
+                how: 'Antes da entrega, o time enumera ativos, possíveis ataques, vetores e mitigações de risco.',
+                use: 'Prioriza segurança antes que a falha aconteça em produção.'
+            },
+            {
+                technique: 'Least Privilege / RBAC',
+                level: 'Obrigatório',
+                area: 'Segurança e acesso',
+                how: 'Cada perfil recebe apenas as permissões mínimas necessárias para executar sua função.',
+                use: 'Limita vazamento, abuso de acesso e impacto de credenciais comprometidas.'
+            },
+            {
+                technique: 'Secrets Management',
+                level: 'Obrigatório',
+                area: 'Segurança operacional',
+                how: 'Senhas, tokens e chaves ficam em vaults ou variáveis seguras, nunca no repositório.',
+                use: 'Protege credenciais e facilita rotação sem expor dados sensíveis.'
+            },
+            {
+                technique: 'SAST / DAST / SCA',
+                level: 'Recomendado',
+                area: 'AppSec',
+                how: 'Ferramentas automatizadas analisam código, comportamento em execução e dependências vulneráveis.',
+                use: 'Identifica vulnerabilidades cedo, antes da liberação.'
+            },
+            {
+                technique: 'Infrastructure as Code',
+                level: 'Recomendado',
+                area: 'Plataforma',
+                how: 'Infraestrutura é definida em código versionado e revisado, como Terraform ou templates equivalentes.',
+                use: 'Deixa ambiente reproduzível, auditável e fácil de recriar.'
+            },
+            {
+                technique: 'Zero-Downtime Migrations',
+                level: 'Avançado',
+                area: 'Banco de dados',
+                how: 'Mudanças no schema são feitas em fases compatíveis com a versão antiga e a nova ao mesmo tempo.',
+                use: 'Permite evoluir banco sem derrubar o sistema ou quebrar deploy.'
+            },
+            {
+                technique: 'Contract Testing',
+                level: 'Recomendado',
+                area: 'APIs e integrações',
+                how: 'Produtores e consumidores validam o mesmo contrato para garantir compatibilidade entre serviços.',
+                use: 'Evita quebra silenciosa em integrações internas e externas.'
+            },
+            {
+                technique: 'Idempotency Keys',
+                level: 'Recomendado',
+                area: 'APIs críticas e pagamentos',
+                how: 'Requisições repetidas com a mesma chave retornam o mesmo resultado, em vez de executar a ação novamente.',
+                use: 'Evita cobranças ou operações duplicadas em cenários de retry.'
+            },
+            {
+                technique: 'Rate Limiting / Quotas',
+                level: 'Recomendado',
+                area: 'Proteção e resiliência',
+                how: 'A aplicação limita a quantidade de chamadas por usuário, IP, token ou período.',
+                use: 'Protege contra abuso, bots e picos inesperados de tráfego.'
+            },
+            {
+                technique: 'Timeout + Retry + Circuit Breaker',
+                level: 'Obrigatório',
+                area: 'Resiliência',
+                how: 'Chamadas externas têm tempo máximo, retries controlados e bloqueio temporário quando a dependência falha demais.',
+                use: 'Evita travamentos e falhas em cascata no sistema inteiro.'
+            },
+            {
+                technique: 'Load / Stress Testing',
+                level: 'Recomendado',
+                area: 'Performance',
+                how: 'Ferramentas simulam volume real ou extremo de acesso para medir latência, throughput e gargalos.',
+                use: 'Ajuda a prever comportamento antes que o crescimento chegue em produção.'
+            },
+            {
+                technique: 'Backups + Restore Drill',
+                level: 'Obrigatório',
+                area: 'Continuidade de dados',
+                how: 'Backups são automatizados e o restore é testado periodicamente, não apenas assumido.',
+                use: 'Garante recuperação real em caso de exclusão, corrupção ou incidente.'
+            },
+            {
+                technique: 'ADR (Architecture Decision Record)',
+                level: 'Recomendado',
+                area: 'Arquitetura',
+                how: 'Cada decisão técnica importante é registrada com contexto, alternativas e motivo da escolha.',
+                use: 'Facilita manutenção, onboarding e revisão futura da arquitetura.'
+            },
+            {
+                technique: 'Privacy by Design',
+                level: 'Recomendado',
+                area: 'Privacidade e LGPD',
+                how: 'Privacidade é considerada desde o desenho: coleta mínima, retenção definida, acesso controlado e descarte seguro.',
+                use: 'Reduz risco regulatório e protege dados pessoais desde o início.'
+            },
+            {
+                technique: 'Chaos Engineering',
+                level: 'Avançado',
+                area: 'Confiabilidade avançada',
+                how: 'Falhas controladas são injetadas em ambiente seguro para provar que o sistema resiste a cenários reais.',
+                use: 'Descobre fragilidades ocultas antes de um incidente de verdade.'
+            },
+        ];
+
+        function levelClass(level) {
+            if (level === 'Obrigatório') return 'tag tag-obrigatorio';
+            if (level === 'Avançado') return 'tag tag-avancado';
+            return 'tag tag-recomendado';
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;');
+        }
+
+        function renderRoutine() {
+            document.getElementById('delivery-routine-card').innerHTML = `
+        <div class="section-title">
+          <h2>🧭 Rotina padrão de entrega</h2>
+          <span>Fluxo recomendado</span>
+        </div>
+        <p class="muted small">As empresas mais maduras não dependem só de checklist: elas seguem uma rotina disciplinada antes, durante e depois do deploy.</p>
+        <div class="routine-grid">
+          ${deliveryRoutine.map((step) => `
+            <div class="routine-step">
+              <strong>${step.title}</strong>
+              <div class="muted small">${step.description}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+        }
+
+        function renderPracticeLibrary(search = '', level = 'all') {
+            const normalizedSearch = search.trim().toLowerCase();
+            const filtered = practiceLibrary.filter((item) => {
+                const matchesLevel = level === 'all' || item.level === level;
+                const haystack = `${item.technique} ${item.area} ${item.how} ${item.use}`.toLowerCase();
+                const matchesSearch = !normalizedSearch || haystack.includes(normalizedSearch);
+                return matchesLevel && matchesSearch;
+            });
+
+            document.getElementById('practice-library-card').innerHTML = `
+        <div class="practice-header">
+          <div>
+            <h2>🌍 Práticas amplamente adotadas pelas empresas de software de maior maturidade</h2>
+            <p class="muted small">Referência de mercado inspirada em práticas comuns de empresas como Microsoft, Google, Amazon, Stripe, Atlassian e Netflix. Nem tudo é obrigatório para todo sistema; a profundidade deve acompanhar o risco e a criticidade.</p>
+          </div>
+          <div class="practice-filters">
+            <input id="practiceSearch" placeholder="Buscar técnica, área ou finalidade" value="${escapeHtml(search)}" />
+            <select id="practiceLevelFilter">
+              <option value="all" ${level === 'all' ? 'selected' : ''}>Todos os níveis</option>
+              <option value="Obrigatório" ${level === 'Obrigatório' ? 'selected' : ''}>Obrigatório</option>
+              <option value="Recomendado" ${level === 'Recomendado' ? 'selected' : ''}>Recomendado</option>
+              <option value="Avançado" ${level === 'Avançado' ? 'selected' : ''}>Avançado</option>
+            </select>
+          </div>
+        </div>
+        <div class="practice-grid">
+          ${filtered.length ? filtered.map((item) => `
+            <div class="practice-card">
+              <div class="practice-top">
+                <div>
+                  <h3>${item.technique}</h3>
+                  <div class="practice-area">${item.area}</div>
+                </div>
+                <span class="${levelClass(item.level)}">${item.level}</span>
+              </div>
+              <p><span>Como funciona:</span> ${item.how}</p>
+              <p><span>Para que utiliza:</span> ${item.use}</p>
+            </div>
+          `).join('') : '<div class="muted small">Nenhuma técnica encontrada com esse filtro.</div>'}
+        </div>
+      `;
+
+            document.getElementById('practiceSearch').addEventListener('input', (event) => {
+                renderPracticeLibrary(event.target.value, document.getElementById('practiceLevelFilter').value);
+            });
+
+            document.getElementById('practiceLevelFilter').addEventListener('change', (event) => {
+                renderPracticeLibrary(document.getElementById('practiceSearch').value, event.target.value);
+            });
+        }
+
+        function renderGroup(title, items, idPrefix, critical = false) {
+            return `
+        <div class="card">
+          <div class="section-title">
+            <h3>${title}</h3>
+            <span>${items.length} itens</span>
+          </div>
+          ${items.map((item, index) => {
+                const id = `${idPrefix}-${index}`;
+                return `
+              <div class="item">
+                <input type="checkbox" id="${id}" data-critical="${critical ? 'true' : 'false'}" />
+                <label for="${id}">
+                  ${item}
+                  ${critical ? '<div class="critical-badge">Gate crítico</div>' : ''}
+                </label>
+              </div>
+            `;
+            }).join('')}
+        </div>
+      `;
+        }
+
+        function render() {
+            document.getElementById('release-gates-card').innerHTML = renderGroup('🚦 Gates mínimos para chamar de pronto para produção', releaseGates, 'gate', true);
+            document.getElementById('required-tests-card').innerHTML = renderGroup('🧪 Testes obrigatórios da entrega', requiredTests, 'test', true);
+            document.getElementById('sections').innerHTML = sections
+                .map((section, index) => renderGroup(section.title, section.items, `section-${index}`))
+                .join('');
+            renderRoutine();
+            renderPracticeLibrary();
+        }
+
+        function serializeState() {
+            const checkboxState = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach((el) => {
+                checkboxState[el.id] = el.checked;
+            });
+
+            return {
+                checkboxState,
+                systemName: document.getElementById('systemName').value,
+                version: document.getElementById('version').value,
+                owner: document.getElementById('owner').value,
+                decision: document.getElementById('decision').value,
+                evidence: document.getElementById('evidence').value,
+                risks: document.getElementById('risks').value,
+            };
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(serializeState()));
+            refreshSummary();
+        }
+
+        function loadState() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+
+            try {
+                const state = JSON.parse(raw);
+                Object.entries(state.checkboxState || {}).forEach(([id, checked]) => {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = Boolean(checked);
+                });
+                ['systemName', 'version', 'owner', 'decision', 'evidence', 'risks'].forEach((id) => {
+                    const el = document.getElementById(id);
+                    if (el && state[id] !== undefined) el.value = state[id];
+                });
+            } catch (error) {
+                console.error('Erro ao carregar checklist salvo:', error);
+            }
+        }
+
+        function refreshSummary() {
+            const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+            const total = checkboxes.length;
+            const checked = checkboxes.filter((el) => el.checked).length;
+            const critical = checkboxes.filter((el) => el.dataset.critical === 'true');
+            const criticalPending = critical.filter((el) => !el.checked).length;
+            const percent = total ? Math.round((checked / total) * 100) : 0;
+
+            document.getElementById('checked-count').textContent = `${checked} / ${total}`;
+            document.getElementById('critical-pending').textContent = `${criticalPending}`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            const status = document.getElementById('auto-status');
+            const note = document.getElementById('auto-status-note');
+
+            status.className = 'final-status';
+            if (criticalPending === 0 && percent >= 85) {
+                status.classList.add('status-ok');
+                status.textContent = 'Aprovado para produção';
+                note.textContent = 'Gates críticos atendidos e checklist com boa cobertura.';
+            } else if (criticalPending <= 2 && percent >= 65) {
+                status.classList.add('status-warn');
+                status.textContent = 'Aprovado com ressalvas';
+                note.textContent = 'Há pontos pendentes. Registre riscos e plano de mitigação.';
+            } else {
+                status.classList.add('status-danger');
+                status.textContent = 'Não aprovado';
+                note.textContent = 'Existem pendências críticas ou cobertura insuficiente para liberação.';
+            }
+        }
+
+        function markAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach((el) => { el.checked = true; });
+            saveState();
+        }
+
+        function clearAll() {
+            if (!confirm('Limpar todo o checklist salvo neste navegador?')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+
+        function expandEvidenceTemplate() {
+            const evidence = document.getElementById('evidence');
+            if (evidence.value.trim()) return;
+
+            evidence.value = [
+                'Data:',
+                'Responsável:',
+                '',
+                'Comandos executados:',
+                '- npm run build',
+                '- npm run typecheck',
+                '- npm run lint',
+                '- testes unitários / integração / E2E',
+                '',
+                'Fluxos validados:',
+                '- Login',
+                '- Fluxo principal',
+                '- Cenário de erro',
+                '- Cenário de permissão',
+                '',
+                'Resultado:',
+                '- Build:',
+                '- Testes:',
+                '- Observações:'
+            ].join('\n');
+
+            saveState();
+        }
+
+        function exportReport() {
+            const data = serializeState();
+            const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+            const checked = checkboxes.filter((el) => el.checked).length;
+            const total = checkboxes.length;
+
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                summary: {
+                    checked,
+                    total,
+                    progressPercent: total ? Math.round((checked / total) * 100) : 0,
+                },
+                ...data,
+            };
+
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'relatorio-entrega-software.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('change', (event) => {
+            if (event.target.matches('input[type="checkbox"], select')) saveState();
+        });
+
+        document.addEventListener('input', (event) => {
+            if (event.target.matches('input, textarea')) saveState();
+        });
+
+        render();
+        loadState();
+        refreshSummary();
+    </script>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
+    cancelReservationById,
     findOrCreateGuestProfile,
     getGuestPortalData,
     updateGuestProfileByEmail,
@@ -133,6 +134,31 @@ export async function PATCH(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 message: 'Reserva atualizada no backend compartilhado.',
+                ...payload,
+            });
+        }
+
+        if (target === 'cancel') {
+            const reservationId = String(body?.reservationId || '').trim();
+
+            if (!reservationId) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        error: 'Reserva não identificada.',
+                    },
+                    { status: 400 }
+                );
+            }
+
+            const payload = await cancelReservationById({
+                email,
+                reservationId,
+            });
+
+            return NextResponse.json({
+                success: true,
+                message: 'Reserva cancelada com sucesso.',
                 ...payload,
             });
         }

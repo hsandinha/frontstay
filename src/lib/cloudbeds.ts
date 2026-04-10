@@ -396,3 +396,13 @@ export async function getRoomAvailability(params: {
 export async function createCloudbedsReservation(data: Record<string, unknown>) {
     return cloudbedsPost('/postReservation', data);
 }
+
+export async function updateCloudbedsReservation(
+    reservationId: string,
+    data: Record<string, unknown>
+) {
+    return cloudbedsPost('/putReservation', {
+        reservationID: reservationId,
+        ...data,
+    });
+}

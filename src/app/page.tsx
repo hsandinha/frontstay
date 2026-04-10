@@ -366,9 +366,7 @@ const HomePage = () => {
 
             setAvailableProperties(mappedProperties);
             setSearchStatus('success');
-            setFeedbackMessage(
-                `${mappedProperties.length} opção(ões) disponíveis para o hotel ${filters.hotelLabel} entre ${filters.startDate} e ${filters.endDate}.`
-            );
+            setFeedbackMessage('');
         } catch (error: any) {
             setCalendarPreview(buildCalendarPreview(filters.startDate, filters.endDate, [], 'neutral'));
             setAvailableProperties([]);

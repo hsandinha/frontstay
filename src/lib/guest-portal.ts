@@ -1,6 +1,7 @@
 import 'server-only';
 
 import type { PostgrestError } from '@supabase/supabase-js';
+import { updateCloudbedsReservation } from '@/lib/cloudbeds';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 export interface GuestProfilePayload {
@@ -13,6 +14,14 @@ export interface GuestProfilePayload {
     city?: string | null;
     state?: string | null;
     country?: string | null;
+}
+
+export interface GuestPortalTimelineItem {
+    id: string;
+    label: string;
+    description: string;
+    createdAt: string | null;
+    tone: 'info' | 'success' | 'warning' | 'neutral';
 }
 
 export interface GuestPortalReservation {
@@ -29,9 +38,18 @@ export interface GuestPortalReservation {
     paymentStatus: 'paid' | 'partial' | 'pending' | 'unknown';
     specialRequests: string | null;
     propertyId: string | null;
+    propertyName: string | null;
+    propertyAddress: string | null;
     source: string | null;
     createdAt: string | null;
     updatedAt: string | null;
+    accessCode: string | null;
+    checkinCompleted: boolean;
+    checkinLinkSent: boolean;
+    notificationSent: boolean;
+    paymentMethod: string | null;
+    promoCode: string | null;
+    timeline: GuestPortalTimelineItem[];
 }
 
 export interface GuestPortalGuest {
@@ -57,10 +75,29 @@ export interface GuestPortalSummary {
     pendingPaymentAmount: number;
 }
 
+export interface GuestPortalCompanion {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    documentType: string | null;
+    isPrimary: boolean;
+}
+
+export interface GuestPortalSettings {
+    wifiNetwork: string | null;
+    wifiPassword: string | null;
+    condoRules: string | null;
+    supportWhatsapp: string | null;
+    propertyAddress: string | null;
+}
+
 export interface GuestPortalData {
     guest: GuestPortalGuest | null;
     reservations: GuestPortalReservation[];
     summary: GuestPortalSummary;
+    companions: GuestPortalCompanion[];
+    settings: GuestPortalSettings;
 }
 
 function normalizeEmail(value: unknown) {
@@ -181,6 +218,106 @@ export async function findOrCreateGuestProfile(data: GuestProfilePayload): Promi
     return (created?.id as string | undefined) || null;
 }
 
+function translatePaymentMethod(value: unknown) {
+    const normalized = String(value || '').trim().toLowerCase();
+
+    switch (normalized) {
+        case 'credit':
+            return 'Cartão de crédito';
+        case 'debit':
+            return 'Cartão de débito';
+        case 'pix':
+        case 'ebanking':
+            return 'PIX';
+        case 'cash':
+            return 'Pagamento na chegada';
+        default:
+            return normalized ? String(value) : null;
+    }
+}
+
+function buildReservationTimeline(row: Record<string, any>): GuestPortalTimelineItem[] {
+    const timeline: GuestPortalTimelineItem[] = [];
+
+    if (typeof row.created_at === 'string') {
+        timeline.push({
+            id: `created-${row.created_at}`,
+            label: 'Reserva criada',
+            description: 'Sua reserva foi registrada no sistema.',
+            createdAt: row.created_at,
+            tone: 'success',
+        });
+    }
+
+    if (row.notification_sent) {
+        timeline.push({
+            id: `notification-${row.updated_at || row.created_at || 'now'}`,
+            label: 'Notificação enviada',
+            description: 'Enviamos uma atualização automática sobre a sua reserva.',
+            createdAt: typeof row.updated_at === 'string' ? row.updated_at : (typeof row.created_at === 'string' ? row.created_at : null),
+            tone: 'info',
+        });
+    }
+
+    if (row.checkin_link_sent) {
+        timeline.push({
+            id: `checkin-link-${row.updated_at || row.created_at || 'now'}`,
+            label: 'Link de check-in liberado',
+            description: 'O check-in online já está disponível para você.',
+            createdAt: typeof row.updated_at === 'string' ? row.updated_at : (typeof row.created_at === 'string' ? row.created_at : null),
+            tone: 'info',
+        });
+    }
+
+    if (row.checkin_completed) {
+        timeline.push({
+            id: `checkin-complete-${row.updated_at || row.created_at || 'now'}`,
+            label: 'Check-in concluído',
+            description: 'Seu cadastro de hospedagem foi finalizado com sucesso.',
+            createdAt: typeof row.updated_at === 'string' ? row.updated_at : (typeof row.created_at === 'string' ? row.created_at : null),
+            tone: 'success',
+        });
+    }
+
+    if (typeof row.access_code === 'string' && row.access_code.trim()) {
+        timeline.push({
+            id: `access-code-${row.updated_at || row.created_at || 'now'}`,
+            label: 'Código de acesso disponível',
+            description: `Seu código atual é ${row.access_code.trim()}.`,
+            createdAt: typeof row.updated_at === 'string' ? row.updated_at : (typeof row.created_at === 'string' ? row.created_at : null),
+            tone: 'success',
+        });
+    }
+
+    if (String(row.status || row.pms_status || '').toLowerCase() === 'canceled') {
+        timeline.push({
+            id: `canceled-${row.updated_at || row.created_at || 'now'}`,
+            label: 'Reserva cancelada',
+            description: 'O cancelamento foi registrado no sistema.',
+            createdAt: typeof row.updated_at === 'string' ? row.updated_at : (typeof row.created_at === 'string' ? row.created_at : null),
+            tone: 'warning',
+        });
+    }
+
+    if (
+        typeof row.updated_at === 'string'
+        && typeof row.created_at === 'string'
+        && row.updated_at !== row.created_at
+    ) {
+        timeline.push({
+            id: `updated-${row.updated_at}`,
+            label: 'Reserva atualizada',
+            description: 'Detectamos uma alteração recente na sua reserva.',
+            createdAt: row.updated_at,
+            tone: 'neutral',
+        });
+    }
+
+    return timeline
+        .sort((a, b) => Date.parse(b.createdAt || '') - Date.parse(a.createdAt || ''))
+        .slice(0, 6);
+}
+
 function mapGuest(profile: Record<string, any> | null, reservations: Record<string, any>[]): GuestPortalGuest | null {
     if (profile) {
         return {
@@ -218,12 +355,15 @@ function mapGuest(profile: Record<string, any> | null, reservations: Record<stri
     };
 }
 
-function mapReservation(row: Record<string, any>): GuestPortalReservation {
+function mapReservation(row: Record<string, any>, propertyMap?: Map<string, { name: string; address: string | null }>): GuestPortalReservation {
     const total = toNullableNumber(row.total);
     const balance = toNullableNumber(row.balance);
     const paidAmount = total !== null
         ? Math.max(total - (balance || 0), 0)
         : null;
+    const customFields = row.custom_fields && typeof row.custom_fields === 'object'
+        ? row.custom_fields as Record<string, unknown>
+        : {};
 
     let paymentStatus: GuestPortalReservation['paymentStatus'] = 'unknown';
 
@@ -247,9 +387,18 @@ function mapReservation(row: Record<string, any>): GuestPortalReservation {
         paymentStatus,
         specialRequests: typeof row.special_requests === 'string' ? row.special_requests : null,
         propertyId: row.property_id ? String(row.property_id) : null,
+        propertyName: (row.property_id && propertyMap?.get(String(row.property_id))?.name) || null,
+        propertyAddress: (row.property_id && propertyMap?.get(String(row.property_id))?.address) || null,
         source: row.source ? String(row.source) : null,
         createdAt: typeof row.created_at === 'string' ? row.created_at : null,
         updatedAt: typeof row.updated_at === 'string' ? row.updated_at : null,
+        accessCode: typeof row.access_code === 'string' ? row.access_code : null,
+        checkinCompleted: Boolean(row.checkin_completed),
+        checkinLinkSent: Boolean(row.checkin_link_sent),
+        notificationSent: Boolean(row.notification_sent),
+        paymentMethod: translatePaymentMethod(customFields.payment_method),
+        promoCode: typeof customFields.promo_code === 'string' ? customFields.promo_code : null,
+        timeline: buildReservationTimeline(row),
     };
 }
 
@@ -287,6 +436,83 @@ function buildSummary(reservations: GuestPortalReservation[]): GuestPortalSummar
     });
 }
 
+function getHoursUntilCheckIn(checkInDate: string | null | undefined) {
+    if (!checkInDate) return Number.POSITIVE_INFINITY;
+
+    const timestamp = Date.parse(`${checkInDate}T14:00:00`);
+    if (Number.isNaN(timestamp)) return Number.POSITIVE_INFINITY;
+
+    return (timestamp - Date.now()) / (1000 * 60 * 60);
+}
+
+function canManageReservationOnline(row: Record<string, any> | null | undefined) {
+    if (!row) {
+        return { allowed: false, reason: 'Reserva não encontrada.' };
+    }
+
+    const status = String(row.status || row.pms_status || '').toLowerCase();
+    if (['canceled', 'cancelled', 'checked_out', 'completed'].includes(status)) {
+        return { allowed: false, reason: 'Essa reserva não pode mais ser alterada pelo portal.' };
+    }
+
+    if (status === 'checked_in') {
+        return { allowed: false, reason: 'Após o check-in, alterações e cancelamentos devem ser solicitados ao suporte.' };
+    }
+
+    const hoursUntilCheckIn = getHoursUntilCheckIn(typeof row.check_in_date === 'string' ? row.check_in_date : null);
+    if (hoursUntilCheckIn < 48) {
+        return { allowed: false, reason: 'Alterações e cancelamento online estão disponíveis somente até 48h antes do check-in.' };
+    }
+
+    return { allowed: true, reason: null };
+}
+
+async function getPropertySettings(): Promise<GuestPortalSettings> {
+    const supabase = getSupabaseAdmin();
+    if (!supabase) return { wifiNetwork: null, wifiPassword: null, condoRules: null, supportWhatsapp: null, propertyAddress: null };
+
+    const { data } = await supabase
+        .from('settings')
+        .select('wifi_network, wifi_password, condo_rules_text, support_whatsapp')
+        .eq('id', 'default')
+        .maybeSingle();
+
+    if (!data) return { wifiNetwork: null, wifiPassword: null, condoRules: null, supportWhatsapp: null, propertyAddress: null };
+
+    return {
+        wifiNetwork: typeof data.wifi_network === 'string' ? data.wifi_network : null,
+        wifiPassword: typeof data.wifi_password === 'string' ? data.wifi_password : null,
+        condoRules: typeof data.condo_rules_text === 'string' ? data.condo_rules_text : null,
+        supportWhatsapp: typeof data.support_whatsapp === 'string' ? data.support_whatsapp : null,
+        propertyAddress: null,
+    };
+}
+
+async function getCompanionsForReservations(reservationIds: (string | number)[]): Promise<GuestPortalCompanion[]> {
+    const supabase = getSupabaseAdmin();
+    if (!supabase || reservationIds.length === 0) return [];
+
+    const stringIds = reservationIds.map(String);
+
+    const { data, error } = await supabase
+        .from('guests')
+        .select('id, reservation_id, name, email, phone, document_type, is_primary, companion_index')
+        .in('reservation_id', stringIds)
+        .order('is_primary', { ascending: false })
+        .order('companion_index', { ascending: true });
+
+    if (error || !data) return [];
+
+    return (data as Record<string, any>[]).map((row) => ({
+        id: String(row.id),
+        name: String(row.name || 'Acompanhante'),
+        email: typeof row.email === 'string' ? row.email : null,
+        phone: typeof row.phone === 'string' ? row.phone : null,
+        documentType: typeof row.document_type === 'string' ? row.document_type : null,
+        isPrimary: Boolean(row.is_primary),
+    }));
+}
+
 export async function getGuestPortalData(email: string): Promise<GuestPortalData> {
     const supabase = getSupabaseAdmin();
     if (!supabase) {
@@ -298,7 +524,7 @@ export async function getGuestPortalData(email: string): Promise<GuestPortalData
         throw new Error('Informe um e-mail válido para consultar suas reservas.');
     }
 
-    const [{ data: profile }, { data: reservations, error: reservationsError }] = await Promise.all([
+    const [{ data: profile }, { data: reservations, error: reservationsError }, settings] = await Promise.all([
         supabase
             .from('guest_profiles')
             .select('*')
@@ -311,6 +537,7 @@ export async function getGuestPortalData(email: string): Promise<GuestPortalData
             .select('*')
             .ilike('guest_email', normalizedEmail)
             .order('check_in_date', { ascending: false }),
+        getPropertySettings(),
     ]);
 
     if (reservationsError) {
@@ -318,13 +545,35 @@ export async function getGuestPortalData(email: string): Promise<GuestPortalData
     }
 
     const reservationRows = Array.isArray(reservations) ? reservations : [];
-    const mappedReservations = reservationRows.map((row) => mapReservation(row as Record<string, any>));
+
+    // Build property map for enriching reservations with property name/address
+    const propertyIds = [...new Set(reservationRows.map((r: any) => r.property_id).filter(Boolean))];
+    let propertyMap = new Map<string, { name: string; address: string | null }>();
+    if (propertyIds.length > 0) {
+        const { data: props } = await supabase
+            .from('properties')
+            .select('id, name, address, city, state')
+            .in('id', propertyIds);
+        if (props) {
+            for (const p of props) {
+                const parts = [p.address, p.city, p.state].filter(Boolean);
+                propertyMap.set(p.id, { name: p.name, address: parts.length > 0 ? parts.join(', ') : null });
+            }
+        }
+    }
+
+    const mappedReservations = reservationRows.map((row) => mapReservation(row as Record<string, any>, propertyMap));
     const guest = mapGuest(profile as Record<string, any> | null, reservationRows as Record<string, any>[]);
+
+    const reservationIds = reservationRows.map((r: any) => r.id).filter(Boolean);
+    const companions = await getCompanionsForReservations(reservationIds);
 
     return {
         guest,
         reservations: mappedReservations,
         summary: buildSummary(mappedReservations),
+        companions,
+        settings,
     };
 }
 
@@ -486,6 +735,31 @@ export async function updateGuestProfileByEmail(email: string, updates: Partial<
     return getGuestPortalData(normalizedEmail);
 }
 
+async function getReservationForGuest(email: string, reservationId: string) {
+    const supabase = getSupabaseAdmin();
+    if (!supabase) return null;
+
+    const normalizedEmail = normalizeEmail(email);
+
+    const byId = await supabase
+        .from('reservations')
+        .select('*')
+        .ilike('guest_email', normalizedEmail)
+        .eq('id', reservationId)
+        .maybeSingle();
+
+    if (byId.data) return byId.data;
+
+    const byPmsId = await supabase
+        .from('reservations')
+        .select('*')
+        .ilike('guest_email', normalizedEmail)
+        .eq('pms_reservation_id', reservationId)
+        .maybeSingle();
+
+    return byPmsId.data || null;
+}
+
 export async function updateReservationById(params: {
     email: string;
     reservationId: string;
@@ -503,6 +777,35 @@ export async function updateReservationById(params: {
         throw new Error('Informe um e-mail válido.');
     }
 
+    const reservation = await getReservationForGuest(normalizedEmail, params.reservationId);
+
+    if (!reservation) {
+        throw new Error('Reserva não encontrada para este hóspede.');
+    }
+
+    const managementPolicy = canManageReservationOnline(reservation as Record<string, any>);
+    if (!managementPolicy.allowed) {
+        throw new Error(managementPolicy.reason || 'Essa reserva não pode mais ser alterada pelo portal.');
+    }
+
+    const cloudbedsPayload: Record<string, unknown> = {};
+
+    if (params.checkInDate && params.checkInDate !== reservation.check_in_date) {
+        cloudbedsPayload.startDate = params.checkInDate;
+    }
+
+    if (params.checkOutDate && params.checkOutDate !== reservation.check_out_date) {
+        cloudbedsPayload.endDate = params.checkOutDate;
+    }
+
+    if (reservation.pms_reservation_id && Object.keys(cloudbedsPayload).length > 0) {
+        const result = await updateCloudbedsReservation(String(reservation.pms_reservation_id), cloudbedsPayload);
+
+        if (result?.success === false) {
+            throw new Error(result?.message || 'O Cloudbeds recusou a alteração da reserva.');
+        }
+    }
+
     const updatePayload = {
         check_in_date: params.checkInDate || undefined,
         check_out_date: params.checkOutDate || undefined,
@@ -518,10 +821,67 @@ export async function updateReservationById(params: {
         .from('reservations')
         .update(cleanedPayload)
         .ilike('guest_email', normalizedEmail)
-        .eq('id', params.reservationId);
+        .eq('id', reservation.id);
 
     if (error) {
         throw new Error(`Não foi possível alterar a reserva: ${error.message}`);
+    }
+
+    return getGuestPortalData(normalizedEmail);
+}
+
+export async function cancelReservationById(params: {
+    email: string;
+    reservationId: string;
+}) {
+    const supabase = getSupabaseAdmin();
+    if (!supabase) {
+        throw new Error('Supabase não configurado no FrontStay.');
+    }
+
+    const normalizedEmail = normalizeEmail(params.email);
+    if (!normalizedEmail.includes('@')) {
+        throw new Error('Informe um e-mail válido.');
+    }
+
+    const reservation = await getReservationForGuest(normalizedEmail, params.reservationId);
+
+    if (!reservation) {
+        throw new Error('Reserva não encontrada para este hóspede.');
+    }
+
+    const currentStatus = String(reservation.status || reservation.pms_status || '').toLowerCase();
+    if (currentStatus === 'canceled' || currentStatus === 'cancelled') {
+        return getGuestPortalData(normalizedEmail);
+    }
+
+    const managementPolicy = canManageReservationOnline(reservation as Record<string, any>);
+    if (!managementPolicy.allowed) {
+        throw new Error(managementPolicy.reason || 'Essa reserva não pode mais ser cancelada pelo portal.');
+    }
+
+    if (reservation.pms_reservation_id) {
+        const result = await updateCloudbedsReservation(String(reservation.pms_reservation_id), {
+            status: 'canceled',
+        });
+
+        if (result?.success === false) {
+            throw new Error(result?.message || 'O Cloudbeds recusou o cancelamento da reserva.');
+        }
+    }
+
+    const { error } = await supabase
+        .from('reservations')
+        .update({
+            status: 'canceled',
+            pms_status: 'canceled',
+            updated_at: new Date().toISOString(),
+        })
+        .ilike('guest_email', normalizedEmail)
+        .eq('id', reservation.id);
+
+    if (error) {
+        throw new Error(`Não foi possível cancelar a reserva: ${error.message}`);
     }
 
     return getGuestPortalData(normalizedEmail);

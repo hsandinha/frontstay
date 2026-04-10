@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { UserRole } from '@/types/user';
+import { createClient } from '@/lib/supabase-browser';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -42,9 +43,33 @@ export default function LoginPage() {
         setAuthFeedbackTone('neutral');
 
         if (selectedRole !== 'hospede') {
-            setTimeout(() => {
-                router.push(`/dashboard/${selectedRole}`);
-            }, 800);
+            try {
+                const supabase = createClient();
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
+                if (error) {
+                    setIsLoading(false);
+                    setAuthFeedback(error.message === 'Invalid login credentials'
+                        ? 'Email ou senha incorretos.'
+                        : error.message);
+                    setAuthFeedbackTone('error');
+                    return;
+                }
+
+                setAuthFeedback('Login realizado com sucesso!');
+                setAuthFeedbackTone('success');
+
+                setTimeout(() => {
+                    router.push(`/dashboard/${selectedRole}`);
+                }, 500);
+            } catch (err: any) {
+                setIsLoading(false);
+                setAuthFeedback(err.message || 'Erro ao fazer login.');
+                setAuthFeedbackTone('error');
+            }
             return;
         }
 

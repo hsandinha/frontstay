@@ -194,7 +194,6 @@ const SearchComponent = ({
     const [isSubmittingReservation, setIsSubmittingReservation] = useState(false);
     const [reservationFeedback, setReservationFeedback] = useState('');
     const [reservationFeedbackTone, setReservationFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
-    const [reservationResult, setReservationResult] = useState<{ reservationId?: string | number | null; message?: string } | null>(null);
 
     const selectedHotel = useMemo(
         () => hotelOptions.find((hotel) => hotel.value === hotelId) ?? hotelOptions[0],
@@ -294,7 +293,6 @@ const SearchComponent = ({
     const resetReservationState = () => {
         setReservationFeedback('');
         setReservationFeedbackTone('neutral');
-        setReservationResult(null);
     };
 
     const resetCouponState = (clearInput = false) => {
@@ -504,9 +502,8 @@ const SearchComponent = ({
         }
 
         setIsSubmittingReservation(true);
-        setReservationFeedback('Enviando a reserva para o Cloudbeds...');
+        setReservationFeedback('Confirmando reserva...');
         setReservationFeedbackTone('neutral');
-        setReservationResult(null);
 
         try {
             const response = await fetch('/api/cloudbeds/reservations', {
@@ -550,15 +547,11 @@ const SearchComponent = ({
 
             const successMessage = payload?.message
                 || (reservationId
-                    ? `Reserva criada no Cloudbeds com o código ${reservationId}. Você já pode acompanhar tudo no painel do hóspede.`
-                    : 'Reserva enviada ao Cloudbeds com sucesso.');
+                    ? `Reserva ${reservationId} criada com sucesso.`
+                    : 'Reserva criada com sucesso.');
 
             setReservationFeedback(successMessage);
             setReservationFeedbackTone('success');
-            setReservationResult({
-                reservationId,
-                message: payload?.message,
-            });
         } catch (error: any) {
             setReservationFeedback(error?.message || 'Não foi possível concluir a reserva no Cloudbeds.');
             setReservationFeedbackTone('error');
@@ -1355,11 +1348,6 @@ const SearchComponent = ({
                                         {reservationFeedback ? (
                                             <div className={`rounded-xl border px-3 py-3 text-sm ${reservationFeedbackTone === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : reservationFeedbackTone === 'error' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-sky-200 bg-sky-50 text-sky-700'}`}>
                                                 <div>{reservationFeedback}</div>
-                                                {reservationResult?.reservationId ? (
-                                                    <div className="mt-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                                                        Código Cloudbeds: {reservationResult.reservationId}
-                                                    </div>
-                                                ) : null}
                                             </div>
                                         ) : null}
 
