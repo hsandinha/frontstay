@@ -731,6 +731,52 @@ export default function AdministradorDashboard() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Subdomain status */}
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div className="p-6 border-b border-gray-200">
+                                <h3 className="text-lg font-questa-bold text-gray-900">Subdomínios Operacionais</h3>
+                                <p className="text-xs text-gray-400 mt-1">Clique para acessar o dashboard operacional de cada prédio</p>
+                            </div>
+                            {!loading && properties.length > 0 ? (
+                                <div className="divide-y divide-gray-100">
+                                    {properties.map(prop => {
+                                        const subdomainUrl = `https://${prop.slug}.frontstay.com.br`;
+                                        return (
+                                            <div key={prop.id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-2.5 h-2.5 rounded-full ${prop.active ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
+                                                    <div>
+                                                        <h4 className="font-questa-bold text-gray-900 text-sm">{prop.name}</h4>
+                                                        <p className="text-xs text-gray-400 font-mono">{prop.slug}.frontstay.com.br</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${prop.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                        {prop.active ? 'Online' : 'Offline'}
+                                                    </span>
+                                                    <a
+                                                        href={subdomainUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-sm text-blue-900 hover:text-blue-700 font-questa-bold px-3 py-1 rounded hover:bg-blue-50 transition-colors flex items-center gap-1"
+                                                    >
+                                                        Abrir
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : !loading ? (
+                                <div className="p-8 text-center text-gray-400 text-sm">
+                                    Nenhum subdomínio configurado.
+                                </div>
+                            ) : null}
+                        </div>
                     </div>
                 )}
 
