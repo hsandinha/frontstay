@@ -13,7 +13,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.cloudbeds.com',
+        hostname: '*.cloudbeds.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.us2.cloudbeds.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.us1.cloudbeds.com',
       },
       {
         protocol: 'https',

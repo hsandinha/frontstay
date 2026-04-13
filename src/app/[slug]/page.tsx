@@ -538,10 +538,10 @@ export default function ImovelPage() {
                                                                 </Link>
                                                             </div>
                                                         ) : (
-                                                            <div className="border-t border-gray-100 pt-6">
-                                                                <p className="text-sm text-gray-500 font-medium py-3 px-4 bg-gray-50 rounded-xl inline-block">
+                                                            <div className="border-t border-gray-100 pt-6 mt-auto">
+                                                                <div className="w-full bg-gray-50 border border-gray-100 text-gray-500 text-center py-3.5 rounded-2xl text-sm font-medium">
                                                                     Não há unidades disponíveis nestas datas.
-                                                                </p>
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>
