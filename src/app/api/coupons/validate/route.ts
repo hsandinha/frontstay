@@ -5,7 +5,7 @@ import { validateBookingCoupon } from '../../../../lib/booking-coupons';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const result = validateBookingCoupon(body || {});
+        const result = await validateBookingCoupon(body || {});
 
         if (!result.valid) {
             return NextResponse.json(

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SearchComponent, { AvailableProperty, CalendarAvailabilityDay, SearchFilters } from './components/SearchComponent';
@@ -36,6 +36,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'esopo.png',
         origem: 'catalogo',
+        slug: 'esopo',
     },
     {
         id: 2,
@@ -44,6 +45,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'citydesign.png',
         origem: 'catalogo',
+        slug: 'city',
     },
     {
         id: 3,
@@ -52,6 +54,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'agora.jpg',
         origem: 'catalogo',
+        slug: 'agora',
     },
     {
         id: 4,
@@ -60,6 +63,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'lourdes.jpeg',
         origem: 'catalogo',
+        slug: 'lourdes',
     },
     {
         id: 5,
@@ -68,6 +72,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'funcionarios.jpeg',
         origem: 'catalogo',
+        slug: 'savassi',
     },
     {
         id: 6,
@@ -76,6 +81,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'centro.jpeg',
         origem: 'catalogo',
+        slug: 'shopping-cidade',
     },
     {
         id: 7,
@@ -84,6 +90,7 @@ const FALLBACK_PROPERTIES: AvailableProperty[] = [
         preco: 400,
         imagem: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2940',
         origem: 'catalogo',
+        slug: 'icon',
     },
 ];
 
@@ -293,6 +300,33 @@ const HomePage = () => {
         'Selecione o hotel, o período e consulte a disponibilidade com cores no calendário.'
     );
     const [calendarPreview, setCalendarPreview] = useState<CalendarPreview | null>(null);
+    const [landingProperties, setLandingProperties] = useState<AvailableProperty[]>(FALLBACK_PROPERTIES);
+
+    // Busca prédios do banco para a landing page
+    useEffect(() => {
+        fetch('/api/properties/public')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.success && Array.isArray(data.properties) && data.properties.length > 0) {
+                    const mapped: AvailableProperty[] = data.properties.map((p: any, i: number) => {
+                        // Usa imagem do banco se existir, senão tenta fallback pelo slug
+                        const fallback = FALLBACK_PROPERTIES.find(fp => fp.slug === p.slug);
+                        return {
+                            id: i + 1,
+                            nome: p.name,
+                            endereco: p.address || '',
+                            preco: 0,
+                            imagem: p.coverImageUrl || fallback?.imagem || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2940',
+                            slug: p.slug,
+                            underConstruction: p.underConstruction || false,
+                            origem: 'catalogo' as const,
+                        };
+                    });
+                    setLandingProperties(mapped);
+                }
+            })
+            .catch(() => { /* mantém fallback */ });
+    }, []);
 
     const handleSearch = async (filters: SearchFilters) => {
         setSearchStatus('loading');
@@ -409,8 +443,8 @@ const HomePage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {FALLBACK_PROPERTIES.map((prop) => (
-                            <PropertyCard key={`${prop.origem}-${prop.id}`} property={prop} />
+                        {landingProperties.map((prop) => (
+                            <PropertyCard key={`${prop.slug || prop.origem}-${prop.id}`} property={prop} />
                         ))}
                     </div>
                 </div>

@@ -1,3 +1,5 @@
+import { getSupabaseAdmin } from './supabase-admin';
+
 export type BookingCouponRule = {
     code: string;
     label: string;
@@ -33,56 +35,62 @@ const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     currency: 'BRL',
 });
 
-const BOOKING_COUPONS: BookingCouponRule[] = [
-    {
-        code: 'BEMVINDO10',
-        label: '10% OFF',
-        description: 'Desconto de boas-vindas para reservas a partir de R$ 350.',
-        type: 'percent',
-        value: 10,
-        minTotal: 350,
-        hotelIds: ['inhouse'],
-        expiresAt: '2026-12-31',
-        active: true,
-    },
-    {
-        code: 'LONGSTAY150',
-        label: 'R$ 150 OFF',
-        description: 'Economize R$ 150 em hospedagens com 3 noites ou mais.',
-        type: 'fixed',
-        value: 150,
-        minTotal: 900,
-        minNights: 3,
-        hotelIds: ['inhouse'],
-        expiresAt: '2026-12-31',
-        active: true,
-    },
-    {
-        code: 'FRONT5',
-        label: '5% OFF',
-        description: 'Desconto rápido para fechar sua reserva hoje.',
-        type: 'percent',
-        value: 5,
-        minTotal: 250,
-        hotelIds: ['inhouse'],
-        expiresAt: '2026-12-31',
-        active: true,
-    },
-];
-
 export function formatCurrency(value: number) {
     return currencyFormatter.format(Math.max(0, value || 0));
 }
 
-export function getFeaturedBookingCoupons(hotelId?: string) {
-    return BOOKING_COUPONS.filter((coupon) => {
+/**
+ * Busca cupons ativos do banco de dados.
+ */
+async function fetchCouponsFromDB(): Promise<BookingCouponRule[]> {
+    const supabase = getSupabaseAdmin();
+    if (!supabase) return [];
+
+    try {
+        const { data, error } = await supabase
+            .from('coupons')
+            .select('*')
+            .eq('active', true)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Erro ao buscar cupons:', error.message);
+            return [];
+        }
+
+        return (data || []).map(c => ({
+            code: c.code,
+            label: c.label,
+            description: c.description || '',
+            type: c.type as 'percent' | 'fixed',
+            value: Number(c.value),
+            minTotal: c.min_total ? Number(c.min_total) : undefined,
+            minNights: c.min_nights ? Number(c.min_nights) : undefined,
+            hotelIds: c.hotel_ids || [],
+            expiresAt: c.expires_at || undefined,
+            active: c.active,
+        }));
+    } catch (err) {
+        console.error('Erro ao buscar cupons:', err);
+        return [];
+    }
+}
+
+export async function getFeaturedBookingCoupons(hotelId?: string) {
+    const coupons = await fetchCouponsFromDB();
+    return coupons.filter((coupon) => {
         if (!coupon.active) return false;
+        // Filtra expirados
+        if (coupon.expiresAt) {
+            const expiresAt = new Date(`${coupon.expiresAt}T23:59:59`);
+            if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) return false;
+        }
         if (!hotelId || !coupon.hotelIds || coupon.hotelIds.length === 0) return true;
         return coupon.hotelIds.includes(hotelId);
     });
 }
 
-export function validateBookingCoupon(input: ValidateBookingCouponInput) {
+export async function validateBookingCoupon(input: ValidateBookingCouponInput) {
     const normalizedCode = input.code?.trim().toUpperCase() || '';
     const totalAmount = Number(input.totalAmount) || 0;
     const nightCount = Number(input.nightCount) || 0;
@@ -102,7 +110,9 @@ export function validateBookingCoupon(input: ValidateBookingCouponInput) {
         };
     }
 
-    const coupon = BOOKING_COUPONS.find((item) => item.code === normalizedCode);
+    // Busca cupons do banco
+    const coupons = await fetchCouponsFromDB();
+    const coupon = coupons.find((item) => item.code === normalizedCode);
 
     if (!coupon || !coupon.active) {
         return {

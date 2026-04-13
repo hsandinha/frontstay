@@ -691,7 +691,7 @@ export default function AdministradorDashboard() {
                             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
                                 <h3 className="text-lg font-questa-bold text-gray-900">Prédios Cadastrados</h3>
                                 <button onClick={() => setShowCreateModal(true)}
-                                    className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors flex items-center gap-2">
+                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors flex items-center gap-2">
                                     + Novo Prédio
                                 </button>
                             </div>
@@ -809,7 +809,7 @@ export default function AdministradorDashboard() {
                                 )}
                             </div>
                             <button onClick={() => setShowCreateModal(true)}
-                                className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors flex items-center gap-2 whitespace-nowrap">
                                 + Novo Prédio
                             </button>
                         </div>
@@ -972,7 +972,7 @@ export default function AdministradorDashboard() {
                         <div className="flex items-center justify-between">
                             <h2 className="text-xl font-questa-bold text-gray-900">Proprietários de Unidades</h2>
                             <button onClick={() => { setEditingOwner(null); setOwnerForm({ unitId: '', ownerName: '', ownerEmail: '', ownerPhone: '', ownerDocument: '', revenueSharePercent: 0 }); setShowOwnerModal(true); }}
-                                className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors">
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-questa-bold hover:bg-blue-800 transition-colors">
                                 + Novo Proprietário
                             </button>
                         </div>

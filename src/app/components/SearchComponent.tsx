@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
-import { formatCurrency, getFeaturedBookingCoupons, type AppliedBookingCoupon } from '../../lib/booking-coupons';
+import { formatCurrency, type AppliedBookingCoupon, type FeaturedCoupon } from '../../lib/coupon-types';
 
 type AvailabilityStatus = 'available' | 'unavailable' | 'neutral';
 
@@ -30,6 +30,8 @@ export type AvailableProperty = {
     endereco: string;
     preco: number;
     imagem: string;
+    slug?: string;
+    underConstruction?: boolean;
     fotos?: string[];
     disponiveis?: number;
     origem?: 'cloudbeds' | 'catalogo';
@@ -220,7 +222,20 @@ const SearchComponent = ({
         return Array.from(new Set(sources));
     }, [primaryProperty]);
     const primaryPropertyImage = propertyGallery[selectedPhotoIndex] || propertyGallery[0] || '/logo.png';
-    const featuredCoupons = useMemo(() => getFeaturedBookingCoupons(hotelId), [hotelId]);
+    const [featuredCoupons, setFeaturedCoupons] = useState<FeaturedCoupon[]>([]);
+
+    // Busca cupons em destaque via API
+    useEffect(() => {
+        fetch(`/api/coupons/featured${hotelId ? `?hotelId=${hotelId}` : ''}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.success && Array.isArray(data.coupons)) {
+                    setFeaturedCoupons(data.coupons);
+                }
+            })
+            .catch(() => {});
+    }, [hotelId]);
+
     const summaryBaseTotalText = totalStayAmount > 0 ? formatCurrency(totalStayAmount) : totalStayText;
     const summaryFinalTotalText = appliedCoupon ? appliedCoupon.formattedFinalAmount : summaryBaseTotalText;
 
@@ -1085,24 +1100,7 @@ const SearchComponent = ({
                                                 </button>
                                             </div>
 
-                                            {featuredCoupons.length > 0 ? (
-                                                <div className="mt-3 flex flex-wrap gap-2">
-                                                    {featuredCoupons.map((coupon) => (
-                                                        <button
-                                                            key={coupon.code}
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setCouponCode(coupon.code);
-                                                                setCouponFeedback(`${coupon.label} disponível para esta hospedagem.`);
-                                                                setCouponFeedbackTone('neutral');
-                                                            }}
-                                                            className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100"
-                                                        >
-                                                            {coupon.code} • {coupon.label}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            ) : null}
+
 
                                             {couponFeedback ? (
                                                 <div className={`mt-3 rounded-lg border px-3 py-2 text-sm ${couponFeedbackTone === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : couponFeedbackTone === 'error' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Property {
     id: number;
@@ -9,6 +10,8 @@ interface Property {
     endereco: string;
     preco: number;
     imagem: string;
+    slug?: string;
+    underConstruction?: boolean;
     disponiveis?: number;
     origem?: 'cloudbeds' | 'catalogo';
     descricao?: string;
@@ -26,7 +29,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             ? property.imagem
             : `/${property.imagem}`;
 
+    const CardWrapper = property.slug
+        ? ({ children }: { children: React.ReactNode }) => <Link href={`/${property.slug}`} className="block">{children}</Link>
+        : ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
     return (
+        <CardWrapper>
         <div className="group cursor-pointer overflow-hidden rounded-bl-xl rounded-br-5xl rounded-tl-xl rounded-tr-xl bg-white shadow-lg transition-all hover:shadow-xl">
             <div className="relative h-56 overflow-hidden rounded-tl-xl rounded-tr-xl">
                 <Image
@@ -37,8 +45,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                 />
 
-                <div className="absolute left-3 top-3">
-                    {property.origem === 'cloudbeds' && (
+                <div className="absolute left-3 top-3 flex gap-2">
+                    {property.underConstruction && (
+                        <span className="rounded-full bg-amber-500/95 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
+                            🚧 Em Construção
+                        </span>
+                    )}
+                    {property.origem === 'cloudbeds' && !property.underConstruction && (
                         <span className="rounded-full bg-emerald-600/95 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
                             Cloudbeds
                         </span>
@@ -73,7 +86,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                 )}
 
                 <div className="space-y-1">
-                    {hasRate ? (
+                    {property.underConstruction ? (
+                        <>
+                            <p className="text-sm font-semibold text-amber-600">🚧 Em breve</p>
+                            <p className="pt-1 text-xs text-gray-500">Lançamento em construção — saiba mais</p>
+                        </>
+                    ) : hasRate ? (
                         <>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-xs text-gray-500 font-questa-regular">a partir de</span>
@@ -90,14 +108,17 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                         <p className="text-sm font-medium text-slate-700">Valor sob consulta</p>
                     )}
 
-                    <p className="pt-1 text-xs font-medium text-emerald-700">
-                        {typeof property.disponiveis === 'number'
-                            ? `${property.disponiveis} unidade(s) disponível(is)`
-                            : 'Disponibilidade sujeita à atualização do PMS'}
-                    </p>
+                    {!property.underConstruction && (
+                        <p className="pt-1 text-xs font-medium text-emerald-700">
+                            {typeof property.disponiveis === 'number'
+                                ? `${property.disponiveis} unidade(s) disponível(is)`
+                                : 'Disponibilidade sujeita à atualização do PMS'}
+                        </p>
+                    )}
                 </div>
             </div>
         </div>
+        </CardWrapper>
     );
 };
 
