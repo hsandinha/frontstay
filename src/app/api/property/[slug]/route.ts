@@ -69,7 +69,7 @@ export async function GET(
             .eq('active', true)
             .maybeSingle();
 
-        const cloudbedsPropertyId = pmsIntegration?.config?.property_id || pmsIntegration?.config?.propertyId || null;
+        const cloudbedsPropertyId = pmsIntegration?.config?.property_id || pmsIntegration?.config?.propertyId || property.cloudbeds_property_id || null;
 
         return NextResponse.json({
             success: true,

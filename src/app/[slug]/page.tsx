@@ -433,13 +433,18 @@ export default function ImovelPage() {
 
         {/* Room Types — from Cloudbeds (only when NOT under construction) */}
         <div id="rooms-section" className="mt-16 pt-16 border-t border-gray-200">
-            {!property.underConstruction && (roomTypes.length > 0 || roomsLoading) && (
+            {!property.underConstruction && !!property.cloudbedsPropertyId && (
                     <section>
                         <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
                         {roomsLoading ? (
                             <div className="flex items-center justify-center py-12">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                                 <span className="ml-3 text-gray-600">Consultando disponibilidade...</span>
+                            </div>
+                        ) : roomTypes.length === 0 ? (
+                            <div className="py-12 bg-gray-50 border border-gray-100 rounded-3xl text-center">
+                                <h3 className="text-lg font-questa-bold text-gray-900 mb-2">Nenhum quarto disponível</h3>
+                                <p className="text-sm text-gray-500">Tente buscar para outras datas no calendário.</p>
                             </div>
                         ) : (
                             <div className="space-y-6">

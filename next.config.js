@@ -15,6 +15,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.cloudbeds.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.in',
+      },
     ],
     formats: ["image/webp", "image/avif"],
     qualities: [75, 90, 100],
