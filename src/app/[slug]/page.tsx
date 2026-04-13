@@ -271,100 +271,126 @@ export default function ImovelPage() {
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="max-w-7xl mx-auto px-6 py-10 space-y-12">
-                {/* Amenities + Check-in/out */}
-                <section>
-                    <div className="flex flex-wrap gap-3">
-                        {property.amenities.map(a => (
-                            <div key={a.id} className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-700 hover:bg-gray-100 transition-colors group">
-                                <span className="text-lg">{a.icon}</span>
-                                <span className="font-medium">{a.name}</span>
-                                {a.hours && (
-                                    <span className="text-xs text-gray-400 hidden group-hover:inline">({a.hours})</span>
-                                )}
-                            </div>
-                        ))}
-                        <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-sm text-emerald-700">
-                            <span className="text-lg">📥</span>
-                            <span className="font-medium">Check-in à partir das {property.checkinTime}h</span>
-                        </div>
-                        <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-50 rounded-xl border border-orange-200 text-sm text-orange-700">
-                            <span className="text-lg">📤</span>
-                            <span className="font-medium">Check-out até as {property.checkoutTime}h</span>
-                        </div>
-                    </div>
-                </section>
+            {/* Content 2-Column Charlie Layout */}
+            <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-12 lg:gap-16">
+                
+                {/* Left Column: Info */}
+                <div className="flex-1 lg:max-w-3xl">
 
                 {/* Description */}
                 {property.description && (
-                    <section className="bg-white">
-                        <h2 className="text-xl font-questa-bold text-gray-900 mb-4">Sobre o {property.name}</h2>
-                        <p className="text-gray-600 leading-relaxed max-w-3xl whitespace-pre-line">{property.description}</p>
+                    <section className="mb-10">
+                        <p className="text-gray-700 text-base md:text-lg leading-relaxed whitespace-pre-line">{property.description}</p>
                     </section>
                 )}
 
-                {/* Property highlights */}
-                <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {property.totalUnits > 0 && (
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-center">
-                            <div className="text-2xl mb-2">🏢</div>
-                            <p className="text-2xl font-questa-bold text-gray-900">{property.totalUnits}</p>
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Apartamentos</p>
-                        </div>
-                    )}
-                    {property.totalFloors && (
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-center">
-                            <div className="text-2xl mb-2">🏗️</div>
-                            <p className="text-2xl font-questa-bold text-gray-900">{property.totalFloors}</p>
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Andares</p>
-                        </div>
-                    )}
-                    <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-center">
-                        <div className="text-2xl mb-2">🔐</div>
-                        <p className="text-lg font-questa-bold text-gray-900">Check-in</p>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">100% Digital</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-center">
-                        <div className="text-2xl mb-2">📱</div>
-                        <p className="text-lg font-questa-bold text-gray-900">Suporte</p>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Via WhatsApp</p>
-                    </div>
-                </section>
-
-                {/* How to book — inspired by StayCharlie */}
-                <section className="bg-slate-900 rounded-[2rem] p-8 md:p-14 text-white shadow-2xl relative overflow-hidden">
-                    {/* Estética Glass e Background Blob (Similar à Home) */}
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/30 blur-[100px] rounded-full pointer-events-none" />
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-600/20 blur-[100px] rounded-full pointer-events-none" />
-
-                    <div className="relative z-10">
-                        <div className="text-center mb-10">
-                            <h2 className="text-3xl font-questa-bold mb-3 tracking-tight">Como se hospedar na FrontStay</h2>
-                            <p className="text-blue-100 max-w-2xl mx-auto">Sua experiência 100% digital, rápida e sem interrupções. Pensada para você ir direto para a sua acomodação.</p>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-                            {STEPS.map((step, i) => (
-                                <div key={i} className="text-center group">
-                                    <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6 backdrop-blur-md group-hover:bg-white/10 group-hover:scale-105 transition-all shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]">
-                                        {step.icon}
-                                    </div>
-                                    <div className="flex items-center justify-center gap-3 mb-3">
-                                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg shadow-blue-500/50">
-                                            {i + 1}
-                                        </div>
-                                        <h3 className="font-bold text-lg">{step.title}</h3>
-                                    </div>
-                                    <p className="text-blue-100/80 text-sm leading-relaxed px-2">{step.desc}</p>
+                {/* Amenities + Property highlights (Charlie Style) */}
+                <section className="mb-10">
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-y-6 gap-x-4">
+                        {property.amenities.map(a => (
+                            <div key={a.id} className="flex items-center gap-3 text-gray-700">
+                                <span className="text-2xl opacity-80">{a.icon}</span>
+                                <div>
+                                    <span className="font-medium">{a.name}</span>
+                                    {a.hours && <span className="text-xs text-gray-500 block">({a.hours})</span>}
                                 </div>
-                            ))}
+                            </div>
+                        ))}
+                        {/* Static Highlights */}
+                        <div className="flex items-center gap-3 text-gray-700">
+                            <span className="text-2xl opacity-80">🔐</span>
+                            <div>
+                                <span className="font-medium">Check-in 100% Digital</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700">
+                            <span className="text-2xl opacity-80">📱</span>
+                            <div>
+                                <span className="font-medium">Suporte via WhatsApp</span>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Room Types — from Cloudbeds (only when NOT under construction) */}
-                {!property.underConstruction && (roomTypes.length > 0 || roomsLoading) && (
+                {/* Checkin and Links */}
+                <section className="mb-12 space-y-6 border-y border-gray-100 py-6">
+                    <div className="flex flex-col gap-3">
+                         <div className="flex items-center gap-3 text-gray-800">
+                             <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">📥</div>
+                             <span className="text-sm font-medium">Check-in à partir das {property.checkinTime}h</span>
+                         </div>
+                         <div className="flex items-center gap-3 text-gray-800">
+                             <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">📤</div>
+                             <span className="text-sm font-medium">Check-out até as {property.checkoutTime}h</span>
+                         </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 pt-2">
+                         <Link href="/termos" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 underline underline-offset-2 w-fit">
+                             📄 Políticas de estadia e cancelamento
+                         </Link>
+                         <Link href="/faq" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 underline underline-offset-2 w-fit">
+                             ❓ Dúvidas frequentes (F.A.Q)
+                         </Link>
+                    </div>
+                </section>
+
+                {/* How to book — Vertical Charlie Style but Frontstay dark glass elements */}
+                <section className="mb-10">
+                    <h2 className="text-2xl font-questa-bold mb-8 text-gray-900">Como se hospedar na FrontStay</h2>
+                    <div className="flex flex-col gap-8">
+                        {STEPS.map((step, i) => (
+                            <div key={i} className="flex gap-5 items-start">
+                                <div className="w-12 h-12 flex-shrink-0 bg-[#0a2540] text-white rounded-full flex items-center justify-center text-xl shadow-lg shadow-blue-900/20">
+                                    {step.icon}
+                                </div>
+                                <div className="pt-2">
+                                    <p className="text-gray-800 font-medium leading-relaxed">{step.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            </div>
+
+            {/* Right Column: Sticky Booking Card - FrontStay Design */}
+            <div className="lg:w-[400px]">
+                <div className="sticky top-24 bg-[#0a2540] text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/30 blur-[60px] rounded-full pointer-events-none" />
+                    
+                    <h2 className="text-2xl font-questa-bold text-white mb-6 relative z-10">Faça sua reserva</h2>
+                    
+                    <div className="bg-white/10 rounded-xl p-4 mb-4 backdrop-blur-md relative z-10 border border-white/10">
+                        <p className="text-xs text-blue-200 uppercase font-semibold mb-1 tracking-wider">Período de estadia</p>
+                        <p className="text-sm font-medium">Consulte nossos quartos e datas na ferramenta de seleção abaixo.</p>
+                    </div>
+
+                    <button 
+                        onClick={() => {
+                            const roomsEl = document.getElementById('rooms-section');
+                            if (roomsEl) {
+                                roomsEl.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                                window.location.href = `/?hotel=${property.slug}`;
+                            }
+                        }}
+                        className="w-full relative z-10 bg-white text-[#0a2540] hover:bg-gray-100 transition-colors py-4 rounded-xl font-bold text-lg shadow-xl shadow-black/20"
+                    >
+                        Garanta sua estadia
+                    </button>
+                    
+                    {property.supportPhone && (
+                        <p className="text-center text-xs text-blue-200 mt-6 relative z-10">
+                            Dúvidas? <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="underline" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a>
+                        </p>
+                    )}
+                </div>
+            </div>
+        </div>
+
+        {/* Room Types — from Cloudbeds (only when NOT under construction) */}
+        <div id="rooms-section" className="mt-16 pt-16 border-t border-gray-200">
+            {!property.underConstruction && (roomTypes.length > 0 || roomsLoading) && (
                     <section>
                         <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
                         {roomsLoading ? (
@@ -385,7 +411,7 @@ export default function ImovelPage() {
                                         <div key={room.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex flex-col md:flex-row">
                                                 {/* Room photo */}
-                                                <div className="relative w-full md:w-[380px] h-64 md:h-auto flex-shrink-0 bg-gray-100">
+                                                <div className="relative w-full md:w-[320px] h-64 md:h-full flex-shrink-0 bg-gray-100">
                                                     {hasPhotos ? (
                                                         <>
                                                             <Image
@@ -491,64 +517,7 @@ export default function ImovelPage() {
                     </section>
                 )}
 
-                {/* CTA */}
-                <section className="text-center py-8">
-                    {property.underConstruction ? (
-                        <>
-                            <div className="inline-flex items-center gap-3 bg-amber-50 border-2 border-amber-200 px-8 py-5 rounded-2xl mb-4">
-                                <span className="text-3xl">🚧</span>
-                                <div className="text-left">
-                                    <h2 className="text-xl font-questa-bold text-amber-800">Imóvel em construção</h2>
-                                    <p className="text-sm text-amber-600">Em breve você poderá reservar neste endereço.</p>
-                                </div>
-                            </div>
-                            <p className="text-gray-500 text-sm">Quer ser notificado quando abrir? Entre em contato pelo WhatsApp.</p>
-                            {property.supportPhone && (
-                                <a
-                                    href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}?text=Olá! Gostaria de ser avisado quando o ${property.name} estiver disponível para reservas.`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 mt-4 bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-all"
-                                >
-                                    💬 Fale pelo WhatsApp
-                                </a>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <h2 className="text-2xl font-questa-bold text-gray-900 mb-3">Pronto para reservar?</h2>
-                            <p className="text-gray-600 mb-6 max-w-lg mx-auto">
-                                Confira a disponibilidade e os melhores preços diretamente no nosso site.
-                            </p>
-                            <Link
-                                href={`/?hotel=${property.slug}`}
-                                className="inline-flex items-center gap-3 bg-[#0a2540] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#0d3156] transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-                            >
-                                Reserve agora
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
-                            </Link>
-                        </>
-                    )}
-                </section>
-
-                {/* Policies link */}
-                <section className="border-t border-gray-100 pt-6 text-center">
-                    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-500">
-                        <Link href="/termos" className="hover:text-gray-900 transition-colors underline underline-offset-2">Políticas de estadia e cancelamento</Link>
-                        <span>·</span>
-                        <Link href="/faq" className="hover:text-gray-900 transition-colors underline underline-offset-2">Dúvidas frequentes (F.A.Q)</Link>
-                        {property.supportPhone && (
-                            <>
-                                <span>·</span>
-                                <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="hover:text-gray-900 transition-colors underline underline-offset-2" target="_blank" rel="noopener noreferrer">
-                                    WhatsApp: {property.supportPhone}
-                                </a>
-                            </>
-                        )}
-                    </div>
-                </section>
+                </div>
             </div>
 
             <Footer />
