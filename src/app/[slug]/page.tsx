@@ -103,20 +103,22 @@ export default function ImovelPage() {
 
     // Fetch room types from Cloudbeds
     useEffect(() => {
-        if (!property?.cloudbedsPropertyId) return;
+        const pId = property?.cloudbedsPropertyId || (slug === 'inhouse' ? '172023' : null);
+        if (!pId) return;
+
         if (!searchTriggered && roomTypes.length === 0) {
             // Load initially for today/tomorrow without strict trigger
-            fetchRooms(checkInDate, checkOutDate, guests);
+            fetchRooms(checkInDate, checkOutDate, guests, pId);
         } else if (searchTriggered) {
-            fetchRooms(checkInDate, checkOutDate, guests);
+            fetchRooms(checkInDate, checkOutDate, guests, pId);
             setSearchTriggered(false);
         }
-    }, [property?.cloudbedsPropertyId, searchTriggered]);
+    }, [property?.cloudbedsPropertyId, searchTriggered, slug]);
 
-    const fetchRooms = (ci: string, co: string, g: number) => {
+    const fetchRooms = (ci: string, co: string, g: number, pId: string) => {
         if (!ci || !co) return;
         setRoomsLoading(true);
-        fetch(`/api/cloudbeds/availability?startDate=${ci}&endDate=${co}&propertyID=${property!.cloudbedsPropertyId}&guests=${g}`)
+        fetch(`/api/cloudbeds/availability?startDate=${ci}&endDate=${co}&propertyID=${pId}&guests=${g}`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (data?.success && Array.isArray(data.items)) {
@@ -352,7 +354,10 @@ export default function ImovelPage() {
 
                 {/* Right Column: Sticky Booking Card - Padrão Branco/Limpo */}
                 <div className="lg:w-[400px]">
-                    <div className="sticky top-24 bg-white text-gray-900 rounded-[32px] p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+                    <div 
+                        className="sticky top-24 bg-white text-gray-900 p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
+                        style={{ borderRadius: '32px' }}
+                    >
 
                         <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
 
@@ -411,7 +416,7 @@ export default function ImovelPage() {
 
             {/* Room Types — from Cloudbeds (only when NOT under construction) */}
             <div id="rooms-section" className="mt-16 pt-16 border-t border-gray-200">
-                {!property.underConstruction && !!property.cloudbedsPropertyId && (
+                {!property.underConstruction && !!(property.cloudbedsPropertyId || slug === 'inhouse') && (
                     <section>
                         <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
                         {roomsLoading ? (
