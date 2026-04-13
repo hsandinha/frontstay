@@ -103,7 +103,8 @@ export default function ImovelPage() {
 
     // Fetch room types from Cloudbeds
     useEffect(() => {
-        const pId = property?.cloudbedsPropertyId || (slug === 'inhouse' ? '172023' : null);
+        // Se for InHouse, forçamos o valor 'ALL' para trazer tudo do Cloudbeds sem filtro de ID
+        const pId = property?.cloudbedsPropertyId || (slug === 'inhouse' ? 'ALL' : null);
         if (!pId) return;
 
         if (!searchTriggered && roomTypes.length === 0) {
@@ -118,7 +119,9 @@ export default function ImovelPage() {
     const fetchRooms = (ci: string, co: string, g: number, pId: string) => {
         if (!ci || !co) return;
         setRoomsLoading(true);
-        fetch(`/api/cloudbeds/availability?startDate=${ci}&endDate=${co}&propertyID=${pId}&guests=${g}`)
+        const pidParam = pId && pId !== 'ALL' ? `&propertyID=${pId}` : '';
+        
+        fetch(`/api/cloudbeds/availability?startDate=${ci}&endDate=${co}&guests=${g}${pidParam}`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (data?.success && Array.isArray(data.items)) {
