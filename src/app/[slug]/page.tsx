@@ -82,6 +82,12 @@ export default function ImovelPage() {
     const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
     const [roomsLoading, setRoomsLoading] = useState(false);
     const [roomPhotoIndex, setRoomPhotoIndex] = useState<Record<string, number>>({});
+    
+    // Date Picker States
+    const [checkInDate, setCheckInDate] = useState(() => { const d = new Date(); return d.toISOString().split('T')[0]; });
+    const [checkOutDate, setCheckOutDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split('T')[0]; });
+    const [guests, setGuests] = useState(1);
+    const [searchTriggered, setSearchTriggered] = useState(false);
 
     useEffect(() => {
         if (!slug) return;
@@ -95,17 +101,22 @@ export default function ImovelPage() {
             .finally(() => setLoading(false));
     }, [slug]);
 
-    // Fetch room types from Cloudbeds when property loads
+    // Fetch room types from Cloudbeds
     useEffect(() => {
         if (!property?.cloudbedsPropertyId) return;
-        setRoomsLoading(true);
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const startDate = today.toISOString().split('T')[0];
-        const endDate = tomorrow.toISOString().split('T')[0];
+        if (!searchTriggered && roomTypes.length === 0) {
+            // Load initially for today/tomorrow without strict trigger
+            fetchRooms(checkInDate, checkOutDate, guests);
+        } else if (searchTriggered) {
+            fetchRooms(checkInDate, checkOutDate, guests);
+            setSearchTriggered(false);
+        }
+    }, [property?.cloudbedsPropertyId, searchTriggered]);
 
-        fetch(`/api/cloudbeds/availability?startDate=${startDate}&endDate=${endDate}&propertyID=${property.cloudbedsPropertyId}&guests=1`)
+    const fetchRooms = (ci: string, co: string, g: number) => {
+        if (!ci || !co) return;
+        setRoomsLoading(true);
+        fetch(`/api/cloudbeds/availability?startDate=${ci}&endDate=${co}&propertyID=${property!.cloudbedsPropertyId}&guests=${g}`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (data?.success && Array.isArray(data.items)) {
@@ -122,11 +133,13 @@ export default function ImovelPage() {
                             ? Object.values(item.raw.roomTypeFeatures).filter((f: any) => typeof f === 'string' && f.trim())
                             : [],
                     })));
+                } else {
+                    setRoomTypes([]);
                 }
             })
             .catch(err => console.error('Erro ao carregar quartos:', err))
             .finally(() => setRoomsLoading(false));
-    }, [property?.cloudbedsPropertyId]);
+    };
 
     if (loading) {
         return (
@@ -353,35 +366,66 @@ export default function ImovelPage() {
                 </section>
             </div>
 
-            {/* Right Column: Sticky Booking Card - FrontStay Design */}
+            {/* Right Column: Sticky Booking Card - FrontStay Design Abaixo/Flutuante */}
             <div className="lg:w-[400px]">
                 <div className="sticky top-24 bg-[#0a2540] text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/30 blur-[60px] rounded-full pointer-events-none" />
                     
                     <h2 className="text-2xl font-questa-bold text-white mb-6 relative z-10">Faça sua reserva</h2>
                     
-                    <div className="bg-white/10 rounded-xl p-4 mb-4 backdrop-blur-md relative z-10 border border-white/10">
-                        <p className="text-xs text-blue-200 uppercase font-semibold mb-1 tracking-wider">Período de estadia</p>
-                        <p className="text-sm font-medium">Consulte nossos quartos e datas na ferramenta de seleção abaixo.</p>
-                    </div>
+                    <div className="space-y-4 relative z-10">
+                        {/* Dates Selector */}
+                        <div className="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/10 flex flex-col gap-3">
+                            <div>
+                                <label className="text-[10px] text-blue-200 uppercase font-bold tracking-wider mb-1 block">Check-in</label>
+                                <input 
+                                    type="date" 
+                                    value={checkInDate}
+                                    onChange={(e) => setCheckInDate(e.target.value)}
+                                    className="w-full bg-transparent text-white font-medium focus:outline-none border-b border-white/20 pb-1"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] text-blue-200 uppercase font-bold tracking-wider mb-1 block">Check-out</label>
+                                <input 
+                                    type="date" 
+                                    value={checkOutDate}
+                                    min={checkInDate}
+                                    onChange={(e) => setCheckOutDate(e.target.value)}
+                                    className="w-full bg-transparent text-white font-medium focus:outline-none border-b border-white/20 pb-1"
+                                />
+                            </div>
+                        </div>
 
-                    <button 
-                        onClick={() => {
-                            const roomsEl = document.getElementById('rooms-section');
-                            if (roomsEl) {
-                                roomsEl.scrollIntoView({ behavior: 'smooth' });
-                            } else {
-                                window.location.href = `/?hotel=${property.slug}`;
-                            }
-                        }}
-                        className="w-full relative z-10 bg-white text-[#0a2540] hover:bg-gray-100 transition-colors py-4 rounded-xl font-bold text-lg shadow-xl shadow-black/20"
-                    >
-                        Garanta sua estadia
-                    </button>
+                        {/* Guests Selector */}
+                        <div className="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/10 flex items-center justify-between">
+                            <span className="text-sm font-medium">Hóspedes</span>
+                            <div className="flex items-center gap-4 bg-[#0a2540] rounded-lg border border-white/10 p-1">
+                                <button onClick={() => setGuests(Math.max(1, guests - 1))} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-white/10 rounded-md transition-colors">−</button>
+                                <span className="font-bold w-4 text-center">{guests}</span>
+                                <button onClick={() => setGuests(guests + 1)} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-white/10 rounded-md transition-colors">+</button>
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={() => {
+                                setSearchTriggered(true);
+                                const roomsEl = document.getElementById('rooms-section');
+                                if (roomsEl) {
+                                    roomsEl.scrollIntoView({ behavior: 'smooth' });
+                                } else {
+                                    window.location.href = `/?hotel=${property.slug}`;
+                                }
+                            }}
+                            className="w-full bg-white text-[#0a2540] hover:bg-gray-100 transition-colors py-4 rounded-xl font-bold text-lg shadow-xl shadow-black/20 mt-2"
+                        >
+                            Garanta sua estadia
+                        </button>
+                    </div>
                     
                     {property.supportPhone && (
                         <p className="text-center text-xs text-blue-200 mt-6 relative z-10">
-                            Dúvidas? <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="underline" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a>
+                            Dúvidas? <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="underline hover:text-white" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a>
                         </p>
                     )}
                 </div>
@@ -408,10 +452,10 @@ export default function ImovelPage() {
                                     const amenityList = (room.amenities as string[]).slice(0, 8);
 
                                     return (
-                                        <div key={room.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                        <div key={room.id} className="bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.12)] transition-shadow">
                                             <div className="flex flex-col md:flex-row">
                                                 {/* Room photo */}
-                                                <div className="relative w-full md:w-[320px] h-64 md:h-full flex-shrink-0 bg-gray-100">
+                                                <div className="relative w-full md:w-[380px] h-64 md:h-full flex-shrink-0 bg-gray-100">
                                                     {hasPhotos ? (
                                                         <>
                                                             <Image
@@ -444,65 +488,69 @@ export default function ImovelPage() {
                                                             )}
                                                         </>
                                                     ) : (
-                                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                                                            <span className="text-5xl">🏨</span>
+                                                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                                                            <span className="text-4xl mb-2">📸</span>
+                                                            <span className="text-sm font-medium">Sem foto</span>
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 {/* Room info */}
-                                                <div className="flex-1 p-6 flex flex-col">
+                                                <div className="flex-1 p-8 flex flex-col">
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div>
-                                                            <h3 className="text-xl font-questa-bold text-gray-900">{room.name}</h3>
+                                                            <h3 className="text-2xl font-questa-bold text-[#1c1c1c]">{room.name}</h3>
                                                             {room.maxGuests && (
-                                                                <p className="text-sm text-gray-500 mt-0.5">Até {room.maxGuests} hóspedes por quarto</p>
+                                                                <p className="text-sm text-gray-500 mt-1">Até {room.maxGuests} {room.maxGuests === 1 ? 'hóspede' : 'hóspedes'} por quarto</p>
                                                             )}
                                                         </div>
                                                         {isAvailable && room.availableRooms <= 3 && (
-                                                            <span className="flex-shrink-0 px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-lg">Últimas vagas</span>
+                                                            <span className="flex-shrink-0 px-3 py-1 bg-[#ff385c] text-white text-xs font-bold uppercase tracking-wide rounded-md">Últimas vagas</span>
                                                         )}
                                                     </div>
 
                                                     {/* Amenities */}
                                                     {amenityList.length > 0 && (
-                                                        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-4">
+                                                        <div className="flex flex-wrap gap-x-6 gap-y-2 mt-6">
                                                             {amenityList.map((amenity, i) => (
-                                                                <span key={i} className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-                                                                    <span className="text-gray-400">✓</span>
+                                                                <span key={i} className="inline-flex items-center gap-2 text-sm text-gray-700 font-medium">
+                                                                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                                    </svg>
                                                                     {amenity}
                                                                 </span>
                                                             ))}
                                                         </div>
                                                     )}
 
-                                                    <div className="mt-auto pt-5">
+                                                    <div className="mt-auto pt-8">
                                                         {isAvailable ? (
-                                                            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+                                                            <div className="flex items-center justify-between border-t border-gray-100 pt-6">
                                                                 <div>
                                                                     {room.rate ? (
                                                                         <>
-                                                                            <p className="text-2xl font-questa-bold text-gray-900">
+                                                                            <p className="text-3xl font-questa-bold text-[#1c1c1c]">
                                                                                 R$ {room.rate.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                                                                <span className="text-sm font-normal text-gray-500 ml-1">por noite</span>
+                                                                                <span className="text-sm font-normal text-gray-500 ml-2">por noite</span>
                                                                             </p>
-                                                                            <p className="text-xs text-gray-400 mt-0.5">1 noite, 1 quarto, 1 hóspede</p>
+                                                                            {/* Subtotal Calculation matching Charlie style */}
+                                                                            <p className="text-xs text-gray-400 mt-1">Total para {guests} hóspede{guests > 1 ? 's' : ''}</p>
                                                                         </>
                                                                     ) : (
                                                                         <p className="text-sm text-gray-600">Valor sob consulta</p>
                                                                     )}
                                                                 </div>
                                                                 <Link
-                                                                    href={`/?hotel=${property.slug}`}
-                                                                    className="inline-flex items-center gap-2 bg-[#0a2540] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#0d3156] transition-all hover:shadow-lg"
+                                                                    href={`/?hotel=${property.slug}&checkin=${checkInDate}&checkout=${checkOutDate}&guests=${guests}`}
+                                                                    className="inline-flex items-center gap-2 bg-[#1c1c1c] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-black transition-all hover:scale-105"
                                                                 >
                                                                     Reserve agora
                                                                 </Link>
                                                             </div>
                                                         ) : (
-                                                            <div className="border-t border-gray-100 pt-4">
-                                                                <p className="text-sm text-gray-400 text-center py-2 bg-gray-50 rounded-xl">
-                                                                    Indisponível nestas datas
+                                                            <div className="border-t border-gray-100 pt-6">
+                                                                <p className="text-sm text-gray-500 font-medium py-3 px-4 bg-gray-50 rounded-xl inline-block">
+                                                                    Não há unidades disponíveis nestas datas.
                                                                 </p>
                                                             </div>
                                                         )}
