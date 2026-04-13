@@ -516,8 +516,6 @@ export default function ImovelPage() {
                         )}
                     </section>
                 )}
-
-                </div>
             </div>
 
             <Footer />
