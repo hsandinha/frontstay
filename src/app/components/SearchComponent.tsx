@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { formatCurrency, type AppliedBookingCoupon, type FeaturedCoupon } from '../../lib/coupon-types';
 
 type AvailabilityStatus = 'available' | 'unavailable' | 'neutral';
@@ -148,7 +149,28 @@ function normalizeImageSrc(value: string) {
 
 const defaultDates = getDefaultDates();
 
-const SearchComponent = ({
+    searchStatus = 'idle',
+}: SearchComponentProps) => {
+    return (
+        <Suspense fallback={<div className="h-[200px] flex items-center justify-center">Carregando motor de reservas...</div>}>
+            <SearchComponentInner 
+                onSearch={onSearch}
+                isLoading={isLoading}
+                calendarDays={calendarDays}
+                calendarMonthLabel={calendarMonthLabel}
+                dailyRateText={dailyRateText}
+                totalStayText={totalStayText}
+                totalStayAmount={totalStayAmount}
+                nightCount={nightCount}
+                availableProperties={availableProperties}
+                feedbackMessage={feedbackMessage}
+                searchStatus={searchStatus}
+            />
+        </Suspense>
+    );
+};
+
+const SearchComponentInner = ({
     onSearch,
     isLoading = false,
     calendarDays = [],
@@ -235,6 +257,47 @@ const SearchComponent = ({
             })
             .catch(() => {});
     }, [hotelId]);
+
+    const searchParams = useSearchParams();
+    
+    // Auto trigger checkout flow if URL requires it
+    useEffect(() => {
+        if (searchParams?.get('checkout_flow') === 'true') {
+            const urlHotel = searchParams.get('hotel') || 'inhouse';
+            const urlCheckin = searchParams.get('checkin');
+            const urlCheckout = searchParams.get('checkout');
+            const urlGuests = searchParams.get('guests');
+            
+            if (urlCheckin && urlCheckout) {
+                setDataInicio(urlCheckin);
+                setDataFim(urlCheckout);
+                setDisplayedMonth(urlCheckin);
+                setHotelId(urlHotel);
+                
+                if (urlGuests) {
+                    setHospedes(Math.max(1, parseInt(urlGuests, 10) || 1));
+                }
+
+                // Force open the modal on the details step
+                setSelectionStep('end');
+                setModalStep('details');
+                setIsCalendarModalOpen(true);
+
+                // Run the search so rooms exist
+                const safeGuests = urlGuests ? Math.max(1, parseInt(urlGuests, 10) || 1) : 1;
+                const hotelLabel = hotelOptions.find(h => h.value === urlHotel)?.label || urlHotel;
+                
+                onSearch?.({
+                    hotelId: urlHotel,
+                    hotelLabel: hotelLabel,
+                    guests: safeGuests,
+                    startDate: urlCheckin,
+                    endDate: urlCheckout,
+                    amenities: selectedAmenities,
+                });
+            }
+        }
+    }, [searchParams]);
 
     const summaryBaseTotalText = totalStayAmount > 0 ? formatCurrency(totalStayAmount) : totalStayText;
     const summaryFinalTotalText = appliedCoupon ? appliedCoupon.formattedFinalAmount : summaryBaseTotalText;

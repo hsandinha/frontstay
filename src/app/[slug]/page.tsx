@@ -366,44 +366,43 @@ export default function ImovelPage() {
                 </section>
             </div>
 
-            {/* Right Column: Sticky Booking Card - FrontStay Design Abaixo/Flutuante */}
+            {/* Right Column: Sticky Booking Card - Padrão Branco/Limpo */}
             <div className="lg:w-[400px]">
-                <div className="sticky top-24 bg-[#0a2540] text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/30 blur-[60px] rounded-full pointer-events-none" />
+                <div className="sticky top-24 bg-white text-gray-900 rounded-3xl p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
                     
-                    <h2 className="text-2xl font-questa-bold text-white mb-6 relative z-10">Faça sua reserva</h2>
+                    <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
                     
-                    <div className="space-y-4 relative z-10">
+                    <div className="space-y-4">
                         {/* Dates Selector */}
-                        <div className="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/10 flex flex-col gap-3">
+                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 flex flex-col gap-3">
                             <div>
-                                <label className="text-[10px] text-blue-200 uppercase font-bold tracking-wider mb-1 block">Check-in</label>
+                                <label className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1 block">Check-in</label>
                                 <input 
                                     type="date" 
                                     value={checkInDate}
                                     onChange={(e) => setCheckInDate(e.target.value)}
-                                    className="w-full bg-transparent text-white font-medium focus:outline-none border-b border-white/20 pb-1"
+                                    className="w-full bg-transparent text-gray-900 font-medium focus:outline-none border-b border-gray-200 pb-1"
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] text-blue-200 uppercase font-bold tracking-wider mb-1 block">Check-out</label>
+                                <label className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1 block">Check-out</label>
                                 <input 
                                     type="date" 
                                     value={checkOutDate}
                                     min={checkInDate}
                                     onChange={(e) => setCheckOutDate(e.target.value)}
-                                    className="w-full bg-transparent text-white font-medium focus:outline-none border-b border-white/20 pb-1"
+                                    className="w-full bg-transparent text-gray-900 font-medium focus:outline-none border-b border-gray-200 pb-1"
                                 />
                             </div>
                         </div>
 
                         {/* Guests Selector */}
-                        <div className="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/10 flex items-center justify-between">
-                            <span className="text-sm font-medium">Hóspedes</span>
-                            <div className="flex items-center gap-4 bg-[#0a2540] rounded-lg border border-white/10 p-1">
-                                <button onClick={() => setGuests(Math.max(1, guests - 1))} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-white/10 rounded-md transition-colors">−</button>
-                                <span className="font-bold w-4 text-center">{guests}</span>
-                                <button onClick={() => setGuests(guests + 1)} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-white/10 rounded-md transition-colors">+</button>
+                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-900">Hóspedes</span>
+                            <div className="flex items-center gap-4 bg-white rounded-lg border border-gray-200 p-1">
+                                <button onClick={() => setGuests(Math.max(1, guests - 1))} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-gray-100 rounded-md transition-colors text-gray-700">−</button>
+                                <span className="font-bold w-4 text-center text-gray-900">{guests}</span>
+                                <button onClick={() => setGuests(guests + 1)} className="w-8 h-8 flex items-center justify-center text-lg hover:bg-gray-100 rounded-md transition-colors text-gray-700">+</button>
                             </div>
                         </div>
 
@@ -414,18 +413,18 @@ export default function ImovelPage() {
                                 if (roomsEl) {
                                     roomsEl.scrollIntoView({ behavior: 'smooth' });
                                 } else {
-                                    window.location.href = `/?hotel=${property.slug}`;
+                                    window.location.href = `/?hotel=${property.slug}&checkin=${checkInDate}&checkout=${checkOutDate}&guests=${guests}`;
                                 }
                             }}
-                            className="w-full bg-white text-[#0a2540] hover:bg-gray-100 transition-colors py-4 rounded-xl font-bold text-lg shadow-xl shadow-black/20 mt-2"
+                            className="w-full bg-[#1c1c1c] text-white hover:bg-black transition-colors py-4 rounded-2xl font-bold text-lg shadow-lg mt-2"
                         >
                             Garanta sua estadia
                         </button>
                     </div>
                     
                     {property.supportPhone && (
-                        <p className="text-center text-xs text-blue-200 mt-6 relative z-10">
-                            Dúvidas? <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="underline hover:text-white" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a>
+                        <p className="text-center text-xs text-gray-500 mt-6 font-medium">
+                            Dúvidas? <a href={`https://wa.me/55${property.supportPhone.replace(/\D/g, '')}`} className="underline hover:text-gray-900" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a>
                         </p>
                     )}
                 </div>
@@ -541,7 +540,7 @@ export default function ImovelPage() {
                                                                     )}
                                                                 </div>
                                                                 <Link
-                                                                    href={`/?hotel=${property.slug}&checkin=${checkInDate}&checkout=${checkOutDate}&guests=${guests}`}
+                                                                    href={`/?hotel=${property.slug}&checkin=${checkInDate}&checkout=${checkOutDate}&guests=${guests}&checkout_flow=true`}
                                                                     className="inline-flex items-center gap-2 bg-[#1c1c1c] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-black transition-all hover:scale-105"
                                                                 >
                                                                     Reserve agora
