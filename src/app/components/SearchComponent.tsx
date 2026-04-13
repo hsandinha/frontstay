@@ -148,7 +148,17 @@ function normalizeImageSrc(value: string) {
 }
 
 const defaultDates = getDefaultDates();
-
+const SearchComponent = ({
+    onSearch,
+    isLoading = false,
+    calendarDays = [],
+    calendarMonthLabel,
+    dailyRateText = 'Selecione um período para consultar a diária no Cloudbeds.',
+    totalStayText = 'Total a calcular',
+    totalStayAmount = 0,
+    nightCount = 0,
+    availableProperties = [],
+    feedbackMessage = '',
     searchStatus = 'idle',
 }: SearchComponentProps) => {
     return (
