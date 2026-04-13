@@ -67,10 +67,9 @@ const FALLBACK_IMAGES: Record<string, string> = {
 const FALLBACK_COVER = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2940';
 
 const STEPS = [
-    { icon: '📝', title: 'Faça sua reserva', desc: 'Reserve pelo nosso site e receba a confirmação por e-mail e WhatsApp.' },
-    { icon: '📱', title: 'Envie seus documentos', desc: 'Complete o check-in online, envie seus documentos para liberar o acesso ao prédio.' },
-    { icon: '🔑', title: 'Acesse o apartamento', desc: 'Na data do check-in, receba as instruções de entrada via WhatsApp a partir das 15h.' },
-    { icon: '👋', title: 'Checkout simples', desc: 'No dia do checkout, basta sair e nos avisar pelo WhatsApp. Simples assim!' },
+    { icon: '📝', title: 'Reserva e Liberação', desc: 'Após a reserva aqui no site, envie seus documentos pelo nosso portal para garantir sua liberação no prédio através do nosso check-in 100% digital.' },
+    { icon: '🔑', title: 'Entrada e Acesso', desc: 'As informações da sua estadia, incluindo a senha para acesso direto ao apartamento, chegarão automaticamente via WhatsApp a partir do horário de check-in.' },
+    { icon: '👋', title: 'Sua Estadia e Checkout', desc: 'Aproveite a sua estadia com os diferenciais InHouse! No dia de ir embora, basta responder nossa mensagem no WhatsApp sinalizando sua saída. Simples assim.' },
 ];
 
 export default function ImovelPage() {
@@ -166,6 +165,22 @@ export default function ImovelPage() {
         <div className="min-h-screen bg-white">
             <Header />
 
+            {/* Promotional & Security Banners */}
+            <div className="bg-[#0a2540] text-center text-white text-xs font-medium px-4 py-2 flex flex-col md:flex-row md:items-center justify-center gap-2 border-b border-white/10 shadow-sm">
+                <span className="bg-amber-500 text-black px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[10px]">Atenção a Golpes</span>
+                <span className="opacity-90">Utilize sempre nossos canais oficiais. A FrontStay não envia áudio ou realiza ligações no WhatsApp. Proteja-se!</span>
+            </div>
+            <div className="bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 border-b border-blue-900 shadow-inner px-4 py-3 text-center">
+                <Link href="/" className="inline-flex flex-col md:flex-row md:items-center justify-center gap-1 md:gap-3 group">
+                    <span className="text-blue-100 font-bold tracking-tight group-hover:text-white transition-colors">
+                        <span className="text-white">FrontStay Black ✦</span> A melhor tarifa sempre no nosso site!
+                    </span>
+                    <span className="text-white text-sm md:text-base border-b border-white/40 group-hover:border-white transition-all">
+                        Reserve pelo sistema oficial e garanta seu check-in automatizado.
+                    </span>
+                </Link>
+            </div>
+
             {/* Hero */}
             <section className="relative bg-[#0a2540]">
                 <div className="relative h-[420px] md:h-[520px] overflow-hidden">
@@ -239,19 +254,19 @@ export default function ImovelPage() {
 
             {/* Breadcrumbs */}
             <div className="bg-gray-50 border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-6 py-3">
-                    <nav className="flex items-center gap-2 text-sm text-gray-500">
-                        <Link href="/" className="hover:text-gray-900 transition-colors">FrontStay</Link>
-                        <span>›</span>
+                <div className="max-w-7xl mx-auto px-6 py-4">
+                    <nav className="flex items-center gap-2 text-xs md:text-sm text-gray-500 font-medium">
+                        <Link href="/" className="hover:text-blue-700 transition-colors">FrontStay</Link>
+                        <span>/</span>
                         <span>Hospedagem</span>
                         {property.city && (
                             <>
-                                <span>›</span>
+                                <span>/</span>
                                 <span>{property.city}</span>
                             </>
                         )}
-                        <span>›</span>
-                        <span className="text-gray-900 font-medium">{property.name}</span>
+                        <span>/</span>
+                        <span className="text-gray-900 font-bold">{property.name}</span>
                     </nav>
                 </div>
             </div>
@@ -318,21 +333,33 @@ export default function ImovelPage() {
                 </section>
 
                 {/* How to book — inspired by StayCharlie */}
-                <section className="bg-gradient-to-br from-[#0a2540] to-[#1a3a5c] rounded-3xl p-8 md:p-12 text-white">
-                    <h2 className="text-2xl font-questa-bold mb-8 text-center">Como se hospedar na FrontStay</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        {STEPS.map((step, i) => (
-                            <div key={i} className="text-center">
-                                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 backdrop-blur-sm">
-                                    {step.icon}
+                <section className="bg-slate-900 rounded-[2rem] p-8 md:p-14 text-white shadow-2xl relative overflow-hidden">
+                    {/* Estética Glass e Background Blob (Similar à Home) */}
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/30 blur-[100px] rounded-full pointer-events-none" />
+                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-600/20 blur-[100px] rounded-full pointer-events-none" />
+
+                    <div className="relative z-10">
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl font-questa-bold mb-3 tracking-tight">Como se hospedar na FrontStay</h2>
+                            <p className="text-blue-100 max-w-2xl mx-auto">Sua experiência 100% digital, rápida e sem interrupções. Pensada para você ir direto para a sua acomodação.</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                            {STEPS.map((step, i) => (
+                                <div key={i} className="text-center group">
+                                    <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6 backdrop-blur-md group-hover:bg-white/10 group-hover:scale-105 transition-all shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]">
+                                        {step.icon}
+                                    </div>
+                                    <div className="flex items-center justify-center gap-3 mb-3">
+                                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg shadow-blue-500/50">
+                                            {i + 1}
+                                        </div>
+                                        <h3 className="font-bold text-lg">{step.title}</h3>
+                                    </div>
+                                    <p className="text-blue-100/80 text-sm leading-relaxed px-2">{step.desc}</p>
                                 </div>
-                                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-bold">
-                                    {i + 1}
-                                </div>
-                                <h3 className="font-semibold mb-2">{step.title}</h3>
-                                <p className="text-white/70 text-sm leading-relaxed">{step.desc}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </section>
 
