@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 
 export default function LoginPage() {
@@ -24,6 +25,14 @@ export default function LoginPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [authFeedback, setAuthFeedback] = useState('');
     const [authFeedbackTone, setAuthFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
+
+    const navLinks = [
+        { id: 'inicio', label: 'Início', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+        { id: 'hospedes', label: 'Hóspedes', href: '#', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+        { id: 'investidores', label: 'Investidores', href: '#', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+        { id: 'sobre', label: 'Sobre', href: '/sobre', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+        { id: 'cliente', label: 'Login', href: '/login', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+    ];
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -135,7 +144,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-frontstay relative overflow-hidden px-4 py-8">
+        <div className="min-h-screen flex items-center justify-center bg-frontstay relative overflow-hidden px-4 py-8 pb-24 md:pb-8">
             {/* Subtle Geometric Background Pattern */}
             <div className="absolute inset-0 bg-geometric-pattern opacity-40 pointer-events-none"></div>
 
@@ -437,6 +446,29 @@ export default function LoginPage() {
                     </div>
                 </div>
             )}
+
+            {/* Floating Bottom Navigation - Mobile (Light Theme) */}
+            <nav className="md:hidden fixed bottom-3 left-3 right-3 z-[45] bg-white border border-gray-200 shadow-[0_4px_25px_rgba(0,0,0,0.1)] rounded-2xl flex justify-around items-center h-16 px-1">
+                {navLinks.map(tab => {
+                    const isActive = tab.id === 'cliente'; // Na página de login o menu ativo será login
+                    return (
+                        <Link
+                            key={tab.id}
+                            href={tab.href}
+                            className={`flex flex-col items-center justify-center flex-1 h-full py-1 gap-1 transition-all ${
+                                isActive ? 'text-primary-teal' : 'text-gray-500'
+                            }`}
+                        >
+                            <svg className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive ? 2.5 : 2} d={tab.icon} />
+                            </svg>
+                            <span className={`text-[9px] uppercase tracking-wider font-semibold truncate w-full px-1 text-center ${isActive ? 'text-primary-teal' : 'text-gray-500'}`}>
+                                {tab.label}
+                            </span>
+                        </Link>
+                    );
+                })}
+            </nav>
         </div>
     );
 }

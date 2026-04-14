@@ -409,7 +409,7 @@ export default function HospedeDashboardClient() {
     /* ───── Render ───── */
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 pb-24 md:pb-0">
             {/* Header - same pattern as proprietario/admin */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4">
@@ -436,9 +436,6 @@ export default function HospedeDashboardClient() {
                                 )}
                             </div>
                             <button onClick={handleLogout} className="text-sm text-red-600 hover:underline font-medium hidden md:inline">Sair</button>
-                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
-                                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -447,39 +444,13 @@ export default function HospedeDashboardClient() {
             <div className="max-w-7xl mx-auto px-6 py-6">
                 {/* ─── Tabs ─── */}
                 <div className="mb-6">
-                    {/* Desktop */}
+                    {/* Desktop Only */}
                     <div className="hidden md:flex gap-1 overflow-x-auto border-b border-gray-200 pb-0">
                         {tabs.map(tab => (
                             <button
                                 key={tab.key}
-                                onClick={() => { setActiveTab(tab.key); setIsMobileMenuOpen(false); }}
-                                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.key ? 'border-blue-900 text-blue-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
-                            >
-                                <span>{tab.icon}</span> {tab.label}
-                            </button>
-                        ))}
-                    </div>
-                    {/* Mobile menu */}
-                    {isMobileMenuOpen && (
-                        <div className="md:hidden bg-white border border-gray-200 rounded-xl shadow-lg p-2 space-y-1">
-                            {tabs.map(tab => (
-                                <button
-                                    key={tab.key}
-                                    onClick={() => { setActiveTab(tab.key); setIsMobileMenuOpen(false); }}
-                                    className={`flex items-center gap-2 w-full px-4 py-2.5 rounded-lg text-sm font-medium ${activeTab === tab.key ? 'bg-blue-900 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                                >
-                                    <span>{tab.icon}</span> {tab.label}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                    {/* Mobile current tab */}
-                    <div className="md:hidden flex gap-1 overflow-x-auto pb-2">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
-                                className={`flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap ${activeTab === tab.key ? 'bg-blue-900 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+                                className={`flex items-center gap-2 px-4 py-3 text-sm font-questa-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.key ? 'border-primary-teal text-primary-teal' : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-300'}`}
                             >
                                 <span>{tab.icon}</span> {tab.label}
                             </button>
@@ -751,7 +722,7 @@ export default function HospedeDashboardClient() {
                                             <div className="rounded-lg bg-gray-50 p-3 text-sm"><span className="text-gray-500">Código de acesso</span><br /><span className="font-medium font-mono">{selectedReservation.accessCode || 'Liberado mais perto da entrada'}</span></div>
                                         </div>
 
-                                        {selectedReservation.balance && selectedReservation.balance > 0 ? (
+                                        {selectedReservation.balance && selectedReservation.balance > 0 && !['canceled', 'cancelled'].includes(String(selectedReservation.status || selectedReservation.pmsStatus || '').toLowerCase()) ? (
                                             <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800 mb-4">
                                                 <strong>Saldo pendente: {formatCurrency(selectedReservation.balance)}</strong>
                                                 <br />
@@ -839,20 +810,7 @@ export default function HospedeDashboardClient() {
                             )}
                         </div>
 
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-4">Visitantes</h3>
-                            <a href={whatsappUrl(whatsappNumber, `Olá! Gostaria de autorizar um visitante${selectedCode ? ` para a reserva ${selectedCode}` : ''}.`)} target="_blank" rel="noreferrer"
-                                className="block w-full px-4 py-3 bg-blue-900 text-white rounded-lg text-sm font-bold text-center hover:bg-blue-800 mb-2">Autorizar visitante</a>
-                            <p className="text-xs text-gray-500">Gerencie quem pode acessar o edifício durante sua estadia</p>
-                        </div>
 
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-4">Portaria e Concierge</h3>
-                            <a href={whatsappUrl(whatsappNumber, `Olá! Preciso de apoio${selectedCode ? ` com a reserva ${selectedCode}` : ''}.`)} target="_blank" rel="noreferrer"
-                                className="block w-full px-4 py-3 bg-blue-900 text-white rounded-lg text-sm font-bold text-center hover:bg-blue-800 mb-2">💬 Enviar mensagem</a>
-                            <a href={whatsappUrl(whatsappNumber, `Olá! Gostaria de saber sobre encomendas${selectedCode ? ` da reserva ${selectedCode}` : ''}.`)} target="_blank" rel="noreferrer"
-                                className="block w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium text-center hover:bg-gray-50">📦 Consultar encomendas</a>
-                        </div>
 
                         {(data.settings.wifiNetwork || data.settings.wifiPassword) && (
                             <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -930,51 +888,7 @@ export default function HospedeDashboardClient() {
                             )}
                         </div>
 
-                        {/* Building services */}
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-4">Serviços do Edifício</h3>
-                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                {[
-                                    { icon: '🧹', name: 'Limpeza', msg: 'Olá! Gostaria de solicitar limpeza.' },
-                                    { icon: '📦', name: 'Encomendas', msg: 'Olá! Gostaria de saber sobre encomendas.' },
-                                    { icon: '👥', name: 'Visitantes', msg: 'Olá! Gostaria de autorizar um visitante.' },
-                                    { icon: '💬', name: 'Portaria', msg: 'Olá! Preciso falar com a portaria.' },
-                                ].map(item => (
-                                    <a key={item.name} href={whatsappUrl(whatsappNumber, selectedCode ? `${item.msg.slice(0, -1)} para a reserva ${selectedCode}.` : item.msg)}
-                                        target="_blank" rel="noreferrer" className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center hover:bg-gray-100 transition-colors">
-                                        <div className="text-2xl">{item.icon}</div>
-                                        <div className="mt-2 text-sm font-semibold text-gray-800">{item.name}</div>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Common areas */}
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-4">Áreas Comuns</h3>
-                            <p className="text-sm text-gray-600 mb-4">Solicite a reserva de áreas comuns do edifício</p>
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {[
-                                    { icon: '🏊', name: 'Piscina', hours: '08:00 - 20:00' },
-                                    { icon: '🏋️', name: 'Academia', hours: '06:00 - 22:00' },
-                                    { icon: '🎉', name: 'Salão de Festas', hours: 'Cap. 40 pessoas' },
-                                    { icon: '💼', name: 'Sala de Reunião', hours: 'Cap. 12 pessoas' },
-                                    { icon: '🧘', name: 'Espaço Zen', hours: 'Yoga e Meditação' },
-                                    { icon: '🎮', name: 'Espaço Gamer', hours: 'Jogos e Entretenimento' },
-                                ].map(area => (
-                                    <div key={area.name} className="rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                                        <div className="text-3xl">{area.icon}</div>
-                                        <p className="mt-2 font-bold text-gray-900">{area.name}</p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{area.hours}</p>
-                                        <a href={whatsappUrl(whatsappNumber, `Olá! Gostaria de reservar ${area.name}${selectedCode ? ` para a reserva ${selectedCode}` : ''}.`)}
-                                            target="_blank" rel="noreferrer"
-                                            className="mt-3 block w-full px-3 py-2 bg-blue-900 text-white rounded-lg text-sm font-bold text-center hover:bg-blue-800 transition-colors">
-                                            Reservar
-                                        </a>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                     </div>
                 )}
 
@@ -1126,6 +1040,29 @@ export default function HospedeDashboardClient() {
                     </div>
                 )}
             </div>
+            {/* FRACTAI Floating Bottom Navigation */}
+            <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 px-6 py-3 flex justify-between items-center z-50 transition-all duration-300">
+                <button onClick={() => setActiveTab('visao-geral')} className={`flex flex-col items-center justify-center gap-1 min-w-[50px] transition-colors ${activeTab === 'visao-geral' ? 'text-primary-teal' : 'text-gray-400 hover:text-gray-600'}`}>
+                    <svg className="w-[1.35rem] h-[1.35rem]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span className="text-[10px] font-medium tracking-wide">Início</span>
+                </button>
+                <button onClick={() => setActiveTab('reservas')} className={`flex flex-col items-center justify-center gap-1 min-w-[50px] transition-colors ${activeTab === 'reservas' ? 'text-primary-teal' : 'text-gray-400 hover:text-gray-600'}`}>
+                    <svg className="w-[1.35rem] h-[1.35rem]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span className="text-[10px] font-medium tracking-wide">Reservas</span>
+                </button>
+                <button onClick={() => setActiveTab('gestao-estadia')} className={`flex flex-col items-center justify-center gap-1 min-w-[50px] transition-colors ${activeTab === 'gestao-estadia' ? 'text-primary-teal' : 'text-gray-400 hover:text-gray-600'}`}>
+                    <svg className="w-[1.35rem] h-[1.35rem]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    <span className="text-[10px] font-medium tracking-wide">Acessos</span>
+                </button>
+                 <button onClick={() => setActiveTab('servicos')} className={`flex flex-col items-center justify-center gap-1 min-w-[50px] transition-colors ${activeTab === 'servicos' ? 'text-primary-teal' : 'text-gray-400 hover:text-gray-600'}`}>
+                    <svg className="w-[1.35rem] h-[1.35rem]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span className="text-[10px] font-medium tracking-wide">Serviços</span>
+                </button>
+                <button onClick={() => setActiveTab('perfil')} className={`flex flex-col items-center justify-center gap-1 min-w-[50px] transition-colors ${activeTab === 'perfil' ? 'text-primary-teal' : 'text-gray-400 hover:text-gray-600'}`}>
+                    <svg className="w-[1.35rem] h-[1.35rem]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span className="text-[10px] font-medium tracking-wide">Perfil</span>
+                </button>
+            </nav>
         </div>
     );
 }
