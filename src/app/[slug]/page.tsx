@@ -444,10 +444,10 @@ export default function ImovelPage() {
                                     const amenityList = (room.amenities as string[]).slice(0, 8);
 
                                     return (
-                                        <div key={room.id} className="bg-white rounded-[24px] border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-                                            <div className="grid grid-cols-1 md:grid-cols-[320px_1fr]">
-                                                {/* Room photo - Grid resolve o bug de altura do Safari/Chrome */}
-                                                <div className="relative w-full h-64 md:h-auto bg-gray-100 overflow-hidden">
+                                        <div key={room.id} className="bg-white rounded-[16px] border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                                            <div className="grid grid-cols-1 md:grid-cols-[340px_1fr]">
+                                                {/* Room photo - Altura min fixa resolve o esmagamento da foto em cards curtos */}
+                                                <div className="relative w-full h-[240px] md:h-full min-h-[260px] bg-gray-100 overflow-hidden">
                                                     {hasPhotos ? (
                                                         <>
                                                             {/* Trocando next/Image por nativo para contornar cache/domínio Next */}
@@ -486,10 +486,10 @@ export default function ImovelPage() {
                                                     )}
                                                 </div>
 
-                                                {/* Room info - Estilo Charlie */}
-                                                <div className="p-6 md:p-8 flex flex-col justify-between">
+                                                {/* Room info - Estilo Charlie Pleno */}
+                                                <div className="p-5 md:p-6 flex flex-col justify-between">
                                                     <div>
-                                                        <div className="flex items-start justify-between gap-4 mb-1">
+                                                        <div className="flex items-start justify-between gap-4 mb-2">
                                                             <div>
                                                                 <h3 className="text-2xl font-questa-bold text-[#1c1c1c]">{room.name}</h3>
                                                                 {room.maxGuests && (
@@ -541,8 +541,8 @@ export default function ImovelPage() {
                                                                 </Link>
                                                             </div>
                                                         ) : (
-                                                            <div className="pt-2">
-                                                                <div className="w-full bg-gray-50 border border-gray-100 text-gray-400 text-center py-4 rounded-full text-[15px] font-medium">
+                                                            <div className="pt-4">
+                                                                <div className="w-full bg-white border border-gray-200 text-[#9ca3af] text-center py-3.5 rounded-full text-[14px] font-medium">
                                                                     Indisponível nestas datas
                                                                 </div>
                                                             </div>
