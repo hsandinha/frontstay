@@ -3,12 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { UserRole } from '@/types/user';
-import { createClient } from '@/lib/supabase-browser';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [selectedRole, setSelectedRole] = useState<UserRole>('hospede');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +14,6 @@ export default function LoginPage() {
 
     // Register form states
     const [registerData, setRegisterData] = useState({
-        role: 'hospede' as UserRole,
         name: '',
         email: '',
         phone: '',
@@ -29,49 +25,11 @@ export default function LoginPage() {
     const [authFeedback, setAuthFeedback] = useState('');
     const [authFeedbackTone, setAuthFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
 
-    const roles = [
-        { value: 'hospede' as UserRole, label: 'Hóspede' },
-        { value: 'proprietario' as UserRole, label: 'Proprietário' },
-        { value: 'administrador' as UserRole, label: 'Administrador' },
-        { value: 'parceiros' as UserRole, label: 'Parceiros' },
-    ];
-
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setAuthFeedback('');
         setAuthFeedbackTone('neutral');
-
-        if (selectedRole !== 'hospede') {
-            try {
-                const supabase = createClient();
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-
-                if (error) {
-                    setIsLoading(false);
-                    setAuthFeedback(error.message === 'Invalid login credentials'
-                        ? 'Email ou senha incorretos.'
-                        : error.message);
-                    setAuthFeedbackTone('error');
-                    return;
-                }
-
-                setAuthFeedback('Login realizado com sucesso!');
-                setAuthFeedbackTone('success');
-
-                setTimeout(() => {
-                    router.push(`/dashboard/${selectedRole}`);
-                }, 500);
-            } catch (err: any) {
-                setIsLoading(false);
-                setAuthFeedback(err.message || 'Erro ao fazer login.');
-                setAuthFeedbackTone('error');
-            }
-            return;
-        }
 
         try {
             const response = await fetch('/api/guest-portal', {
@@ -125,56 +83,49 @@ export default function LoginPage() {
         setAuthFeedbackTone('neutral');
 
         try {
-            if (registerData.role === 'hospede') {
-                const fullName = registerData.name.trim();
-                const [firstName = '', ...rest] = fullName.split(/\s+/);
-                const lastName = rest.join(' ');
+            const fullName = registerData.name.trim();
+            const [firstName = '', ...rest] = fullName.split(/\s+/);
+            const lastName = rest.join(' ');
 
-                const response = await fetch('/api/guest-portal', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'register',
-                        name: fullName,
-                        firstName,
-                        lastName,
-                        email: registerData.email,
-                        phone: registerData.phone,
-                    }),
-                });
+            const response = await fetch('/api/guest-portal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'register',
+                    name: fullName,
+                    firstName,
+                    lastName,
+                    email: registerData.email,
+                    phone: registerData.phone,
+                }),
+            });
 
-                const payload = await response.json();
+            const payload = await response.json();
 
-                if (!response.ok || !payload?.success) {
-                    throw new Error(payload?.error || 'Não foi possível concluir o cadastro.');
-                }
-
-                if (typeof window !== 'undefined') {
-                    window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
-                        email: registerData.email,
-                        name: payload?.guest?.name || fullName,
-                    }));
-                }
-
-                setEmail(registerData.email);
-                setSelectedRole('hospede');
-                setPassword('');
-                setShowRegisterModal(false);
-                setAuthFeedback('Cadastro compartilhado criado com sucesso. Redirecionando para o seu painel...');
-                setAuthFeedbackTone('success');
-                setIsLoading(false);
-
-                setTimeout(() => {
-                    router.push(`/dashboard/hospede?email=${encodeURIComponent(registerData.email)}`);
-                }, 900);
-                return;
+            if (!response.ok || !payload?.success) {
+                throw new Error(payload?.error || 'Não foi possível concluir o cadastro.');
             }
 
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
+                    email: registerData.email,
+                    name: payload?.guest?.name || fullName,
+                }));
+            }
+
+            setEmail(registerData.email);
+            setPassword('');
             setShowRegisterModal(false);
-            setAuthFeedback('Cadastro realizado com sucesso!');
+            setAuthFeedback('Cadastro concluído com sucesso. Redirecionando para o seu painel...');
             setAuthFeedbackTone('success');
+            setIsLoading(false);
+
+            setTimeout(() => {
+                router.push(`/dashboard/hospede?email=${encodeURIComponent(registerData.email)}`);
+            }, 900);
+
         } catch (error: any) {
             setAuthFeedback(error?.message || 'Não foi possível concluir o cadastro.');
             setAuthFeedbackTone('error');
@@ -188,55 +139,39 @@ export default function LoginPage() {
             {/* Subtle Geometric Background Pattern */}
             <div className="absolute inset-0 bg-geometric-pattern opacity-40 pointer-events-none"></div>
 
-            {/* Back Button */}
-            <div className="absolute top-6 left-6 z-20">
+            {/* Back Button (Cleaner) */}
+            <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20">
                 <button
                     onClick={() => router.push('/')}
-                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-questa-medium transition-colors bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 shadow-sm"
+                    className="flex items-center gap-2 text-gray-400 hover:text-gray-800 font-questa-medium transition-colors border-b border-transparent hover:border-gray-800 pb-0.5"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Voltar ao Site
+                    Página Inicial
                 </button>
             </div>
 
             {/* Main Login Card */}
-            <div className="relative z-10 w-full max-w-md bg-white rounded-[2rem] shadow-glass border border-gray-100 p-8 md:p-10 transform transition-all duration-500 hover:shadow-card-hover">
+            <div className="relative z-10 w-full max-w-md bg-white rounded-[2.5rem] shadow-glass border border-gray-100 p-8 md:p-10 transform transition-all duration-500 hover:shadow-card-hover">
                 {/* Logo */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-10">
                     <Image
                         src="/logo.png"
                         alt="FrontStay Logo"
-                        width={180}
-                        height={72}
-                        className="object-contain h-14 w-auto"
+                        width={240}
+                        height={100}
+                        className="object-contain"
                         priority
                     />
                 </div>
 
                 <div className="mb-8 text-center">
-                    <h1 className="text-gray-900 text-3xl font-questa-bold mb-2">Acesse sua conta</h1>
-                    <p className="text-gray-500 text-sm font-questa-regular">Faça login para gerenciar suas estadias ou imóveis.</p>
+                    <h1 className="text-gray-900 text-3xl font-questa-bold mb-2">Área do Hóspede</h1>
+                    <p className="text-gray-500 text-sm font-questa-regular">Acesse sua conta para gerenciar suas estadias.</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
-                    <div>
-                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Perfil de Acesso</label>
-                        <select
-                            value={selectedRole}
-                            onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm appearance-none"
-                            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
-                        >
-                            {roles.map((role) => (
-                                <option key={role.value} value={role.value}>
-                                    {role.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
                     <div>
                         <label className="block text-gray-700 text-sm mb-2 font-questa-medium">E-mail</label>
                         <input
@@ -352,23 +287,6 @@ export default function LoginPage() {
 
                         {/* Modal Body */}
                         <form onSubmit={handleRegister} className="p-6 md:p-8 space-y-6">
-                            {/* Role Selection */}
-                            <div>
-                                <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Tipo de Usuário</label>
-                                <select
-                                    value={registerData.role}
-                                    onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as UserRole })}
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm appearance-none"
-                                    style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
-                                >
-                                    {roles.map((role) => (
-                                        <option key={role.value} value={role.value}>
-                                            {role.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Name */}
                                 <div>
