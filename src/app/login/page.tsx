@@ -184,162 +184,165 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex overflow-hidden relative">
-            {/* Background Image - Full Screen */}
-            <div className="absolute inset-0">
-                <Image
-                    src="/esopo.png"
-                    alt="Background"
-                    fill
-                    className="object-contain object-right"
-                    priority
-                />
-                {/* Gradient Overlay - Smooth transition from black to transparent */}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 via-slate-950/90 via-slate-950/70 via-slate-900/50 via-slate-900/30 to-transparent"></div>
+        <div className="min-h-screen flex items-center justify-center bg-frontstay relative overflow-hidden px-4 py-8">
+            {/* Subtle Geometric Background Pattern */}
+            <div className="absolute inset-0 bg-geometric-pattern opacity-40 pointer-events-none"></div>
+
+            {/* Back Button */}
+            <div className="absolute top-6 left-6 z-20">
+                <button
+                    onClick={() => router.push('/')}
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-questa-medium transition-colors bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 shadow-sm"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Voltar ao Site
+                </button>
             </div>
 
-            {/* Login Form - Positioned on the left */}
-            <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-8">
-                <div className="w-full max-w-md">
-                    {/* Logo */}
-                    <div className="flex justify-center mb-8">
-                        <Image
-                            src="/logo2.png"
-                            alt="FrontStay Logo"
-                            width={120}
-                            height={120}
-                            className="object-contain"
+            {/* Main Login Card */}
+            <div className="relative z-10 w-full max-w-md bg-white rounded-[2rem] shadow-glass border border-gray-100 p-8 md:p-10 transform transition-all duration-500 hover:shadow-card-hover">
+                {/* Logo */}
+                <div className="flex justify-center mb-8">
+                    <Image
+                        src="/logo.png"
+                        alt="FrontStay Logo"
+                        width={180}
+                        height={72}
+                        className="object-contain h-14 w-auto"
+                        priority
+                    />
+                </div>
+
+                <div className="mb-8 text-center">
+                    <h1 className="text-gray-900 text-3xl font-questa-bold mb-2">Acesse sua conta</h1>
+                    <p className="text-gray-500 text-sm font-questa-regular">Faça login para gerenciar suas estadias ou imóveis.</p>
+                </div>
+
+                <form onSubmit={handleLogin} className="space-y-6">
+                    <div>
+                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Perfil de Acesso</label>
+                        <select
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm appearance-none"
+                            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
+                        >
+                            {roles.map((role) => (
+                                <option key={role.value} value={role.value}>
+                                    {role.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">E-mail</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                            placeholder="Digite seu e-mail"
                         />
                     </div>
 
-                    <div className="mb-8">
-                        <h1 className="text-white text-3xl font-bold mb-2 text-center">Faça seu login.</h1>
-                        <p className="text-slate-400 text-center text-sm">Acesse sua conta FrontStay</p>
-                    </div>
-
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div>
-                            <label className="block text-slate-200 text-sm mb-2 font-medium">Perfil</label>
-                            <select
-                                value={selectedRole}
-                                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                            >
-                                {roles.map((role) => (
-                                    <option key={role.value} value={role.value} className="bg-slate-900">
-                                        {role.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-slate-200 text-sm mb-2 font-medium">E-mail</label>
+                    <div>
+                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Senha</label>
+                        <div className="relative">
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                placeholder="Digite seu e-mail"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                placeholder="Digite sua senha"
                             />
-                        </div>
-
-                        <div>
-                            <label className="block text-slate-200 text-sm mb-2 font-medium">Senha</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                    placeholder="Digite sua senha"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-                                >
-                                    {showPassword ? (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <label className="flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 rounded border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 bg-slate-800"
-                                />
-                                <span className="ml-2 text-slate-300 text-sm">Lembrar-me</span>
-                            </label>
-                            <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
-                                Esqueci a senha
-                            </a>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-bold py-3.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
-                        >
-                            {isLoading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Entrando...
-                                </span>
-                            ) : (
-                                'ENTRAR'
-                            )}
-                        </button>
-
-                        {authFeedback ? (
-                            <div className={`rounded-lg border px-3 py-2 text-sm ${authFeedbackTone === 'success' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100' : authFeedbackTone === 'error' ? 'border-rose-500/40 bg-rose-500/10 text-rose-100' : 'border-slate-500/40 bg-slate-500/10 text-slate-100'}`}>
-                                {authFeedback}
-                            </div>
-                        ) : null}
-                    </form>
-
-                    <div className="mt-8 text-center">
-                        <p className="text-slate-400 text-sm">
-                            Ainda não possui uma conta?{' '}
                             <button
-                                onClick={() => setShowRegisterModal(true)}
-                                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
                             >
-                                Cadastre-se
+                                {showPassword ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                )}
                             </button>
-                        </p>
+                        </div>
                     </div>
+
+                    <div className="flex items-center justify-between">
+                        <label className="flex items-center cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                className="w-4 h-4 rounded border-gray-300 text-primary-teal focus:ring-primary-teal bg-white transition-colors cursor-pointer"
+                            />
+                            <span className="ml-2 text-gray-500 font-questa-regular text-sm group-hover:text-gray-700 transition-colors">Lembrar-me</span>
+                        </label>
+                        <a href="#" className="text-primary-teal hover:text-primary-teal-dark font-questa-medium text-sm transition-colors decoration-2 hover:underline underline-offset-4">
+                            Esqueci a senha
+                        </a>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-gradient-primary hover:bg-gradient-to-r hover:from-primary-teal-dark hover:to-secondary-purple-dark text-white font-questa-bold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                    >
+                        {isLoading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Autenticando...
+                            </span>
+                        ) : (
+                            'ENTRAR'
+                        )}
+                    </button>
+
+                    {authFeedback ? (
+                        <div className={`mt-4 rounded-xl border px-4 py-3 text-sm font-questa-medium animate-fade-in-up ${authFeedbackTone === 'success' ? 'border-support-green/20 bg-support-green/10 text-support-green' : authFeedbackTone === 'error' ? 'border-accent-orange/20 bg-accent-orange/10 text-accent-orange-dark' : 'border-gray-200 bg-gray-50 text-gray-700'}`}>
+                            {authFeedback}
+                        </div>
+                    ) : null}
+                </form>
+
+                <div className="mt-8 text-center border-t border-gray-100 pt-6">
+                    <p className="text-gray-500 text-sm font-questa-regular">
+                        Ainda não possui uma conta?{' '}
+                        <button
+                            onClick={() => setShowRegisterModal(true)}
+                            className="text-primary-teal hover:text-primary-teal-dark font-questa-bold transition-colors decoration-2 hover:underline underline-offset-4"
+                        >
+                            Cadastre-se
+                        </button>
+                    </p>
                 </div>
             </div>
 
-            {/* Register Modal */}
+            {/* Register Modal - Light Theme */}
             {showRegisterModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
+                    <div className="bg-white rounded-[2rem] shadow-2xl border border-gray-100 w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 flex items-center justify-between">
+                        <div className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-100 p-6 md:p-8 flex items-center justify-between z-10">
                             <div>
-                                <h2 className="text-2xl font-bold text-white">Criar conta</h2>
-                                <p className="text-slate-400 text-sm mt-1">Preencha os dados para se cadastrar</p>
+                                <h2 className="text-2xl font-questa-bold text-gray-900">Criar Nova Conta</h2>
+                                <p className="text-gray-500 text-sm mt-1 font-questa-regular">Preencha os dados abaixo e junte-se à FrontStay.</p>
                             </div>
                             <button
                                 onClick={() => setShowRegisterModal(false)}
-                                className="text-slate-400 hover:text-white transition-colors"
+                                className="text-gray-400 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-full transition-all"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -348,151 +351,156 @@ export default function LoginPage() {
                         </div>
 
                         {/* Modal Body */}
-                        <form onSubmit={handleRegister} className="p-6 space-y-5">
+                        <form onSubmit={handleRegister} className="p-6 md:p-8 space-y-6">
                             {/* Role Selection */}
                             <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">Tipo de Cadastro</label>
+                                <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Tipo de Usuário</label>
                                 <select
                                     value={registerData.role}
                                     onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as UserRole })}
-                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm appearance-none"
+                                    style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
                                 >
                                     {roles.map((role) => (
-                                        <option key={role.value} value={role.value} className="bg-slate-900">
+                                        <option key={role.value} value={role.value}>
                                             {role.label}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
-                            {/* Name */}
-                            <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">Nome Completo</label>
-                                <input
-                                    type="text"
-                                    value={registerData.name}
-                                    onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-                                    required
-                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                    placeholder="Digite seu nome completo"
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Name */}
+                                <div>
+                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Nome Completo</label>
+                                    <input
+                                        type="text"
+                                        value={registerData.name}
+                                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                                        required
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                        placeholder="Ex: João da Silva"
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div>
+                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Telefone/WhatsApp</label>
+                                    <input
+                                        type="tel"
+                                        value={registerData.phone}
+                                        onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
+                                        required
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                        placeholder="(11) 99999-9999"
+                                    />
+                                </div>
                             </div>
 
                             {/* Email */}
                             <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">E-mail</label>
+                                <label className="block text-gray-700 text-sm mb-2 font-questa-medium">E-mail</label>
                                 <input
                                     type="email"
                                     value={registerData.email}
                                     onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                                     required
-                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                    placeholder="Digite seu e-mail"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                    placeholder="seu@email.com"
                                 />
                             </div>
 
-                            {/* Phone */}
-                            <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">Telefone</label>
-                                <input
-                                    type="tel"
-                                    value={registerData.phone}
-                                    onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
-                                    required
-                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                    placeholder="(00) 00000-0000"
-                                />
-                            </div>
-
-                            {/* Password */}
-                            <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">Senha</label>
-                                <div className="relative">
-                                    <input
-                                        type={showRegisterPassword ? 'text' : 'password'}
-                                        value={registerData.password}
-                                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                                        required
-                                        minLength={6}
-                                        className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                        placeholder="Mínimo 6 caracteres"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-                                    >
-                                        {showRegisterPassword ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                            </svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        )}
-                                    </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Password */}
+                                <div>
+                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Senha</label>
+                                    <div className="relative">
+                                        <input
+                                            type={showRegisterPassword ? 'text' : 'password'}
+                                            value={registerData.password}
+                                            onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                                            required
+                                            minLength={6}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                            placeholder="Mín. 6 caracteres"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                        >
+                                            {showRegisterPassword ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Confirm Password */}
-                            <div>
-                                <label className="block text-slate-200 text-sm mb-2 font-medium">Confirmar Senha</label>
-                                <div className="relative">
-                                    <input
-                                        type={showConfirmPassword ? 'text' : 'password'}
-                                        value={registerData.confirmPassword}
-                                        onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
-                                        required
-                                        minLength={6}
-                                        className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                        placeholder="Digite a senha novamente"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-                                    >
-                                        {showConfirmPassword ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                            </svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        )}
-                                    </button>
+                                {/* Confirm Password */}
+                                <div>
+                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Confirmar Senha</label>
+                                    <div className="relative">
+                                        <input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            value={registerData.confirmPassword}
+                                            onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                                            required
+                                            minLength={6}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
+                                            placeholder="Repita a senha"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                        >
+                                            {showConfirmPassword ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Terms */}
-                            <div className="flex items-start">
+                            <div className="flex items-start bg-gray-50 p-4 rounded-xl border border-gray-100">
                                 <input
                                     type="checkbox"
                                     required
-                                    className="w-4 h-4 mt-1 rounded border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 bg-slate-800"
+                                    className="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary-teal focus:ring-primary-teal bg-white cursor-pointer"
                                 />
-                                <label className="ml-2 text-slate-300 text-sm">
-                                    Eu aceito os <a href="#" className="text-blue-400 hover:text-blue-300">termos de uso</a> e a <a href="#" className="text-blue-400 hover:text-blue-300">política de privacidade</a>
+                                <label className="ml-3 text-gray-600 text-sm font-questa-regular">
+                                    Concordo com os <a href="#" className="text-primary-teal font-questa-medium hover:underline">termos de uso</a> e a <a href="#" className="text-primary-teal font-questa-medium hover:underline">política de privacidade</a> da FrontStay.
                                 </label>
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex gap-3 pt-4">
+                            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
                                 <button
                                     type="button"
                                     onClick={() => setShowRegisterModal(false)}
-                                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-all duration-300"
+                                    className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-questa-bold py-3.5 rounded-xl transition-all duration-300 pointer"
                                 >
-                                    Cancelar
+                                    Voltar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-1 bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-bold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
+                                    className="flex-[2] bg-gradient-primary hover:bg-gradient-to-r hover:from-primary-teal-dark hover:to-secondary-purple-dark text-white font-questa-bold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5"
                                 >
                                     {isLoading ? (
                                         <span className="flex items-center justify-center gap-2">
@@ -500,10 +508,10 @@ export default function LoginPage() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Cadastrando...
+                                            Processando...
                                         </span>
                                     ) : (
-                                        'Criar Conta'
+                                        'CELEBRAR CADASTRO'
                                     )}
                                 </button>
                             </div>
