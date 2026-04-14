@@ -13,7 +13,7 @@ import Footer from '../components/Footer';
 
 const SobreAFrontPage = () => {
     return (
-        <div>
+        <div className="pb-24 md:pb-0">
             <Header />
             <main>
                 <Hero />

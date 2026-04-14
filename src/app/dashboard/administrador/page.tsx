@@ -572,7 +572,7 @@ export default function AdministradorDashboard() {
     const activeProperties = properties.filter(p => p.active).length;
 
     return (
-        <div className="min-h-screen bg-gray-50 font-questa-regular">
+        <div className="min-h-screen bg-gray-50 font-questa-regular pb-24 lg:pb-0 relative">
             {/* Header */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4">
@@ -602,39 +602,34 @@ export default function AdministradorDashboard() {
             {/* Tabs */}
             <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
                 <div className="max-w-7xl mx-auto px-6">
-                    {/* Mobile */}
-                    <div className="flex lg:hidden items-center justify-between py-3">
-                        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="flex items-center gap-2 text-gray-700 font-questa-medium">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {isMobileMenuOpen
-                                    ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
-                            </svg>
-                            <span className="text-sm">Menu</span>
-                        </button>
-                        <span className="text-sm text-gray-900 font-questa-bold">
-                            {{ 'visao-geral': 'Visão Geral', predios: 'Gestão de Prédios', proprietarios: 'Proprietários', financeiro: 'Financeiro', documentos: 'Documentos' }[activeTab]}
-                        </span>
-                    </div>
-                    {isMobileMenuOpen && (
-                        <nav className="lg:hidden pb-4 space-y-1">
-                            {[
-                                { key: 'visao-geral' as TabType, label: 'Visão Geral', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-                                { key: 'predios' as TabType, label: 'Gestão de Prédios', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-                                { key: 'proprietarios' as TabType, label: 'Proprietários', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-                                { key: 'financeiro' as TabType, label: 'Financeiro', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-                                { key: 'documentos' as TabType, label: 'Documentos', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
-                            ].map(tab => (
-                                <button key={tab.key} onClick={() => handleTabChange(tab.key)}
-                                    className={`w-full py-3 px-4 text-sm font-questa-medium rounded-lg transition-colors flex items-center gap-3 ${activeTab === tab.key ? 'bg-blue-900 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={tab.icon} />
+                    {/* FRACTAI Floating Bottom Navigation - Mobile */}
+                    <nav className="lg:hidden fixed bottom-3 left-3 right-3 z-50 bg-[#0B0F19] border border-gray-800 shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-2xl flex justify-around items-center h-16 px-1">
+                        {[
+                            { key: 'visao-geral' as TabType, label: 'Resumo', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+                            { key: 'predios' as TabType, label: 'Prédios', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+                            { key: 'proprietarios' as TabType, label: 'Propriets.', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+                            { key: 'financeiro' as TabType, label: 'Finanças', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                            { key: 'documentos' as TabType, label: 'Docs', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+                        ].map(tab => {
+                            const isActive = activeTab === tab.key;
+                            return (
+                                <button
+                                    key={tab.key}
+                                    onClick={() => handleTabChange(tab.key)}
+                                    className={`flex flex-col items-center justify-center flex-1 h-full py-1 gap-1 transition-all ${
+                                        isActive ? 'text-blue-400' : 'text-gray-500'
+                                    }`}
+                                >
+                                    <svg className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive ? 2.5 : 2} d={tab.icon} />
                                     </svg>
-                                    {tab.label}
+                                    <span className={`text-[9px] uppercase tracking-wider font-semibold truncate w-full px-1 text-center ${isActive ? 'text-blue-400' : 'text-gray-400'}`}>
+                                        {tab.label}
+                                    </span>
                                 </button>
-                            ))}
-                        </nav>
-                    )}
+                            );
+                        })}
+                    </nav>
                     {/* Desktop */}
                     <nav className="hidden lg:flex gap-8">
                         {[
