@@ -442,34 +442,33 @@ export default function ImovelPage() {
                                     const amenityList = (room.amenities as string[]).slice(0, 8);
 
                                     return (
-                                        <div key={room.id} className="bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.12)] transition-shadow">
-                                            <div className="flex flex-col md:flex-row">
-                                                {/* Room photo */}
-                                                <div className="relative w-full md:w-[380px] h-64 md:h-full flex-shrink-0 bg-gray-100">
+                                        <div key={room.id} className="bg-white rounded-[24px] border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                                            <div className="grid grid-cols-1 md:grid-cols-[320px_1fr]">
+                                                {/* Room photo - Grid resolve o bug de altura do Safari/Chrome */}
+                                                <div className="relative w-full h-64 md:h-auto bg-gray-100 overflow-hidden">
                                                     {hasPhotos ? (
                                                         <>
-                                                            <Image
+                                                            {/* Trocando next/Image por nativo para contornar cache/domínio Next */}
+                                                            <img
                                                                 src={photos[currentPhoto] || photos[0]}
                                                                 alt={room.name}
-                                                                fill
-                                                                className="object-cover"
-                                                                sizes="(min-width: 768px) 380px, 100vw"
+                                                                className="absolute inset-0 w-full h-full object-cover"
                                                             />
                                                             {photos.length > 1 && (
                                                                 <>
                                                                     <button
                                                                         onClick={() => setRoomPhotoIndex(prev => ({ ...prev, [room.id]: currentPhoto === 0 ? photos.length - 1 : currentPhoto - 1 }))}
-                                                                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-all"
+                                                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-all z-10"
                                                                     >
                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                                                     </button>
                                                                     <button
                                                                         onClick={() => setRoomPhotoIndex(prev => ({ ...prev, [room.id]: currentPhoto === photos.length - 1 ? 0 : currentPhoto + 1 }))}
-                                                                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-all"
+                                                                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-all z-10"
                                                                     >
                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                                                     </button>
-                                                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                                                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
                                                                         {photos.map((_, i) => (
                                                                             <button key={i} onClick={() => setRoomPhotoIndex(prev => ({ ...prev, [room.id]: i }))} className={`w-2 h-2 rounded-full transition-all ${i === currentPhoto ? 'bg-white scale-125' : 'bg-white/50'}`} />
                                                                         ))}
@@ -485,46 +484,48 @@ export default function ImovelPage() {
                                                     )}
                                                 </div>
 
-                                                {/* Room info */}
-                                                <div className="flex-1 p-8 flex flex-col">
-                                                    <div className="flex items-start justify-between gap-4">
-                                                        <div>
-                                                            <h3 className="text-2xl font-questa-bold text-[#1c1c1c]">{room.name}</h3>
-                                                            {room.maxGuests && (
-                                                                <p className="text-sm text-gray-500 mt-1">Até {room.maxGuests} {room.maxGuests === 1 ? 'hóspede' : 'hóspedes'} por quarto</p>
+                                                {/* Room info - Estilo Charlie */}
+                                                <div className="p-6 md:p-8 flex flex-col justify-between">
+                                                    <div>
+                                                        <div className="flex items-start justify-between gap-4 mb-1">
+                                                            <div>
+                                                                <h3 className="text-2xl font-questa-bold text-[#1c1c1c]">{room.name}</h3>
+                                                                {room.maxGuests && (
+                                                                    <p className="text-sm text-gray-500 mt-1">Até {room.maxGuests} {room.maxGuests === 1 ? 'hóspede' : 'hóspedes'} por quarto</p>
+                                                                )}
+                                                            </div>
+                                                            {isAvailable && room.availableRooms <= 3 && (
+                                                                <span className="flex-shrink-0 px-3 py-1 bg-[#ff385c] text-white text-xs font-bold rounded-lg">Últimas vagas</span>
                                                             )}
                                                         </div>
-                                                        {isAvailable && room.availableRooms <= 3 && (
-                                                            <span className="flex-shrink-0 px-3 py-1 bg-[#ff385c] text-white text-xs font-bold uppercase tracking-wide rounded-md">Últimas vagas</span>
+
+                                                        {/* Amenities */}
+                                                        {amenityList.length > 0 && (
+                                                            <div className="flex flex-wrap gap-x-5 gap-y-3 mt-6">
+                                                                {amenityList.map((amenity, i) => (
+                                                                    <span key={i} className="inline-flex items-center gap-1.5 text-sm text-gray-700">
+                                                                        <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                        </svg>
+                                                                        {amenity}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
                                                         )}
                                                     </div>
 
-                                                    {/* Amenities */}
-                                                    {amenityList.length > 0 && (
-                                                        <div className="flex flex-wrap gap-x-6 gap-y-2 mt-6">
-                                                            {amenityList.map((amenity, i) => (
-                                                                <span key={i} className="inline-flex items-center gap-2 text-sm text-gray-700 font-medium">
-                                                                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                                                    </svg>
-                                                                    {amenity}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
-
-                                                    <div className="mt-auto pt-8">
+                                                    <div className="mt-8">
                                                         {isAvailable ? (
-                                                            <div className="flex items-center justify-between border-t border-gray-100 pt-6">
+                                                            <div className="flex items-end justify-between">
                                                                 <div>
                                                                     {room.rate ? (
                                                                         <>
-                                                                            <p className="text-3xl font-questa-bold text-[#1c1c1c]">
+                                                                            <p className="text-[28px] font-questa-bold text-[#1c1c1c] leading-none">
                                                                                 R$ {room.rate.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                                                                 <span className="text-sm font-normal text-gray-500 ml-2">por noite</span>
                                                                             </p>
-                                                                            {/* Subtotal Calculation matching Charlie style */}
-                                                                            <p className="text-xs text-gray-400 mt-1">Total para {guests} hóspede{guests > 1 ? 's' : ''}</p>
+                                                                            <p className="text-[13px] text-gray-500 mt-2 underline">total de R$ {((room.totalRate || room.rate) * 1).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                                                                            <p className="text-[13px] text-gray-500">1 noite, 1 quarto, {guests} hóspede{guests > 1 ? 's' : ''}</p>
                                                                         </>
                                                                     ) : (
                                                                         <p className="text-sm text-gray-600">Valor sob consulta</p>
@@ -532,15 +533,15 @@ export default function ImovelPage() {
                                                                 </div>
                                                                 <Link
                                                                     href={`/?hotel=${property.slug}&checkin=${checkInDate}&checkout=${checkOutDate}&guests=${guests}&checkout_flow=true`}
-                                                                    className="inline-flex items-center gap-2 bg-[#1c1c1c] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-black transition-all hover:scale-105"
+                                                                    className="inline-flex flex-shrink-0 items-center justify-center bg-[#1c1c1c] text-white px-8 py-3.5 rounded-[12px] font-bold text-sm hover:bg-black transition-all shadow-md"
                                                                 >
                                                                     Reserve agora
                                                                 </Link>
                                                             </div>
                                                         ) : (
-                                                            <div className="border-t border-gray-100 pt-6 mt-auto">
-                                                                <div className="w-full bg-gray-50 border border-gray-100 text-gray-500 text-center py-3.5 rounded-2xl text-sm font-medium">
-                                                                    Não há unidades disponíveis nestas datas.
+                                                            <div className="pt-2">
+                                                                <div className="w-full bg-gray-50 border border-gray-100 text-gray-400 text-center py-4 rounded-full text-[15px] font-medium">
+                                                                    Indisponível nestas datas
                                                                 </div>
                                                             </div>
                                                         )}
