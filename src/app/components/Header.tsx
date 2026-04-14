@@ -15,6 +15,7 @@ const Header = () => {
     { id: 'sobre', label: 'Sobre', href: '/sobre', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
     { id: 'cliente', label: 'Login', href: '/login', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
   ];
+  return (
     <>
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
@@ -137,6 +138,7 @@ const Header = () => {
         </div>
       )}
     </>
+  );
 };
 
 export default Header;
