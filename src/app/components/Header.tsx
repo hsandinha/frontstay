@@ -48,17 +48,6 @@ const Header = () => {
               Área do Cliente
             </Link>
           </nav>
-
-          <div className="md:hidden flex items-center">
-            <Link href="/login" className="text-sm font-semibold text-blue-900 border border-blue-900 px-3 py-1 rounded-full mr-4">
-              Login
-            </Link>
-            <button onClick={() => setIsMobileMenuOpen(true)} aria-label="Abrir menu" className="text-gray-800 hover:text-black p-2">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
         </div>
       </header>
 
