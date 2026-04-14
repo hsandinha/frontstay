@@ -258,8 +258,12 @@ function buildCalendarPreview(
         };
     });
 
+    const endKey = toDateKey(end);
+
+    // Na contagem de noites e soma de valores, ignoramos o dia de checkout 
+    // (a pessoa não dorme lá na noite do checkout)
     const selectedRangeRates = days
-        .filter((day) => day.isSelectedRange && day.rate && day.rate > 0)
+        .filter((day) => day.isSelectedRange && day.date !== endKey && day.rate && day.rate > 0)
         .map((day) => Number(day.rate));
 
     const minRate = selectedRangeRates.length > 0
