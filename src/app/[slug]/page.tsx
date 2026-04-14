@@ -420,11 +420,12 @@ export default function ImovelPage() {
             </div>
 
             {/* Room Types — from Cloudbeds (only when NOT under construction) */}
-            <div id="rooms-section" className="mt-16 pt-16 border-t border-gray-200">
-                {!property.underConstruction && !!(property.cloudbedsPropertyId || slug === 'inhouse') && (
-                    <section>
-                        <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
-                        {roomsLoading ? (
+            <div id="rooms-section" className="border-t border-gray-200 bg-white">
+                <div className="max-w-7xl mx-auto px-6 py-16">
+                    {!property.underConstruction && !!(property.cloudbedsPropertyId || slug === 'inhouse') && (
+                        <section>
+                            <h2 className="text-2xl font-questa-bold text-gray-900 mb-6">Faça sua reserva</h2>
+                            {roomsLoading ? (
                             <div className="flex items-center justify-center py-12">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                                 <span className="ml-3 text-gray-600">Consultando disponibilidade...</span>
@@ -557,6 +558,7 @@ export default function ImovelPage() {
                         )}
                     </section>
                 )}
+                </div>
             </div>
 
             <Footer />
