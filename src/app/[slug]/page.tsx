@@ -22,6 +22,7 @@ type RoomType = {
     description: string | null;
     availableRooms: number;
     rate: number | null;
+    totalRate: number | null;
     maxGuests: number | null;
     photoUrls: string[];
     mainPhotoUrl: string | null;
@@ -131,6 +132,7 @@ export default function ImovelPage() {
                         description: item.description || null,
                         availableRooms: item.availableRooms || 0,
                         rate: item.rate || item.totalRate || null,
+                        totalRate: item.totalRate || item.rate || null,
                         maxGuests: item.maxGuests || null,
                         photoUrls: item.photoUrls || [],
                         mainPhotoUrl: item.mainPhotoUrl || null,
