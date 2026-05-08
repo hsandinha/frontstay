@@ -365,8 +365,8 @@ export default function ParceirosDashboard() {
                                                 <input value={svcForm.price} onChange={e => setSvcForm({ ...svcForm, price: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Ex: R$ 150/hora" />
                                             </div>
                                             <div>
-                                                <label className="block text-xs text-gray-600 mb-1">Desconto para hóspedes</label>
-                                                <input value={svcForm.discountText} onChange={e => setSvcForm({ ...svcForm, discountText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Ex: 10% de desconto" />
+                                                <label className="block text-xs text-gray-600 mb-1">Cashback para hóspedes</label>
+                                                <input value={svcForm.discountText} onChange={e => setSvcForm({ ...svcForm, discountText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Ex: 10% de cashback" />
                                             </div>
                                             {properties.length > 0 && (
                                                 <div className="md:col-span-2">
