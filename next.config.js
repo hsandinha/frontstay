@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
+  experimental: {
+    optimizePackageImports: [
+      "framer-motion",
+      "lucide-react",
+      "react-scroll-parallax",
+    ],
+  },
   images: {
     remotePatterns: [
       {
@@ -10,26 +17,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.frontstay.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.cloudbeds.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.us2.cloudbeds.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.us1.cloudbeds.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.supabase.co',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.supabase.in',
       },
     ],
     formats: ["image/webp", "image/avif"],

@@ -1,80 +1,46 @@
-'use client';
-
-import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import React from 'react';
 
 const Header = () => {
-  const [activeTab, setActiveTab] = useState('inicio');
-  const navLinks = [
-    { id: 'inicio', label: 'Início', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-    { id: 'hospedes', label: 'Hóspedes', href: '#', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-    { id: 'investidores', label: 'Investidores', href: '#', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-    { id: 'sobre', label: 'Sobre', href: '/sobre', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-    { id: 'cliente', label: 'Login', href: '/login', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-  ];
   return (
-    <>
-      {/* Esconde todo o HEADER no mobile conforme pedido */}
-      <header className="bg-white border-b border-gray-200 hidden md:block">
-        <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center">
-            <Link href="/">
-              <Image
-                src="/logo.png"
-                alt="FrontStay Logo"
-                width={160}
-                height={64}
-                className="h-16 w-auto"
-                priority
-              />
-            </Link>
-          </div>
+    <header className="bg-white border-b border-gray-200">
+      <div className="container mx-auto px-6 flex justify-between items-center h-16">
 
-          <nav className="hidden items-center space-x-0 text-sm text-gray-800 md:flex">
-            <Link href="#" className="px-4 transition-colors hover:text-black">
-              Hospedes
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link href="#" className="px-4 transition-colors hover:text-black">
-              Investidores
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link href="/sobre" className="px-4 transition-colors hover:text-black">
-              Sobre A Front
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link href="/login" className="px-4 transition-colors hover:text-black font-semibold">
-              Área do Cliente
-            </Link>
-          </nav>
+        {/* Logo */}
+        <div className="flex items-center">
+          <img
+            src="/logo.png"
+            alt="FrontStay Logo"
+            className="h-16 w-auto"
+          />
         </div>
-      </header>
 
-      {/* Floating Bottom Navigation - Mobile (Light Theme) */}
-      <nav className="md:hidden fixed bottom-3 left-3 right-3 z-40 bg-white border border-gray-200 shadow-[0_4px_25px_rgba(0,0,0,0.1)] rounded-2xl flex justify-around items-center h-16 px-1">
-        {navLinks.map(tab => {
-          const isActive = activeTab === tab.id;
-          return (
-            <Link
-              key={tab.id}
-              href={tab.href}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-1 gap-1 transition-all ${
-                isActive ? 'text-primary-teal' : 'text-gray-500'
-              }`}
-            >
-              <svg className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive ? 2.5 : 2} d={tab.icon} />
-              </svg>
-              <span className={`text-[9px] uppercase tracking-wider font-semibold truncate w-full px-1 text-center ${isActive ? 'text-primary-teal' : 'text-gray-500'}`}>
-                {tab.label}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
-    </>
+        {/* Menu de Navegação Desktop */}
+        <nav className="hidden md:flex items-center space-x-0 text-sm text-gray-800">
+          <a href="#" className="px-4 hover:text-black transition-colors">
+            Hospedes
+          </a>
+          <span className="text-gray-300">|</span>
+          <a href="#" className="px-4 hover:text-black transition-colors">
+            Investidores
+          </a>
+          <span className="text-gray-300">|</span>
+          <a href="/sobre" className="px-4 hover:text-black transition-colors">
+            Sobre A Front
+          </a>
+          <span className="text-gray-300">|</span>
+          <a href="/login" className="px-4 hover:text-black transition-colors">
+            Área do Cliente
+          </a>
+        </nav>
+
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <button className="text-gray-800 hover:text-black">
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+        </div>
+      </div>
+    </header>
   );
 };
 

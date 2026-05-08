@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
+import { UserRole } from '@/types/user';
 
 export default function LoginPage() {
     const router = useRouter();
+    const [selectedRole, setSelectedRole] = useState<UserRole>('hospede');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +16,7 @@ export default function LoginPage() {
 
     // Register form states
     const [registerData, setRegisterData] = useState({
+        role: 'hospede' as UserRole,
         name: '',
         email: '',
         phone: '',
@@ -23,270 +25,191 @@ export default function LoginPage() {
     });
     const [showRegisterPassword, setShowRegisterPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [authFeedback, setAuthFeedback] = useState('');
-    const [authFeedbackTone, setAuthFeedbackTone] = useState<'neutral' | 'success' | 'error'>('neutral');
 
-    const navLinks = [
-        { id: 'inicio', label: 'Início', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-        { id: 'hospedes', label: 'Hóspedes', href: '#', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-        { id: 'investidores', label: 'Investidores', href: '#', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-        { id: 'sobre', label: 'Sobre', href: '/sobre', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-        { id: 'cliente', label: 'Login', href: '/login', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+    const roles = [
+        { value: 'hospede' as UserRole, label: 'Hóspede' },
+        { value: 'proprietario' as UserRole, label: 'Proprietário' },
+        { value: 'administrador' as UserRole, label: 'Administrador' },
+        { value: 'parceiros' as UserRole, label: 'Parceiros' },
     ];
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setAuthFeedback('');
-        setAuthFeedbackTone('neutral');
 
-        try {
-            const response = await fetch('/api/guest-portal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'login',
-                    email,
-                }),
-            });
-
-            const payload = await response.json();
-
-            if (!response.ok || !payload?.success) {
-                throw new Error(payload?.error || 'Não foi possível acessar o painel do hóspede.');
-            }
-
-            if (typeof window !== 'undefined') {
-                window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
-                    email,
-                    name: payload?.guest?.name || '',
-                }));
-            }
-
-            setAuthFeedback('Acesso liberado. Carregando seu painel...');
-            setAuthFeedbackTone('success');
-
-            setTimeout(() => {
-                router.push(`/dashboard/hospede?email=${encodeURIComponent(email)}`);
-            }, 700);
-        } catch (error: any) {
-            setIsLoading(false);
-            setAuthFeedback(error?.message || 'Não foi possível acessar o painel do hóspede.');
-            setAuthFeedbackTone('error');
-        }
+        setTimeout(() => {
+            router.push(`/dashboard/${selectedRole}`);
+        }, 1500);
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (registerData.password !== registerData.confirmPassword) {
-            setAuthFeedback('As senhas não coincidem.');
-            setAuthFeedbackTone('error');
+            alert('As senhas não coincidem!');
             return;
         }
 
         setIsLoading(true);
-        setAuthFeedback('');
-        setAuthFeedbackTone('neutral');
-
-        try {
-            const fullName = registerData.name.trim();
-            const [firstName = '', ...rest] = fullName.split(/\s+/);
-            const lastName = rest.join(' ');
-
-            const response = await fetch('/api/guest-portal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'register',
-                    name: fullName,
-                    firstName,
-                    lastName,
-                    email: registerData.email,
-                    phone: registerData.phone,
-                }),
-            });
-
-            const payload = await response.json();
-
-            if (!response.ok || !payload?.success) {
-                throw new Error(payload?.error || 'Não foi possível concluir o cadastro.');
-            }
-
-            if (typeof window !== 'undefined') {
-                window.localStorage.setItem('frontstay-guest-session', JSON.stringify({
-                    email: registerData.email,
-                    name: payload?.guest?.name || fullName,
-                }));
-            }
-
-            setEmail(registerData.email);
-            setPassword('');
+        // Simulação de cadastro
+        setTimeout(() => {
+            setIsLoading(false);
             setShowRegisterModal(false);
-            setAuthFeedback('Cadastro concluído com sucesso. Redirecionando para o seu painel...');
-            setAuthFeedbackTone('success');
-            setIsLoading(false);
-
-            setTimeout(() => {
-                router.push(`/dashboard/hospede?email=${encodeURIComponent(registerData.email)}`);
-            }, 900);
-
-        } catch (error: any) {
-            setAuthFeedback(error?.message || 'Não foi possível concluir o cadastro.');
-            setAuthFeedbackTone('error');
-        } finally {
-            setIsLoading(false);
-        }
+            alert('Cadastro realizado com sucesso!');
+        }, 1500);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-frontstay relative overflow-hidden px-4 py-8 pb-24 md:pb-8">
-            {/* Subtle Geometric Background Pattern */}
-            <div className="absolute inset-0 bg-geometric-pattern opacity-40 pointer-events-none"></div>
-
-            {/* Back Button (Cleaner) */}
-            <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20">
-                <button
-                    onClick={() => router.push('/')}
-                    className="flex items-center gap-2 text-gray-400 hover:text-gray-800 font-questa-medium transition-colors border-b border-transparent hover:border-gray-800 pb-0.5"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Página Inicial
-                </button>
+        <div className="min-h-screen flex overflow-hidden relative">
+            {/* Background Image - Full Screen */}
+            <div className="absolute inset-0">
+                <Image
+                    src="/esopo.png"
+                    alt="Background"
+                    fill
+                    className="object-contain object-right"
+                    priority
+                />
+                {/* Gradient Overlay - Smooth transition from black to transparent */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 via-slate-950/90 via-slate-950/70 via-slate-900/50 via-slate-900/30 to-transparent"></div>
             </div>
 
-            {/* Main Login Card */}
-            <div className="relative z-10 w-full max-w-md bg-white rounded-[2.5rem] shadow-glass border border-gray-100 p-8 md:p-10 transform transition-all duration-500 hover:shadow-card-hover">
-                {/* Logo */}
-                <div className="flex justify-center mb-10">
-                    <Image
-                        src="/logo.png"
-                        alt="FrontStay Logo"
-                        width={240}
-                        height={100}
-                        className="object-contain"
-                        priority
-                    />
-                </div>
-
-                <div className="mb-8 text-center">
-                    <h1 className="text-gray-900 text-3xl font-questa-bold mb-2">Área do Hóspede</h1>
-                    <p className="text-gray-500 text-sm font-questa-regular">Acesse sua conta para gerenciar suas estadias.</p>
-                </div>
-
-                <form onSubmit={handleLogin} className="space-y-6">
-                    <div>
-                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">E-mail</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                            placeholder="Digite seu e-mail"
+            {/* Login Form - Positioned on the left */}
+            <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-8">
+                        <Image
+                            src="/logo2.png"
+                            alt="FrontStay Logo"
+                            width={120}
+                            height={120}
+                            className="object-contain"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Senha</label>
-                        <div className="relative">
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                placeholder="Digite sua senha"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    <div className="mb-8">
+                        <h1 className="text-white text-3xl font-bold mb-2 text-center">Faça seu login.</h1>
+                        <p className="text-slate-400 text-center text-sm">Acesse sua conta FrontStay</p>
+                    </div>
+
+                    <form onSubmit={handleLogin} className="space-y-5">
+                        <div>
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">Perfil</label>
+                            <select
+                                value={selectedRole}
+                                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                             >
-                                {showPassword ? (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                    </svg>
-                                ) : (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                )}
-                            </button>
+                                {roles.map((role) => (
+                                    <option key={role.value} value={role.value} className="bg-slate-900">
+                                        {role.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                    </div>
 
-                    <div className="flex items-center justify-between">
-                        <label className="flex items-center cursor-pointer group">
+                        <div>
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">E-mail</label>
                             <input
-                                type="checkbox"
-                                className="w-4 h-4 rounded border-gray-300 text-primary-teal focus:ring-primary-teal bg-white transition-colors cursor-pointer"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                placeholder="Digite seu e-mail"
                             />
-                            <span className="ml-2 text-gray-500 font-questa-regular text-sm group-hover:text-gray-700 transition-colors">Lembrar-me</span>
-                        </label>
-                        <a href="#" className="text-primary-teal hover:text-primary-teal-dark font-questa-medium text-sm transition-colors decoration-2 hover:underline underline-offset-4">
-                            Esqueci a senha
-                        </a>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full bg-gradient-primary hover:bg-gradient-to-r hover:from-primary-teal-dark hover:to-secondary-purple-dark text-white font-questa-bold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                    >
-                        {isLoading ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Autenticando...
-                            </span>
-                        ) : (
-                            'ENTRAR'
-                        )}
-                    </button>
-
-                    {authFeedback ? (
-                        <div className={`mt-4 rounded-xl border px-4 py-3 text-sm font-questa-medium animate-fade-in-up ${authFeedbackTone === 'success' ? 'border-support-green/20 bg-support-green/10 text-support-green' : authFeedbackTone === 'error' ? 'border-accent-orange/20 bg-accent-orange/10 text-accent-orange-dark' : 'border-gray-200 bg-gray-50 text-gray-700'}`}>
-                            {authFeedback}
                         </div>
-                    ) : null}
-                </form>
 
-                <div className="mt-8 text-center border-t border-gray-100 pt-6">
-                    <p className="text-gray-500 text-sm font-questa-regular">
-                        Ainda não possui uma conta?{' '}
+                        <div>
+                            <label className="block text-slate-200 text-sm mb-2 font-medium">Senha</label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    placeholder="Digite sua senha"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <label className="flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 rounded border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 bg-slate-800"
+                                />
+                                <span className="ml-2 text-slate-300 text-sm">Lembrar-me</span>
+                            </label>
+                            <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
+                                Esqueci a senha
+                            </a>
+                        </div>
+
                         <button
-                            onClick={() => setShowRegisterModal(true)}
-                            className="text-primary-teal hover:text-primary-teal-dark font-questa-bold transition-colors decoration-2 hover:underline underline-offset-4"
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-bold py-3.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
                         >
-                            Cadastre-se
+                            {isLoading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Entrando...
+                                </span>
+                            ) : (
+                                'ENTRAR'
+                            )}
                         </button>
-                    </p>
+                    </form>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-slate-400 text-sm">
+                            Ainda não possui uma conta?{' '}
+                            <button
+                                onClick={() => setShowRegisterModal(true)}
+                                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                            >
+                                Cadastre-se
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Register Modal - Light Theme */}
+            {/* Register Modal */}
             {showRegisterModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
-                    <div className="bg-white rounded-[2rem] shadow-2xl border border-gray-100 w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-100 p-6 md:p-8 flex items-center justify-between z-10">
+                        <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 flex items-center justify-between">
                             <div>
-                                <h2 className="text-2xl font-questa-bold text-gray-900">Criar Nova Conta</h2>
-                                <p className="text-gray-500 text-sm mt-1 font-questa-regular">Preencha os dados abaixo e junte-se à FrontStay.</p>
+                                <h2 className="text-2xl font-bold text-white">Criar conta</h2>
+                                <p className="text-slate-400 text-sm mt-1">Preencha os dados para se cadastrar</p>
                             </div>
                             <button
                                 onClick={() => setShowRegisterModal(false)}
-                                className="text-gray-400 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-full transition-all"
+                                className="text-slate-400 hover:text-white transition-colors"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -295,139 +218,151 @@ export default function LoginPage() {
                         </div>
 
                         {/* Modal Body */}
-                        <form onSubmit={handleRegister} className="p-6 md:p-8 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Name */}
-                                <div>
-                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Nome Completo</label>
-                                    <input
-                                        type="text"
-                                        value={registerData.name}
-                                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-                                        required
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                        placeholder="Ex: João da Silva"
-                                    />
-                                </div>
+                        <form onSubmit={handleRegister} className="p-6 space-y-5">
+                            {/* Role Selection */}
+                            <div>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">Tipo de Cadastro</label>
+                                <select
+                                    value={registerData.role}
+                                    onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as UserRole })}
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                >
+                                    {roles.map((role) => (
+                                        <option key={role.value} value={role.value} className="bg-slate-900">
+                                            {role.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                {/* Phone */}
-                                <div>
-                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Telefone/WhatsApp</label>
-                                    <input
-                                        type="tel"
-                                        value={registerData.phone}
-                                        onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
-                                        required
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                        placeholder="(11) 99999-9999"
-                                    />
-                                </div>
+                            {/* Name */}
+                            <div>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">Nome Completo</label>
+                                <input
+                                    type="text"
+                                    value={registerData.name}
+                                    onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                                    required
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    placeholder="Digite seu nome completo"
+                                />
                             </div>
 
                             {/* Email */}
                             <div>
-                                <label className="block text-gray-700 text-sm mb-2 font-questa-medium">E-mail</label>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">E-mail</label>
                                 <input
                                     type="email"
                                     value={registerData.email}
                                     onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                                     required
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                    placeholder="seu@email.com"
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    placeholder="Digite seu e-mail"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Password */}
-                                <div>
-                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Senha</label>
-                                    <div className="relative">
-                                        <input
-                                            type={showRegisterPassword ? 'text' : 'password'}
-                                            value={registerData.password}
-                                            onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                                            required
-                                            minLength={6}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                            placeholder="Mín. 6 caracteres"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                                        >
-                                            {showRegisterPassword ? (
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                                </svg>
-                                            ) : (
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
+                            {/* Phone */}
+                            <div>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">Telefone</label>
+                                <input
+                                    type="tel"
+                                    value={registerData.phone}
+                                    onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
+                                    required
+                                    className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    placeholder="(00) 00000-0000"
+                                />
+                            </div>
 
-                                {/* Confirm Password */}
-                                <div>
-                                    <label className="block text-gray-700 text-sm mb-2 font-questa-medium">Confirmar Senha</label>
-                                    <div className="relative">
-                                        <input
-                                            type={showConfirmPassword ? 'text' : 'password'}
-                                            value={registerData.confirmPassword}
-                                            onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
-                                            required
-                                            minLength={6}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 font-questa-regular focus:outline-none focus:ring-2 focus:ring-primary-teal focus:border-primary-teal transition-all shadow-sm"
-                                            placeholder="Repita a senha"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                                        >
-                                            {showConfirmPassword ? (
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                                </svg>
-                                            ) : (
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                            )}
-                                        </button>
-                                    </div>
+                            {/* Password */}
+                            <div>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">Senha</label>
+                                <div className="relative">
+                                    <input
+                                        type={showRegisterPassword ? 'text' : 'password'}
+                                        value={registerData.password}
+                                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                                        required
+                                        minLength={6}
+                                        className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        placeholder="Mínimo 6 caracteres"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                    >
+                                        {showRegisterPassword ? (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Confirm Password */}
+                            <div>
+                                <label className="block text-slate-200 text-sm mb-2 font-medium">Confirmar Senha</label>
+                                <div className="relative">
+                                    <input
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        value={registerData.confirmPassword}
+                                        onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                                        required
+                                        minLength={6}
+                                        className="w-full bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        placeholder="Digite a senha novamente"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                    >
+                                        {showConfirmPassword ? (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
 
                             {/* Terms */}
-                            <div className="flex items-start bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div className="flex items-start">
                                 <input
                                     type="checkbox"
                                     required
-                                    className="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary-teal focus:ring-primary-teal bg-white cursor-pointer"
+                                    className="w-4 h-4 mt-1 rounded border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 bg-slate-800"
                                 />
-                                <label className="ml-3 text-gray-600 text-sm font-questa-regular">
-                                    Concordo com os <a href="#" className="text-primary-teal font-questa-medium hover:underline">termos de uso</a> e a <a href="#" className="text-primary-teal font-questa-medium hover:underline">política de privacidade</a> da FrontStay.
+                                <label className="ml-2 text-slate-300 text-sm">
+                                    Eu aceito os <a href="#" className="text-blue-400 hover:text-blue-300">termos de uso</a> e a <a href="#" className="text-blue-400 hover:text-blue-300">política de privacidade</a>
                                 </label>
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowRegisterModal(false)}
-                                    className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-questa-bold py-3.5 rounded-xl transition-all duration-300 pointer"
+                                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-all duration-300"
                                 >
-                                    Voltar
+                                    Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-[2] bg-gradient-primary hover:bg-gradient-to-r hover:from-primary-teal-dark hover:to-secondary-purple-dark text-white font-questa-bold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                                    className="flex-1 bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-bold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
                                 >
                                     {isLoading ? (
                                         <span className="flex items-center justify-center gap-2">
@@ -435,10 +370,10 @@ export default function LoginPage() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Processando...
+                                            Cadastrando...
                                         </span>
                                     ) : (
-                                        'CELEBRAR CADASTRO'
+                                        'Criar Conta'
                                     )}
                                 </button>
                             </div>
@@ -446,29 +381,6 @@ export default function LoginPage() {
                     </div>
                 </div>
             )}
-
-            {/* Floating Bottom Navigation - Mobile (Light Theme) */}
-            <nav className="md:hidden fixed bottom-3 left-3 right-3 z-[45] bg-white border border-gray-200 shadow-[0_4px_25px_rgba(0,0,0,0.1)] rounded-2xl flex justify-around items-center h-16 px-1">
-                {navLinks.map(tab => {
-                    const isActive = tab.id === 'cliente'; // Na página de login o menu ativo será login
-                    return (
-                        <Link
-                            key={tab.id}
-                            href={tab.href}
-                            className={`flex flex-col items-center justify-center flex-1 h-full py-1 gap-1 transition-all ${
-                                isActive ? 'text-primary-teal' : 'text-gray-500'
-                            }`}
-                        >
-                            <svg className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive ? 2.5 : 2} d={tab.icon} />
-                            </svg>
-                            <span className={`text-[9px] uppercase tracking-wider font-semibold truncate w-full px-1 text-center ${isActive ? 'text-primary-teal' : 'text-gray-500'}`}>
-                                {tab.label}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </nav>
         </div>
     );
 }

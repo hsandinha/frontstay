@@ -1,16 +1,10 @@
 // app/layout.tsx
 
 import type { Metadata } from "next";
-import { Great_Vibes, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
-const greatVibes = Great_Vibes({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  variable: "--font-great-vibes",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Front Stay",
@@ -24,7 +18,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" suppressHydrationWarning>
-      <body className={`${inter.className} ${greatVibes.variable}`}>{children}</body>
+      <head>
+        {/* Adicione esta linha para importar os ícones do Google Fonts */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,1,-25" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

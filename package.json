@@ -3,36 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .next && next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "next lint"
   },
   "dependencies": {
-    "@opentelemetry/api": "^1.9.1",
-    "@supabase/ssr": "^0.10.0",
-    "@supabase/supabase-js": "^2.101.1",
     "clsx": "^2.1.0",
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.400.0",
-    "next": "^16.2.2",
+    "next": "^15.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-scroll-parallax": "^3.4.5",
-    "tailwind-merge": "^2.2.1",
-    "tslib": "^2.8.1"
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
-    "@types/prop-types": "^15.7.15",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.2",
+    "eslint": "^9.33.0",
+    "eslint-config-next": "^15.5.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
